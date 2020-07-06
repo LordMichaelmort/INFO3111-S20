@@ -26,7 +26,7 @@
 #include <string>
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, -4.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 60.0, -100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -61,6 +61,8 @@ glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 cShaderManager* g_pShaderManager = 0;       // NULL
 
 cVAOManager* g_pTheVAOManager = 0;          // NULL or nullptr
+
+bool g_isWireFrame = false;
 
 
 //static const char* vertex_shader_text =
@@ -187,7 +189,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+    // Switches from wireframe to solid (glPolygonMode)
+    if (key == GLFW_KEY_9 && action == GLFW_PRESS ) {::g_isWireFrame = true; }
+    if (key == GLFW_KEY_0 && action == GLFW_PRESS ) {::g_isWireFrame = false; }
 
 
     // Print out camera location:
@@ -226,7 +234,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     std::cout << "About to create window..." << std::endl;
-    window = glfwCreateWindow(1024, 700, "Long Live COBOL", NULL, NULL);
+    window = glfwCreateWindow(1024, 700, "9 is wireframe, 0 is solid", NULL, NULL);
     if (!window)
     {
         // Can't init openGL. Oh no. 
@@ -373,6 +381,14 @@ int main(void)
 
 
         glUseProgram(program);
+
+
+        // This will change the model to "wireframe" and "solid"
+        // In this example, it's changed by pressing "9" and "0" keys
+        if ( ::g_isWireFrame )
+        {  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
+        else                        
+        {  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
 
         //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
