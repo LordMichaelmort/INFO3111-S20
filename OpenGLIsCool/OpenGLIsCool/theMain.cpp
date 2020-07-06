@@ -22,6 +22,12 @@
 #include <fstream>
 #include <string>
 
+// Camera stuff
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, -4.0f);
+glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+
+
 struct sVertex
 {
     float x, y, z;      // NEW! With Zs
@@ -150,8 +156,43 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    const float CAMERASPEED = 0.01f;
+    // WSAD - AD are "right and left"
+    //      - SW are "forward and back"
+    //      - QE are "up and down"
+
+    if (key == GLFW_KEY_A) // go "left"
+    {   
+        ::g_cameraEye.x -= CAMERASPEED;
+    }
+
+    if (key == GLFW_KEY_D) // go "right"
+    {
+        ::g_cameraEye.x += CAMERASPEED;
+    }
+
+    if (key == GLFW_KEY_S) // go "back" (-ve Z)
+    {
+        ::g_cameraEye.z -= CAMERASPEED;
+    }
+
+    if (key == GLFW_KEY_W) // go "forward" (+ve Z)
+    {
+        ::g_cameraEye.z += CAMERASPEED;
+    }
+
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+
+    // Print out camera location:
+    std::cout << "cam: " 
+        << ::g_cameraEye.x << ", "
+        << ::g_cameraEye.y << ", "
+        << ::g_cameraEye.z << std::endl;
+
+
+    return;
 }
 
 int main(void)
@@ -297,13 +338,13 @@ int main(void)
 
         v = glm::mat4(1.0f);
 
-        glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
-        glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+        //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
+        //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+        //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        v = glm::lookAt(cameraEye,
-                        cameraTarget,
-                        upVector);
+        v = glm::lookAt( ::g_cameraEye,
+                         ::g_cameraTarget,
+                         ::g_upVector );
 
         //mat4x4_mul(mvp, p, m);
         mvp = p * v * m;
