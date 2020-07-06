@@ -17,11 +17,12 @@
 #include <iostream>
 
 #include "cShaderManager.h"
+#include "cVAOManager.h"            // NEW!
 
 #include <string>
 
-// File IO
-#include <fstream>
+//// File IO
+//#include <fstream>
 #include <string>
 
 // Camera stuff
@@ -30,14 +31,14 @@ glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
 
-struct sVertex
-{
-    float x, y, z;      // NEW! With Zs
-    float r, g, b;
-};
-
-int g_numberOfVerts = 0;
-sVertex* g_pVertexBuffer = 0;     // or NULL or nullptr
+//struct sVertex
+//{
+//    float x, y, z;      // NEW! With Zs
+//    float r, g, b;
+//};
+//
+//int g_numberOfVerts = 0;
+//sVertex* g_pVertexBuffer = 0;     // or NULL or nullptr
 
 
 
@@ -58,6 +59,8 @@ sVertex* g_pVertexBuffer = 0;     // or NULL or nullptr
 
 // Yes, it's global. Just be calm, for now.
 cShaderManager* g_pShaderManager = 0;       // NULL
+
+cVAOManager* g_pTheVAOManager = 0;          // NULL or nullptr
 
 
 //static const char* vertex_shader_text =
@@ -80,76 +83,76 @@ cShaderManager* g_pShaderManager = 0;       // NULL
 //"    gl_FragColor = vec4(color, 1.0);\n"
 //"}\n";
 
-void LoadPlyFile( std::string fileName )
-{
-    std::ifstream theFile( fileName.c_str() );
-
-    if (!theFile.is_open())
-    {
-        std::cout << "Oh NO!!" << std::endl;
-        return;
-    }
-
-    // Look for the work "vertex"
-    std::string temp;
-
-    bool bKeepReading = true;
-
-    while (bKeepReading)
-    {
-        theFile >> temp;    // Read next string
-        if (temp == "vertex")
-        {
-            bKeepReading = false;
-        }
-    }//while
-
-//    int numberOfVerts = 0;
-    theFile >> ::g_numberOfVerts;
-    std::cout << ::g_numberOfVerts << std::endl;
-
-    // Make the vertex buffer the size we need
-    // Allocate "this" number of vertices
-    ::g_pVertexBuffer = new sVertex[::g_numberOfVerts];
-
-    while (true)
-    {
-        theFile >> temp;    // Read next string
-        if (temp == "face")
-        {
-            break;
-        }
-    }//while
-
-    int numberOfTriangles = 0;
-    theFile >> numberOfTriangles;
-    std::cout << numberOfTriangles << std::endl;
-
-
-    while (true)
-    {
-        theFile >> temp;    // Read next string
-        if (temp == "end_header")
-        {
-            break;
-        }
-    }//while
-
-    for (int index = 0; index != ::g_numberOfVerts; index++)
-    {
-        float x,y,z,r,g,b,a;
-        theFile >> x >> y >> z >> r >> g >> b >> a;
-
-        ::g_pVertexBuffer[index].x = x;
-        ::g_pVertexBuffer[index].y = y;
-        ::g_pVertexBuffer[index].z = z;
-        ::g_pVertexBuffer[index].r = r / 255.0f;
-        ::g_pVertexBuffer[index].g = g / 255.0f;
-        ::g_pVertexBuffer[index].b = b / 255.0f;
-    }
-
-    return;
-}
+//void LoadPlyFile( std::string fileName )
+//{
+//    std::ifstream theFile( fileName.c_str() );
+//
+//    if (!theFile.is_open())
+//    {
+//        std::cout << "Oh NO!!" << std::endl;
+//        return;
+//    }
+//
+//    // Look for the work "vertex"
+//    std::string temp;
+//
+//    bool bKeepReading = true;
+//
+//    while (bKeepReading)
+//    {
+//        theFile >> temp;    // Read next string
+//        if (temp == "vertex")
+//        {
+//            bKeepReading = false;
+//        }
+//    }//while
+//
+////    int numberOfVerts = 0;
+//    theFile >> ::g_numberOfVerts;
+//    std::cout << ::g_numberOfVerts << std::endl;
+//
+//    // Make the vertex buffer the size we need
+//    // Allocate "this" number of vertices
+//    ::g_pVertexBuffer = new sVertex[::g_numberOfVerts];
+//
+//    while (true)
+//    {
+//        theFile >> temp;    // Read next string
+//        if (temp == "face")
+//        {
+//            break;
+//        }
+//    }//while
+//
+//    int numberOfTriangles = 0;
+//    theFile >> numberOfTriangles;
+//    std::cout << numberOfTriangles << std::endl;
+//
+//
+//    while (true)
+//    {
+//        theFile >> temp;    // Read next string
+//        if (temp == "end_header")
+//        {
+//            break;
+//        }
+//    }//while
+//
+//    for (int index = 0; index != ::g_numberOfVerts; index++)
+//    {
+//        float x,y,z,r,g,b,a;
+//        theFile >> x >> y >> z >> r >> g >> b >> a;
+//
+//        ::g_pVertexBuffer[index].x = x;
+//        ::g_pVertexBuffer[index].y = y;
+//        ::g_pVertexBuffer[index].z = z;
+//        ::g_pVertexBuffer[index].r = r / 255.0f;
+//        ::g_pVertexBuffer[index].g = g / 255.0f;
+//        ::g_pVertexBuffer[index].b = b / 255.0f;
+//    }
+//
+//    return;
+//}
 
 static void error_callback(int error, const char* description)
 {
@@ -200,7 +203,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 int main(void)
 {
 
-    LoadPlyFile("assets/models/bun_zipper_res4_xyz_colour.ply");
+ //   LoadPlyFile("assets/models/bun_zipper_res4_xyz_colour.ply");
 
     std::cout << "About to start..." << std::endl;
 
@@ -237,19 +240,19 @@ int main(void)
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
 
-    // NOTE: OpenGL error checks have been omitted for brevity
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-
-    //sVertex vertices[6]
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    unsigned int sizeOfVertBufferInBytes = sizeof(sVertex) * ::g_numberOfVerts;
-
-    glBufferData( GL_ARRAY_BUFFER, 
-                  sizeOfVertBufferInBytes,      // Size in bytes
-                  ::g_pVertexBuffer,            // Pointer to START of local array
-                  GL_STATIC_DRAW);
+//    // NOTE: OpenGL error checks have been omitted for brevity
+//    glGenBuffers(1, &vertex_buffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+//
+//    //sVertex vertices[6]
+//    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+//
+//    unsigned int sizeOfVertBufferInBytes = sizeof(sVertex) * ::g_numberOfVerts;
+//
+//    glBufferData( GL_ARRAY_BUFFER, 
+//                  sizeOfVertBufferInBytes,      // Size in bytes
+//                  ::g_pVertexBuffer,            // Pointer to START of local array
+//                  GL_STATIC_DRAW);
 
     //cShaderManager* g_pShaderManager = 0;
     ::g_pShaderManager = new cShaderManager();          // HEAP  
@@ -290,24 +293,36 @@ int main(void)
     vpos_location = glGetAttribLocation(program, "vPos");
     vcol_location = glGetAttribLocation(program, "vCol");
 
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 
-                          3, GL_FLOAT, 
-                          GL_FALSE,
-                          sizeof(sVertex),      // "stride"
-                          (void*)offsetof(sVertex, x) );
-    //struct sVertex
+//    glEnableVertexAttribArray(vpos_location);
+//    glVertexAttribPointer(vpos_location, 
+//                          3, GL_FLOAT, 
+//                          GL_FALSE,
+//                          sizeof(sVertex),      // "stride"
+//                          (void*)offsetof(sVertex, x) );
+//    //struct sVertex
     //{
     //    float x, y, z;      // NEW! With Zs
     //    float r, g, b;
     //};
+//
+//    glEnableVertexAttribArray(vcol_location);
+//    glVertexAttribPointer(vcol_location, 
+//                          3, GL_FLOAT, 
+//                          GL_FALSE,
+//                          sizeof(sVertex),               // "stride"
+//                          (void*)offsetof(sVertex, r) ); // "offset" (how many bytes 'in' is this member?)
 
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 
-                          3, GL_FLOAT, 
-                          GL_FALSE,
-                          sizeof(sVertex),               // "stride"
-                          (void*)offsetof(sVertex, r) ); // "offset" (how many bytes 'in' is this member?)
+    // STARTOF: Loading the models
+    ::g_pTheVAOManager = new cVAOManager();
+
+    sModelDrawInfo mdoBunny;
+    if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_res4_xyz_colour.ply",
+                                                 mdoBunny, program) )
+    {
+        std::cout << "Error: " << ::g_pTheVAOManager->getLastError() << std::endl;
+    }
+    // ENDOF: Loading the models
+
 
     std::cout << "We're all set! Buckle up!" << std::endl;
 
@@ -364,7 +379,23 @@ int main(void)
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
 
 //        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
+ //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
+
+        sModelDrawInfo mdoModelToDraw;
+        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/bun_zipper_res4_xyz_colour.ply",
+                                                        mdoModelToDraw))
+        {
+            glBindVertexArray(mdoModelToDraw.VAO_ID);
+
+            glDrawElements( GL_TRIANGLES, 
+                            mdoModelToDraw.numberOfIndices, 
+                            GL_UNSIGNED_INT,     // How big the index values are 
+                            0 );        // Starting index for this model
+
+            glBindVertexArray(0);
+        }
+
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
