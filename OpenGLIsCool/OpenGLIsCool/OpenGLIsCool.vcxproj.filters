@@ -9,9 +9,11 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Shader Stuff">
+      <UniqueIdentifier>{80036769-ef2f-4b05-9b5b-2994d90eea0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VAO and Model">
+      <UniqueIdentifier>{d5277e28-bb31-4969-ad2d-269acb70b7f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,15 +24,32 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cShader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Shader Stuff</Filter>
     </ClCompile>
     <ClCompile Include="cShaderManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Shader Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="cVAOManager.cpp">
+      <Filter>VAO and Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
+      <Filter>Shader Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="cVAOManager.h">
+      <Filter>VAO and Model</Filter>
+    </ClInclude>
+    <ClInclude Include="globalOpenGLStuff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="simpleFragment.glsl">
+      <Filter>Shader Stuff</Filter>
+    </None>
+    <None Include="simpleVertex.glsl">
+      <Filter>Shader Stuff</Filter>
+    </None>
   </ItemGroup>
 </Project>

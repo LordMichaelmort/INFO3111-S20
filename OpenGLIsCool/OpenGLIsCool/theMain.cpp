@@ -1,5 +1,7 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+//#include <glad/glad.h>
+//#include <GLFW/glfw3.h>
+#include "globalOpenGLStuff.h"
+
 //#include "linmath.h"
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
@@ -309,16 +311,21 @@ int main(void)
 
     std::cout << "We're all set! Buckle up!" << std::endl;
 
-    while (!glfwWindowShouldClose(window))
+    while ( ! glfwWindowShouldClose(window) )
     {
         float ratio;
         int width, height;
         //       mat4x4 m, p, mvp;
         glm::mat4 m, p, v, mvp;
+
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+        glEnable(GL_DEPTH_TEST);
+        glCullFace(GL_BACK);
 
         //         mat4x4_identity(m);
         m = glm::mat4(1.0f);
@@ -361,7 +368,8 @@ int main(void)
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-    }
+
+    }//while ( ! glfwWindowShouldClose(window) )
 
 
     delete ::g_pShaderManager;

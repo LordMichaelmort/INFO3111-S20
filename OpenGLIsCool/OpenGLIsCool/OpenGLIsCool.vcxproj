@@ -152,11 +152,18 @@
   <ItemGroup>
     <ClCompile Include="cShader.cpp" />
     <ClCompile Include="cShaderManager.cpp" />
+    <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="theMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h" />
+    <ClInclude Include="cVAOManager.h" />
+    <ClInclude Include="globalOpenGLStuff.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="simpleFragment.glsl" />
+    <None Include="simpleVertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
