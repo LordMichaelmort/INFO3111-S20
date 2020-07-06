@@ -316,7 +316,7 @@ int main(void)
     ::g_pTheVAOManager = new cVAOManager();
 
     sModelDrawInfo mdoBunny;
-    if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_res4_xyz_colour.ply",
+    if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/free_arena_ASCII_xyz_rgba.ply",
                                                  mdoBunny, program) )
     {
         std::cout << "Error: " << ::g_pTheVAOManager->getLastError() << std::endl;
@@ -382,7 +382,7 @@ int main(void)
  //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
 
         sModelDrawInfo mdoModelToDraw;
-        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/bun_zipper_res4_xyz_colour.ply",
+        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/free_arena_ASCII_xyz_rgba.ply",
                                                         mdoModelToDraw))
         {
             glBindVertexArray(mdoModelToDraw.VAO_ID);
