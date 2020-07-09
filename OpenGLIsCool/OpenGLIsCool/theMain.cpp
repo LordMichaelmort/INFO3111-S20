@@ -21,7 +21,7 @@
 #include <vector>
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +5000.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -158,12 +158,24 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+int selectedObject = 0;
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const float CAMERASPEED = 10.0f;
+    const float CAMERASPEED = 1.0f;
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
+
+    if (key == GLFW_KEY_L)
+    {
+        ::g_pVecObjects[selectedObject]->orientation.z += glm::radians(CAMERASPEED);
+    }
+    if (key == GLFW_KEY_K)
+    {
+        ::g_pVecObjects[selectedObject]->orientation.z -= glm::radians(CAMERASPEED);
+    }
+
 
     if (key == GLFW_KEY_A) // go "left"
     {   
@@ -353,14 +365,27 @@ int main(void)
     cMeshObject* pShuttle01 = new cMeshObject();
     pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
     pShuttle01->position.x = -10.0f;
-    pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size
+    pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size 0.001
     ::g_pVecObjects.push_back( pShuttle01 );
 
     cMeshObject* pShuttle02 = new cMeshObject();
     pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
     pShuttle02->position.x = +10.0f;
     pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
+    pShuttle02->orientation.z = glm::radians(135.0f);
     ::g_pVecObjects.push_back( pShuttle02 );
+
+    cMeshObject* pBunny = new cMeshObject();
+    pBunny->meshName = "assets/models/bun_zipper_res4_xyz_colour.ply";
+    pBunny->position.y = +10.0f;
+    pBunny->scale = 25.0f;    
+    ::g_pVecObjects.push_back(pBunny);
+
+    cMeshObject* pArena = new cMeshObject();
+    pArena->meshName = "assets/models/free_arena_ASCII_xyz_rgba.ply";
+    pArena->position.y = -20.0f;
+    pArena->scale = 1.0f;
+    ::g_pVecObjects.push_back(pArena);
 
 
 
@@ -372,7 +397,7 @@ int main(void)
         float ratio;
         int width, height;
         //       mat4x4 m, p, mvp;
-        glm::mat4 m, p, v, mvp;
+        glm::mat4 matModel, p, v, mvp;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
@@ -383,8 +408,6 @@ int main(void)
         glEnable(GL_DEPTH_TEST);
         glCullFace(GL_BACK);
 
-        //         mat4x4_identity(m);
-        m = glm::mat4(1.0f);
 
         //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
 //        glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
@@ -420,8 +443,64 @@ int main(void)
             // For ease, copy the pointer to a sensible variable name
             cMeshObject* pCurMesh = *it_pCurMesh;
 
+
+            //         mat4x4_identity(m);
+            matModel = glm::mat4(1.0f);
+
+            // ****************************
+            // *** Model transfomations ***
+            // Place the object in the world at 'this' location
+            glm::mat4 matTranslation
+                = glm::translate(glm::mat4(1.0f),
+                                 glm::vec3(pCurMesh->position.x,
+                                           pCurMesh->position.y,
+                                           pCurMesh->position.z));
+            matModel = matModel * matTranslation;
+
+
+            //mat4x4_rotate_Z(m, m, );
+            //*************************************
+            // ROTATE around Z
+            glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
+                                               pCurMesh->orientation.z, // (float) glfwGetTime(), 
+                                               glm::vec3(0.0f, 0.0f, 1.0f));
+            matModel = matModel * matRotateZ;
+            //*************************************
+
+            //*************************************
+            // ROTATE around Y
+            glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
+                                               pCurMesh->orientation.y, // (float) glfwGetTime(), 
+                                               glm::vec3(0.0f, 1.0f, 0.0f));
+            matModel = matModel * matRotateY;
+            //*************************************
+
+            //*************************************
+            // ROTATE around X
+            glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
+                                            pCurMesh->orientation.x, // (float) glfwGetTime(), 
+                                            glm::vec3(1.0f, 0.0, 0.0f));
+            matModel = matModel * rotateX;
+            //*************************************
+
+
+            // Set up a scaling matrix
+            glm::mat4 matScale = glm::mat4(1.0f);
+
+            float theScale = pCurMesh->scale;		// 1.0f;		
+            matScale = glm::scale(glm::mat4(1.0f),
+                                  glm::vec3(theScale, theScale, theScale));
+
+
+            // Apply (multiply) the scaling matrix to 
+            // the existing "model" (or "world") matrix
+            matModel = matModel * matScale;
+
+            // *** Model transfomations ***
+            // *********************************
+
             //mat4x4_mul(mvp, p, m);
-            mvp = p * v * m;
+            mvp = p * v * matModel;
 
 
             glUseProgram(program);
