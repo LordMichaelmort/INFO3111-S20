@@ -10,26 +10,23 @@
 #include <glm/gtc/matrix_transform.hpp> 
 // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
-
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <iostream>
-
 #include "cShaderManager.h"
 #include "cVAOManager.h"            // NEW!
-
 #include <string>
 
-//// File IO
-//#include <fstream>
-#include <string>
+#include "cMeshObject.h"
+#include <vector>
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +5000.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
+// The objects we are drawing go in here! Hazzah!
+std::vector< cMeshObject* > g_pVecObjects;
 
 //struct sVertex
 //{
@@ -163,7 +160,7 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const float CAMERASPEED = 1.0f;
+    const float CAMERASPEED = 10.0f;
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
@@ -352,6 +349,22 @@ int main(void)
     }
     // ENDOF: Loading the models
 
+    // Add to the list of things to draw
+    cMeshObject* pShuttle01 = new cMeshObject();
+    pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    pShuttle01->position.x = -10.0f;
+    pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size
+    ::g_pVecObjects.push_back( pShuttle01 );
+
+    cMeshObject* pShuttle02 = new cMeshObject();
+    pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    pShuttle02->position.x = +10.0f;
+    pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
+    ::g_pVecObjects.push_back( pShuttle02 );
+
+
+
+
     std::cout << "We're all set! Buckle up!" << std::endl;
 
     while ( ! glfwWindowShouldClose(window) )
@@ -383,8 +396,8 @@ int main(void)
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         p = glm::perspective(0.6f,
                              ratio,
-                             0.1f,
-                             1000.0f);
+                             0.1f,          // Near plane
+                             10000.0f);      // Far plane
 
         v = glm::mat4(1.0f);
 
@@ -396,40 +409,60 @@ int main(void)
                          ::g_cameraTarget,  // "at"  (looking "at")
                          ::g_upVector );    
 
-        //mat4x4_mul(mvp, p, m);
-        mvp = p * v * m;
 
-
-        glUseProgram(program);
-
-
-        // This will change the model to "wireframe" and "solid"
-        // In this example, it's changed by pressing "9" and "0" keys
-        if ( ::g_isWireFrame )
-        {  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
-        else                        
-        {  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
-
-
-        //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
-
-//        glDrawArrays(GL_TRIANGLES, 0, 3);
- //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
-
-        sModelDrawInfo mdoModelToDraw;
-        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/SpaceShuttleOrbiter_xyz_rgba.ply",
-                                                         mdoModelToDraw))
+        // *******************************************
+        // **** Draw the entire scene of objects *****
+        // *******************************************
+        for ( std::vector< cMeshObject* >::iterator it_pCurMesh = ::g_pVecObjects.begin();
+              it_pCurMesh != ::g_pVecObjects.end(); it_pCurMesh++ )
         {
-            glBindVertexArray(mdoModelToDraw.VAO_ID);
+            
+            // For ease, copy the pointer to a sensible variable name
+            cMeshObject* pCurMesh = *it_pCurMesh;
 
-            glDrawElements( GL_TRIANGLES, 
-                            mdoModelToDraw.numberOfIndices, 
-                            GL_UNSIGNED_INT,     // How big the index values are 
-                            0 );        // Starting index for this model
+            //mat4x4_mul(mvp, p, m);
+            mvp = p * v * m;
 
-            glBindVertexArray(0);
-        }
+
+            glUseProgram(program);
+
+
+            // This will change the model to "wireframe" and "solid"
+            // In this example, it's changed by pressing "9" and "0" keys
+            if ( pCurMesh->isWireframe )
+            {  
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // Wireframe
+            }
+            else                        
+            {  
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Solid
+            }
+
+
+            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+            glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+
+    //        glDrawArrays(GL_TRIANGLES, 0, 3);
+     //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
+
+            sModelDrawInfo mdoModelToDraw;
+            if (::g_pTheVAOManager->FindDrawInfoByModelName( pCurMesh->meshName,
+                                                             mdoModelToDraw))
+            {
+                glBindVertexArray(mdoModelToDraw.VAO_ID);
+
+                glDrawElements( GL_TRIANGLES, 
+                                mdoModelToDraw.numberOfIndices, 
+                                GL_UNSIGNED_INT,     // How big the index values are 
+                                0 );        // Starting index for this model
+
+                glBindVertexArray(0);
+            }
+
+        }//for ( std::vector< cMeshObject* >
+        // ****************************
+        // **** END OF: Draw scene ****
+        // ****************************
 
 
 
