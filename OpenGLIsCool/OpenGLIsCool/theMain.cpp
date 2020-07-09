@@ -26,7 +26,7 @@
 #include <string>
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 60.0, -100.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -163,7 +163,7 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const float CAMERASPEED = 0.01f;
+    const float CAMERASPEED = 1.0f;
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
@@ -323,14 +323,24 @@ int main(void)
     // STARTOF: Loading the models
     ::g_pTheVAOManager = new cVAOManager();
 
-    sModelDrawInfo mdoBunny;
+    sModelDrawInfo mdiArena;
     if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/free_arena_ASCII_xyz_rgba.ply",
-                                                 mdoBunny, program) )
+                                                 mdiArena, program) )
     {
         std::cout << "Error: " << ::g_pTheVAOManager->getLastError() << std::endl;
     }
-    // ENDOF: Loading the models
 
+    {// Load the bunny, too
+        sModelDrawInfo mdiRabbit;
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_res4_xyz_colour.ply", 
+                                              mdiRabbit, program );
+    }
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiSpaceShuttle;
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply", 
+                                              mdiSpaceShuttle, program );
+    }
+    // ENDOF: Loading the models
 
     std::cout << "We're all set! Buckle up!" << std::endl;
 
@@ -372,9 +382,9 @@ int main(void)
         //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
         //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        v = glm::lookAt( ::g_cameraEye,
-                         ::g_cameraTarget,
-                         ::g_upVector );
+        v = glm::lookAt( ::g_cameraEye,     // "position" "eye"
+                         ::g_cameraTarget,  // "at"  (looking "at")
+                         ::g_upVector );    
 
         //mat4x4_mul(mvp, p, m);
         mvp = p * v * m;
@@ -398,8 +408,8 @@ int main(void)
  //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
 
         sModelDrawInfo mdoModelToDraw;
-        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/free_arena_ASCII_xyz_rgba.ply",
-                                                        mdoModelToDraw))
+        if (::g_pTheVAOManager->FindDrawInfoByModelName("assets/models/SpaceShuttleOrbiter_xyz_rgba.ply",
+                                                         mdoModelToDraw))
         {
             glBindVertexArray(mdoModelToDraw.VAO_ID);
 
