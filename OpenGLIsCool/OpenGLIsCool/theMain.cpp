@@ -21,7 +21,7 @@
 #include <vector>
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +5000.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -160,7 +160,7 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const float CAMERASPEED = 10.0f;
+    const float CAMERASPEED = 1.0f;
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
@@ -347,20 +347,25 @@ int main(void)
         ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply", 
                                               mdiSpaceShuttle, program );
     }
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiGiantPlant;
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/Monstera_Deliciosa_Plant_xyz_rgba.ply", 
+                                              mdiGiantPlant, program );
+    }
     // ENDOF: Loading the models
 
     // Add to the list of things to draw
     cMeshObject* pShuttle01 = new cMeshObject();
-    pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    pShuttle01->meshName = "assets/models/Monstera_Deliciosa_Plant_xyz_rgba.ply";
     pShuttle01->position.x = -10.0f;
     pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size
     ::g_pVecObjects.push_back( pShuttle01 );
 
-    cMeshObject* pShuttle02 = new cMeshObject();
-    pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
-    pShuttle02->position.x = +10.0f;
-    pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
-    ::g_pVecObjects.push_back( pShuttle02 );
+    //cMeshObject* pShuttle02 = new cMeshObject();
+    //pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    //pShuttle02->position.x = +10.0f;
+    //pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
+    //::g_pVecObjects.push_back( pShuttle02 );
 
 
 
