@@ -188,6 +188,16 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         ::g_cameraEye.z += CAMERASPEED;
     }
 
+    if (key == GLFW_KEY_Q) // go "down" (-ve Y)
+    {
+        ::g_cameraEye.y -= CAMERASPEED;
+    }
+
+    if (key == GLFW_KEY_E) // go "up" (-ve Y)
+    {
+        ::g_cameraEye.y += CAMERASPEED;
+    }
+
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, GLFW_TRUE);

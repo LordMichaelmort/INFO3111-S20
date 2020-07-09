@@ -32,6 +32,9 @@
     <ClCompile Include="cVAOManager.cpp">
       <Filter>VAO and Model</Filter>
     </ClCompile>
+    <ClCompile Include="cMeshObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -41,6 +44,9 @@
       <Filter>VAO and Model</Filter>
     </ClInclude>
     <ClInclude Include="globalOpenGLStuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cMeshObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
