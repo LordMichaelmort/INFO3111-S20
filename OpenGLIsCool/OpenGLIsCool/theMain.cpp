@@ -185,9 +185,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     if (key == GLFW_KEY_8 && action == GLFW_PRESS)
     {
         ::g_selectedObjectID++;
-        if ( ::g_selectedObjectID >= ::g_pVecObjects.size()-1 ) { ::g_pVecObjects.size() - 1; }
+        if ( ::g_selectedObjectID >= ::g_pVecObjects.size()-1 ) { ::g_selectedObjectID = ::g_pVecObjects.size() - 1; }
         std::cout << ::g_selectedObjectID << " " 
             << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+
     }
 
     if (key == GLFW_KEY_A) // go "left"
@@ -403,12 +404,14 @@ int main(void)
     pBunny->meshName = "assets/models/bun_zipper_res4_xyz_colour.ply";
     pBunny->position.y = +10.0f;
     pBunny->scale = 25.0f;    
+    pBunny->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     ::g_pVecObjects.push_back(pBunny);
 
     cMeshObject* pArena = new cMeshObject();
     pArena->meshName = "assets/models/free_arena_ASCII_xyz_rgba.ply";
     pArena->position.y = -20.0f;
     pArena->scale = 1.0f;
+    pArena->colourRGBA = glm::vec4( 1.0f, 0.0f, 0.0f, 1.0f );
     ::g_pVecObjects.push_back(pArena);
 
     cMeshObject* pKling1 = new cMeshObject();
@@ -416,6 +419,7 @@ int main(void)
     pKling1->position.y = 10.0f;
     pKling1->position.x = -10.0f;
     pKling1->scale = 1.0f;
+    pKling1->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
     ::g_pVecObjects.push_back(pKling1);
 
     cMeshObject* pKling2 = new cMeshObject();
@@ -423,14 +427,23 @@ int main(void)
     pKling2->position.y = 10.0f;
     pKling2->position.x = 20.0f;
     pKling2->scale = 2.0f;
+    pKling2->colourRGBA = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
     ::g_pVecObjects.push_back(pKling2);
 
     cMeshObject* pTerrain = new cMeshObject();
     pTerrain->meshName = "assets/models/Mountain_Terrain_xyz_rgba.ply";
-    pTerrain->position.y = -100.0f;
+    pTerrain->position.y = -150.0f;
+    pTerrain->orientation.y = glm::radians(180.0f);
     pTerrain->scale = 5.0f;
     pTerrain->isWireframe = true;
-    ::g_pVecObjects.push_back(pTerrain);
+    pTerrain->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+   ::g_pVecObjects.push_back(pTerrain);
+
+
+    // Get the locations for the "uniform variables"
+    //  uniform vec4 objectColour;
+
+    GLint objectColour_LocID = glGetUniformLocation( program, "objectColour" );
 
 
 
@@ -565,8 +578,14 @@ int main(void)
             //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
             glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
 
-    //        glDrawArrays(GL_TRIANGLES, 0, 3);
-     //       glDrawArrays(GL_TRIANGLES, 0, ::g_numberOfVerts);
+            // set the uniform colour info
+            //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
+            glUniform4f( objectColour_LocID, 
+                         pCurMesh->colourRGBA.r, 
+                         pCurMesh->colourRGBA.g, 
+                         pCurMesh->colourRGBA.b, 
+                         pCurMesh->colourRGBA.a );
+
 
             sModelDrawInfo mdoModelToDraw;
             if (::g_pTheVAOManager->FindDrawInfoByModelName( pCurMesh->meshName,

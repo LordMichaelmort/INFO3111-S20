@@ -13,6 +13,7 @@
 struct sVert
 {
 	float x, y, z;		// added "z"
+//	float nx, ny, nz;
 	float r, g, b;
 };
 
