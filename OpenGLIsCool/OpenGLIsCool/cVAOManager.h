@@ -34,6 +34,16 @@ struct sModelDrawInfo
 	unsigned int numberOfIndices;
 	unsigned int numberOfTriangles;
 
+	// Extents: Largest and smallest values ("bounding box" or "hit box")
+	float maxX, maxY, maxZ;
+	float minX, minY, minZ;
+	float deltaX, deltaY, deltaZ;	// Length of each side of the "box" 
+	                                // max - min for each side
+	float maxExtent;				// Largest size
+	float scaleForUnitBB;			// 1.0 / maxExtent
+//	10.0f ---> 1.0		0.1    1.0/10
+//  0.01f ---> 1.0    100.0    1.0/0.01 --> 100.0
+
 	// The "local" (i.e. "CPU side" temporary array)
 	sVert* pVertices;	//  = 0;
 	// The index buffer (CPU side)

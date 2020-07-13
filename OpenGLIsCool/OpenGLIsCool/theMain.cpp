@@ -27,6 +27,7 @@ glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // The objects we are drawing go in here! Hazzah!
 std::vector< cMeshObject* > g_pVecObjects;
+int g_selectedObjectID = 0;
 
 //struct sVertex
 //{
@@ -158,8 +159,6 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
-int selectedObject = 0;
-
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     const float CAMERASPEED = 1.0f;
@@ -169,13 +168,27 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     if (key == GLFW_KEY_L)
     {
-        ::g_pVecObjects[selectedObject]->orientation.z += glm::radians(CAMERASPEED);
+        ::g_pVecObjects[::g_selectedObjectID]->orientation.z += glm::radians(CAMERASPEED);
     }
     if (key == GLFW_KEY_K)
     {
-        ::g_pVecObjects[selectedObject]->orientation.z -= glm::radians(CAMERASPEED);
+        ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(CAMERASPEED);
     }
-
+    if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+    {
+        ::g_selectedObjectID--;
+        if ( ::g_selectedObjectID <= 0 ) { ::g_selectedObjectID = 0; }
+        std::cout << ::g_selectedObjectID << " " 
+            << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+        //glfwSetWindowTitle()
+    }
+    if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+    {
+        ::g_selectedObjectID++;
+        if ( ::g_selectedObjectID >= ::g_pVecObjects.size()-1 ) { ::g_pVecObjects.size() - 1; }
+        std::cout << ::g_selectedObjectID << " " 
+            << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+    }
 
     if (key == GLFW_KEY_A) // go "left"
     {   
@@ -222,6 +235,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         << ::g_cameraEye.x << ", "
         << ::g_cameraEye.y << ", "
         << ::g_cameraEye.z << std::endl;
+
 
 
     return;
@@ -359,7 +373,17 @@ int main(void)
         ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply", 
                                               mdiSpaceShuttle, program );
     }
-    // ENDOF: Loading the models
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiKlingon;
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/KlingonCruiser_xyz_rgba.ply", 
+                                              mdiKlingon, program );
+    }
+     {// Load the space shuttle, too
+        sModelDrawInfo mdiTerrain;
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/Mountain_Terrain_xyz_rgba.ply", 
+                                             mdiTerrain, program );
+    }
+   // ENDOF: Loading the models
 
     // Add to the list of things to draw
     cMeshObject* pShuttle01 = new cMeshObject();
@@ -387,6 +411,26 @@ int main(void)
     pArena->scale = 1.0f;
     ::g_pVecObjects.push_back(pArena);
 
+    cMeshObject* pKling1 = new cMeshObject();
+    pKling1->meshName = "assets/models/KlingonCruiser_xyz_rgba.ply";
+    pKling1->position.y = 10.0f;
+    pKling1->position.x = -10.0f;
+    pKling1->scale = 1.0f;
+    ::g_pVecObjects.push_back(pKling1);
+
+    cMeshObject* pKling2 = new cMeshObject();
+    pKling2->meshName = "assets/models/KlingonCruiser_xyz_rgba.ply";
+    pKling2->position.y = 10.0f;
+    pKling2->position.x = 20.0f;
+    pKling2->scale = 2.0f;
+    ::g_pVecObjects.push_back(pKling2);
+
+    cMeshObject* pTerrain = new cMeshObject();
+    pTerrain->meshName = "assets/models/Mountain_Terrain_xyz_rgba.ply";
+    pTerrain->position.y = -100.0f;
+    pTerrain->scale = 5.0f;
+    pTerrain->isWireframe = true;
+    ::g_pVecObjects.push_back(pTerrain);
 
 
 
