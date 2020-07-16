@@ -358,7 +358,7 @@ int main(void)
     ::g_pTheVAOManager = new cVAOManager();
 
     sModelDrawInfo mdiArena;
-    if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/free_arena_ASCII_xyz_rgba.ply",
+    if ( ! ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/free_arena_ASCII_xyz_n_rgba_uv.ply",
                                                  mdiArena, program) )
     {
         std::cout << "Error: " << ::g_pTheVAOManager->getLastError() << std::endl;
@@ -366,56 +366,56 @@ int main(void)
 
     {// Load the bunny, too
         sModelDrawInfo mdiRabbit;
-        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_res4_xyz_colour.ply", 
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_xyz_n_rgba_uv..ply", 
                                               mdiRabbit, program );
     }
     {// Load the space shuttle, too
         sModelDrawInfo mdiSpaceShuttle;
-        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply", 
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply", 
                                               mdiSpaceShuttle, program );
     }
     {// Load the space shuttle, too
         sModelDrawInfo mdiKlingon;
-        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/KlingonCruiser_xyz_rgba.ply", 
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/KlingonCruiser_xyz_n_rgba_uv.ply", 
                                               mdiKlingon, program );
     }
      {// Load the space shuttle, too
         sModelDrawInfo mdiTerrain;
-        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/Mountain_Terrain_xyz_rgba.ply", 
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/Mountain_Terrain_xyz_n_rgba_uv.ply", 
                                              mdiTerrain, program );
     }
    // ENDOF: Loading the models
 
     // Add to the list of things to draw
     cMeshObject* pShuttle01 = new cMeshObject();
-    pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
     pShuttle01->position.x = -10.0f;
     pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size 0.001
     ::g_pVecObjects.push_back( pShuttle01 );
 
     cMeshObject* pShuttle02 = new cMeshObject();
-    pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_rgba.ply";
+    pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
     pShuttle02->position.x = +10.0f;
     pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
     pShuttle02->orientation.z = glm::radians(135.0f);
     ::g_pVecObjects.push_back( pShuttle02 );
 
     cMeshObject* pBunny = new cMeshObject();
-    pBunny->meshName = "assets/models/bun_zipper_res4_xyz_colour.ply";
+    pBunny->meshName = "assets/models/bun_zipper_xyz_n_rgba_uv.ply";
     pBunny->position.y = +10.0f;
     pBunny->scale = 25.0f;    
     pBunny->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     ::g_pVecObjects.push_back(pBunny);
 
     cMeshObject* pArena = new cMeshObject();
-    pArena->meshName = "assets/models/free_arena_ASCII_xyz_rgba.ply";
+    pArena->meshName = "assets/models/free_arena_ASCII_xyz_n_rgba_uv.ply";
     pArena->position.y = -20.0f;
     pArena->scale = 1.0f;
     pArena->colourRGBA = glm::vec4( 1.0f, 0.0f, 0.0f, 1.0f );
     ::g_pVecObjects.push_back(pArena);
 
     cMeshObject* pKling1 = new cMeshObject();
-    pKling1->meshName = "assets/models/KlingonCruiser_xyz_rgba.ply";
+    pKling1->meshName = "assets/models/KlingonCruiser_xyz_n_rgba_uv.ply";
     pKling1->position.y = 10.0f;
     pKling1->position.x = -10.0f;
     pKling1->scale = 1.0f;
@@ -423,7 +423,7 @@ int main(void)
     ::g_pVecObjects.push_back(pKling1);
 
     cMeshObject* pKling2 = new cMeshObject();
-    pKling2->meshName = "assets/models/KlingonCruiser_xyz_rgba.ply";
+    pKling2->meshName = "assets/models/KlingonCruiser_xyz_n_rgba_uv.ply";
     pKling2->position.y = 10.0f;
     pKling2->position.x = 20.0f;
     pKling2->scale = 2.0f;
@@ -431,7 +431,7 @@ int main(void)
     ::g_pVecObjects.push_back(pKling2);
 
     cMeshObject* pTerrain = new cMeshObject();
-    pTerrain->meshName = "assets/models/Mountain_Terrain_xyz_rgba.ply";
+    pTerrain->meshName = "assets/models/Mountain_Terrain_xyz_n_rgba_uv.ply";
     pTerrain->position.y = -150.0f;
     pTerrain->orientation.y = glm::radians(180.0f);
     pTerrain->scale = 5.0f;

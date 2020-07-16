@@ -4,6 +4,7 @@
 
 #include <fstream>
 
+#include <glm/vec2.hpp>		// Added
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
@@ -209,13 +210,31 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 
 	// And now, we start reading vertices... Hazzah!
 	
+//		ply
+//		format ascii 1.0
+//		comment VCGLIB generated
+//		element vertex 8612
+//		property float x
+//		property float y
+//		property float z
+//		property float nx
+//		property float ny
+//		property float nz
+//		property uchar red
+//		property uchar green
+//		property uchar blue
+//		property uchar alpha
+//		property float texture_u
+//		property float texture_v
+
 	// This is set up to match the ply (3d model) file. 
 	// NOT the shader. 
 	struct sVertPly
 	{
 		glm::vec3 pos;
-//		glm::vec3 normal;	// ADDED
+		glm::vec3 normal;	// ADDED
 		glm::vec4 colour;
+		glm::vec2 textUV;	// ADDED, also needed to add #include vec2
 	};
 
 	std::vector<sVertPly> vecTempPlyVerts;
@@ -225,12 +244,26 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	for ( unsigned int index = 0; index != drawInfo.numberOfVertices; // ::g_NumberOfVertices; 
 		  index++ )
 	{
+		//		property float x
+		//		property float y
+		//		property float z
 		thePlyFile >> tempVert.pos.x >> tempVert.pos.y >> tempVert.pos.z;
 		
-//		thePlyFile >> tempVert.normal.x >> tempVert.normal.y >> tempVert.normal.z;
+		//		property float nx
+		//		property float ny
+		//		property float nz
+		thePlyFile >> tempVert.normal.x >> tempVert.normal.y >> tempVert.normal.z;
 
+		//		property uchar red
+		//		property uchar green
+		//		property uchar blue
+		//		property uchar alpha
 		thePlyFile >> tempVert.colour.x >> tempVert.colour.y
 			       >> tempVert.colour.z >> tempVert.colour.w; 
+
+		thePlyFile >> tempVert.textUV.x >> tempVert.textUV.y;
+		//		property float texture_u
+		//		property float texture_v
 
 		// Scale the colour from 0 to 1, instead of 0 to 255
 		tempVert.colour.x /= 255.0f;
