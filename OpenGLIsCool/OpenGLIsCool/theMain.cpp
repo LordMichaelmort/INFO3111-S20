@@ -419,7 +419,7 @@ int main(void)
     pArena->meshName = "assets/models/free_arena_ASCII_xyz_n_rgba_uv.ply";
     pArena->position.y = -20.0f;
     pArena->scale = 1.0f;
-    pArena->colourRGBA = glm::vec4( 1.0f, 0.0f, 0.0f, 1.0f );
+    pArena->colourRGBA = glm::vec4( 0.0f, 1.0f, 0.0f, 1.0f );
     ::g_pVecObjects.push_back(pArena);
 
     cMeshObject* pKling1 = new cMeshObject();

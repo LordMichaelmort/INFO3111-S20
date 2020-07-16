@@ -1,24 +1,31 @@
 #version 420
 
-uniform mat4 MVP;
-
-uniform vec4 objectColour;
-
 // Vertices coming INTO the vertex shader
-in vec4 vCol;   	// vec3 vCol; 			
 in vec4 vPos;   	// vec3 vCol;
+in vec4 vNormal;	// ADDED
+in vec4 vCol;   	// vec3 vCol; 	
+in vec4 vUVx2;		// ADDED (after the mid-term)		
 
-out vec4 colour;
+out vec4 fColour;	// Now with "f"
+out vec4 fNormal;	// ADDED
+out vec4 fUVx2;		// ADDED
+
+uniform mat4 MVP;
+uniform vec4 objectColour;
 
 void main()
 {
 	vec3 positionXYZ = vec3( vPos.xyz );
     gl_Position = MVP * vec4(positionXYZ, 1.0);
 	
-	colour = vCol;
+	// Copying the normals & texture coords
+	fNormal = vNormal;
+	fUVx2 = vUVx2;
+	
+	fColour = vCol;
 	
 	// Set to essentially black (but keep the vCol variable)
-	colour.rgb *= 0.001f;	
-
-	colour.rgb += objectColour.rgb;
+	fColour.rgb *= 0.001f;	
+	fColour.rgb += objectColour.rgb;
+	
 }
