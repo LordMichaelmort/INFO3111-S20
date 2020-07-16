@@ -185,7 +185,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     if (key == GLFW_KEY_8 && action == GLFW_PRESS)
     {
         ::g_selectedObjectID++;
-        if ( ::g_selectedObjectID >= ::g_pVecObjects.size()-1 ) { ::g_selectedObjectID = ::g_pVecObjects.size() - 1; }
+        if ( ::g_selectedObjectID >= static_cast<int>(::g_pVecObjects.size())-1 ) 
+        { 
+            ::g_selectedObjectID = static_cast<int>(::g_pVecObjects.size()) - 1; 
+        }
         std::cout << ::g_selectedObjectID << " " 
             << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
 
@@ -250,9 +253,9 @@ int main(void)
     std::cout << "About to start..." << std::endl;
 
     GLFWwindow* window;
-    GLuint vertex_buffer;
-    GLuint vertex_shader; 
-    GLuint fragment_shader;
+//    GLuint vertex_buffer;
+//    GLuint vertex_shader; 
+//    GLuint fragment_shader;
     GLuint program;
 
     GLint mvp_location, vpos_location, vcol_location;
@@ -314,7 +317,12 @@ int main(void)
         
         // Exit program (maybe add some cleanup code)
         return -1;
-    }//createProgramFromFile
+    }
+    else
+    {
+        std::cout << "Shader complie and link = OK" << std::endl;
+    }
+    //createProgramFromFile
 
     //vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     //glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
@@ -366,7 +374,7 @@ int main(void)
 
     {// Load the bunny, too
         sModelDrawInfo mdiRabbit;
-        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_xyz_n_rgba_uv..ply", 
+        ::g_pTheVAOManager->LoadModelIntoVAO( "assets/models/bun_zipper_xyz_n_rgba_uv.ply", 
                                               mdiRabbit, program );
     }
     {// Load the space shuttle, too

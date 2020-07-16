@@ -10,14 +10,23 @@
 // The vertex structure 
 //	that's ON THE GPU (eventually) 
 // So dictated from THE SHADER
-struct sVert
+// Original layout for what matched the shader
+//struct sVert		
+//{
+//	float x, y, z;		// added "z"
+//	float r, g, b;
+//};
+struct sVert_xyzw_rgba		
 {
-	float x, y, z;		// added "z"
-//	float nx, ny, nz;
-	float r, g, b;
-
+	sVert_xyzw_rgba()
+	{
+		this->x = this->y = this->z = this->w = 0.0f;
+		this->r = this->g = this->b = this->a = 0.0f;
+		return;
+	}
+	float x, y, z, w;		// Added 4th element ("w")
+	float r, g, b, a;		// Added 4th element ("a" for alpha)
 };
-
 
 struct sModelDrawInfo
 {
@@ -47,7 +56,9 @@ struct sModelDrawInfo
 //  0.01f ---> 1.0    100.0    1.0/0.01 --> 100.0
 
 	// The "local" (i.e. "CPU side" temporary array)
-	sVert* pVertices;	//  = 0;
+	//sVert* pVertices;	//  = 0;
+	sVert_xyzw_rgba* pVertices;
+
 	// The index buffer (CPU side)
 	unsigned int* pIndices;
 };

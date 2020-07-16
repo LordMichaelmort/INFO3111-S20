@@ -5,18 +5,20 @@ uniform mat4 MVP;
 uniform vec4 objectColour;
 
 // Vertices coming INTO the vertex shader
-in vec3 vCol;     			
-in vec3 vPos;   
+in vec4 vCol;   	// vec3 vCol; 			
+in vec4 vPos;   	// vec3 vCol;
 
-out vec3 color;
+out vec4 colour;
 
 void main()
 {
-    gl_Position = MVP * vec4(vPos, 1.0);
-    color = vCol;
+	vec3 positionXYZ = vec3( vPos.xyz );
+    gl_Position = MVP * vec4(positionXYZ, 1.0);
+	
+	colour = vCol;
 	
 	// Set to essentially black (but keep the vCol variable)
-	color.rgb *= 0.001f;	
+	colour.rgb *= 0.001f;	
 
-	color.rgb += objectColour.rgb;
+	colour.rgb += objectColour.rgb;
 }

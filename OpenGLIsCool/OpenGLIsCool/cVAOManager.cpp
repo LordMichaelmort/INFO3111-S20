@@ -31,11 +31,11 @@ sModelDrawInfo::sModelDrawInfo()
 
 	// You could store the max and min values of the 
 	//  vertices here (determined when you load them):
-	glm::vec3 maxValues;
-	glm::vec3 minValues;
-
-//	scale = 5.0/maxExtent;		-> 5x5x5
-	float maxExtent;
+	this->maxX = this->maxY = this->maxZ = 0.0f;
+	this->minX = this->minY = this->minZ = 0.0f;
+	this->deltaX = this->deltaY = this->deltaZ = 0.0f;
+	this->maxExtent = 0.0f;
+	this->scaleForUnitBB = 0.0f;
 
 	return;
 }
@@ -86,8 +86,9 @@ bool cVAOManager::LoadModelIntoVAO(
 	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
 	// sVert vertices[3]
 	glBufferData( GL_ARRAY_BUFFER, 
-				  sizeof(sVert) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
-				  (GLvoid*) drawInfo.pVertices,							// pVertices,			//vertices, 
+				  //sizeof(sVert) * drawInfo.numberOfVertices,			
+				  sizeof(sVert_xyzw_rgba) * drawInfo.numberOfVertices,	// ::g_NumberOfVertsToDraw,	// sizeof(vertices), 
+				  (GLvoid*) drawInfo.pVertices,					
 				  GL_STATIC_DRAW );
 
 
@@ -108,17 +109,20 @@ bool cVAOManager::LoadModelIntoVAO(
 	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
 
 	// Set the vertex attributes for this shader
-	glEnableVertexAttribArray(vpos_location);	// vPos
-	glVertexAttribPointer( vpos_location, 3,		// vPos
+	glEnableVertexAttribArray(vpos_location);		// vPos
+	glVertexAttribPointer( vpos_location, 4,		// was 3 (vec3)
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(float) * 6, 
-						   ( void* )0);
+						   sizeof(sVert_xyzw_rgba),
+						   ( void* )offsetof(sVert_xyzw_rgba, x) );	
+							// offsetof() returns how many bytes into the structure
+							// we'll find the "x" member.
 
-	glEnableVertexAttribArray(vcol_location);	// vCol
-	glVertexAttribPointer( vcol_location, 3,		// vCol
+	glEnableVertexAttribArray(vcol_location);		// vCol
+	glVertexAttribPointer( vcol_location, 4,		// vCol
 						   GL_FLOAT, GL_FALSE,
-						   sizeof(float) * 6, 
-						   ( void* )( sizeof(float) * 3 ));
+						   sizeof(sVert_xyzw_rgba),
+						   (void*)offsetof(sVert_xyzw_rgba, r));
+							// How many bytes into the struct is the "r" member
 
 	// Now that all the parts are set up, set the VAO to zero
 	glBindVertexArray(0);
@@ -269,6 +273,7 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		tempVert.colour.x /= 255.0f;
 		tempVert.colour.y /= 255.0f;
 		tempVert.colour.z /= 255.0f;
+		tempVert.colour.a /= 255.0f;
 
 		// Add too... what? 
 		vecTempPlyVerts.push_back(tempVert);
@@ -279,7 +284,8 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 	// - sVertPly was made to match the file format
 	// - sVert was made to match the shader vertex attrib format
 
-	drawInfo.pVertices = new sVert[drawInfo.numberOfVertices];
+//	drawInfo.pVertices = new sVert[drawInfo.numberOfVertices];
+	drawInfo.pVertices = new sVert_xyzw_rgba[drawInfo.numberOfVertices];
 
 	// Optional clear array to zero 
 	//memset( drawInfo.pVertices, 0, sizeof(sVert) * drawInfo.numberOfVertices);
@@ -289,10 +295,14 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		drawInfo.pVertices[index].x = vecTempPlyVerts[index].pos.x;
 		drawInfo.pVertices[index].y = vecTempPlyVerts[index].pos.y;
 		drawInfo.pVertices[index].z = vecTempPlyVerts[index].pos.z;
+		drawInfo.pVertices[index].w = 1.0f;								// Set 4th element to 1.0f if unsure.
 
 		drawInfo.pVertices[index].r = vecTempPlyVerts[index].colour.r;
 		drawInfo.pVertices[index].g = vecTempPlyVerts[index].colour.g;
 		drawInfo.pVertices[index].b = vecTempPlyVerts[index].colour.b;
+		drawInfo.pVertices[index].a = vecTempPlyVerts[index].colour.a;
+
+
 	}// for ( unsigned int index...
 
 
