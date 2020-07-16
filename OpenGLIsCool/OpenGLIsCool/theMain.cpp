@@ -29,6 +29,21 @@ glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 std::vector< cMeshObject* > g_pVecObjects;
 int g_selectedObjectID = 0;
 
+// This a light structure to match what's in the shader
+struct sLight
+{
+    glm::vec4 position;
+    glm::vec4 diffuse;
+    glm::vec4 specular;	// rgb = highlight colour, w = power
+    glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
+    glm::vec4 direction;	// Spot, directional lights
+    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+                    // 0 = pointlight
+                    // 1 = spot light
+                    // 2 = directional light
+    glm::vec4 param2;	// x = 0 for off, 1 for on
+};
+
 //struct sVertex
 //{
 //    float x, y, z;      // NEW! With Zs
@@ -402,6 +417,7 @@ int main(void)
     pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
     pShuttle01->position.x = -10.0f;
     pShuttle01->scale = 1.0f/100.0f;    // 100th of it's normal size 0.001
+    pShuttle01->colourRGBA = glm::vec4(207.0f/255.0f, 181.0f/255.0f, 59.0f/255.0f, 1.0f);
     ::g_pVecObjects.push_back( pShuttle01 );
 
     cMeshObject* pShuttle02 = new cMeshObject();
@@ -409,6 +425,7 @@ int main(void)
     pShuttle02->position.x = +10.0f;
     pShuttle02->scale = 1.0f/100.0f;    // 100th of it's normal size
     pShuttle02->orientation.z = glm::radians(135.0f);
+    pShuttle02->colourRGBA = glm::vec4(189.0f/255.0f, 183.0f/255.0f, 107.0f/255.0f, 1.0f);
     ::g_pVecObjects.push_back( pShuttle02 );
 
     cMeshObject* pBunny = new cMeshObject();
@@ -446,7 +463,7 @@ int main(void)
     pTerrain->position.y = -150.0f;
     pTerrain->orientation.y = glm::radians(180.0f);
     pTerrain->scale = 5.0f;
-    pTerrain->isWireframe = true;
+//    pTerrain->isWireframe = true;
     pTerrain->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
    ::g_pVecObjects.push_back(pTerrain);
 
@@ -459,6 +476,15 @@ int main(void)
     GLint matModel_LocID = glGetUniformLocation( program, "matModel" );
     GLint matView_LocID = glGetUniformLocation( program, "matView" );
     GLint matProj_LocID = glGetUniformLocation( program, "matProj" );
+
+    // Get the uniform locations for the light(s)
+    GLint theLights_0_position_LocID = glGetUniformLocation( program, "theLights[0].position");
+    GLint theLights_0_diffuse_LocID = glGetUniformLocation( program, "theLights[0].diffuse");
+    GLint theLights_0_specular_LocID = glGetUniformLocation( program, "theLights[0].specular");
+    GLint theLights_0_atten_LocID = glGetUniformLocation( program, "theLights[0].atten");
+    GLint theLights_0_direction_LocID = glGetUniformLocation( program, "theLights[0].direction");
+    GLint theLights_0_param1_LocID = glGetUniformLocation( program, "theLights[0].param1");
+    GLint theLights_0_param2_LocID = glGetUniformLocation( program, "theLights[0].param2");
 
 
     std::cout << "We're all set! Buckle up!" << std::endl;
@@ -508,6 +534,18 @@ int main(void)
         matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
                          ::g_cameraTarget,  // "at"  (looking "at")
                          ::g_upVector );    
+
+
+        // Set the ligthing for the "scene"
+        glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
+        glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
+        glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
+        glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
+        glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
+        glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
+        //x = 0 for off, 1 for on
+        glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
+
 
 
         // *******************************************

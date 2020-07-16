@@ -2,7 +2,8 @@
 
 in vec4 fColour;		// colour
 in vec4 fNormal;
-in vec4 fUVx2;		// ADDED
+in vec4 fUVx2;			// ADDED
+in vec4 fVertWorldPos;	// ADDED
 
 out vec4 outputColour;	// Added. 
 
@@ -20,6 +21,7 @@ struct sLight
 					// 2 = directional light
 	vec4 param2;	// x = 0 for off, 1 for on
 };
+
 
 const int POINT_LIGHT_TYPE = 0;
 const int SPOT_LIGHT_TYPE = 1;
@@ -42,10 +44,15 @@ void main()
 {
     //gl_FragColor = vec4(colour, 1.0);
 	//gl_FragColor = colour;
+	//outputColour = fNormal;
 	
-	outputColour = fColour;
+//	outputColour = fColour;
 	
-	outputColour = fNormal;
+	outputColour = calcualteLightContrib( diffuseColour, 
+	                                       vec3(fNormal.xyz),
+										   vec3(fVertWorldPos),
+										   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+	
 }
 
 

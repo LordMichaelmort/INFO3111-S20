@@ -9,6 +9,7 @@ in vec4 vUVx2;		// ADDED (after the mid-term)
 out vec4 fColour;	// Now with "f"
 out vec4 fNormal;	// ADDED
 out vec4 fUVx2;		// ADDED
+out vec4 fVertWorldPos;		// Vertex position in world space
 
 //uniform mat4 MVP;
 //uniform vec4 objectColour;
@@ -26,8 +27,15 @@ void main()
 	
     gl_Position = MVP * vec4(positionXYZ, 1.0);
 	
+	fVertWorldPos = matModel * vec4(positionXYZ, 1.0);
+	
+	// We want to remove translation and scaling from the normals...
+	// ...leaving ONLY rotation. The "inverse transpose" of a matrix does that 
+	// (for 4x4 matrices)
+	// Or "because math"
+	fNormal = inverse(transpose(matModel)) * vec4(vNormal.xyz, 1.0f);
+	
 	// Copying the normals & texture coords
-	fNormal = vNormal;
 	fUVx2 = vUVx2;
 	
 	fColour = vCol;
