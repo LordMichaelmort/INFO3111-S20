@@ -245,6 +245,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     return;
 }
 
+
+
+
 int main(void)
 {
 
@@ -451,8 +454,11 @@ int main(void)
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
 
-    GLint objectColour_LocID = glGetUniformLocation( program, "objectColour" );
+    GLint diffuseColour_LocID = glGetUniformLocation( program, "diffuseColour" );
 
+    GLint matModel_LocID = glGetUniformLocation( program, "matModel" );
+    GLint matView_LocID = glGetUniformLocation( program, "matView" );
+    GLint matProj_LocID = glGetUniformLocation( program, "matProj" );
 
 
     std::cout << "We're all set! Buckle up!" << std::endl;
@@ -462,7 +468,13 @@ int main(void)
         float ratio;
         int width, height;
         //       mat4x4 m, p, mvp;
-        glm::mat4 matModel, p, v, mvp;
+//        uniform mat4 matModel;	// "model" or "world" matrix
+//        uniform mat4 matView;		// "view" or "camera" or "eye" matrix
+//        uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
+        glm::mat4 matModel;
+        glm::mat4 matProjection; 
+        glm::mat4 matView; 
+        // glm::mat4 mvp;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
@@ -482,18 +494,18 @@ int main(void)
 //       m = m * rotateZ;
 
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        p = glm::perspective(0.6f,
-                             ratio,
-                             0.1f,          // Near plane
-                             10000.0f);      // Far plane
+        matProjection = glm::perspective( 0.6f,
+                                          ratio,
+                                          0.1f,          // Near plane
+                                          10000.0f);      // Far plane
 
-        v = glm::mat4(1.0f);
+        matView = glm::mat4(1.0f);
 
         //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
         //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
         //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        v = glm::lookAt( ::g_cameraEye,     // "position" "eye"
+        matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
                          ::g_cameraTarget,  // "at"  (looking "at")
                          ::g_upVector );    
 
@@ -564,11 +576,17 @@ int main(void)
             // *** Model transfomations ***
             // *********************************
 
-            //mat4x4_mul(mvp, p, m);
-            mvp = p * v * matModel;
-
 
             glUseProgram(program);
+
+            //mat4x4_mul(mvp, p, m);
+            //mvp = p * v * matModel;
+            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+
+            glUniformMatrix4fv( matModel_LocID, 1, GL_FALSE, glm::value_ptr(matModel) );
+            glUniformMatrix4fv( matView_LocID, 1, GL_FALSE, glm::value_ptr(matView) );
+            glUniformMatrix4fv( matProj_LocID, 1, GL_FALSE, glm::value_ptr(matProjection) );
 
 
             // This will change the model to "wireframe" and "solid"
@@ -583,16 +601,12 @@ int main(void)
             }
 
 
-            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-            glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
-
             // set the uniform colour info
             //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
-            glUniform4f( objectColour_LocID, 
+            glUniform3f( diffuseColour_LocID,
                          pCurMesh->colourRGBA.r, 
                          pCurMesh->colourRGBA.g, 
-                         pCurMesh->colourRGBA.b, 
-                         pCurMesh->colourRGBA.a );
+                         pCurMesh->colourRGBA.b);
 
 
             sModelDrawInfo mdoModelToDraw;
@@ -629,3 +643,23 @@ int main(void)
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
+
+
+//
+//
+//void MyThreadedFunction()
+//{
+//    // Do some stuff.
+//    z[ID] = x[ID] + y[ID] + yolo_common;
+//    return;
+//}
+//
+//int x[2560];
+//int y[2560];
+//int z[2560];
+//
+//int yolo_common = 4;
+//for( ..2560.. )
+//{
+//    CreateThread(MyThreadedFunction);
+//}

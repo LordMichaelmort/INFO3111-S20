@@ -10,12 +10,20 @@ out vec4 fColour;	// Now with "f"
 out vec4 fNormal;	// ADDED
 out vec4 fUVx2;		// ADDED
 
-uniform mat4 MVP;
-uniform vec4 objectColour;
+//uniform mat4 MVP;
+//uniform vec4 objectColour;
+uniform mat4 matModel;		// "model" or "world" matrix
+uniform mat4 matView;		// "view" or "camera" or "eye" matrix
+uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
 
 void main()
 {
 	vec3 positionXYZ = vec3( vPos.xyz );
+	
+	// Note reverse order because we need to apply these
+	// in order of M, then V, then P, and matrix multiply goes "backwards"
+	mat4 MVP = matProj * matView * matModel;
+	
     gl_Position = MVP * vec4(positionXYZ, 1.0);
 	
 	// Copying the normals & texture coords
@@ -24,8 +32,8 @@ void main()
 	
 	fColour = vCol;
 	
-	// Set to essentially black (but keep the vCol variable)
-	fColour.rgb *= 0.001f;	
-	fColour.rgb += objectColour.rgb;
+//	// Set to essentially black (but keep the vCol variable)
+//	fColour.rgb *= 0.001f;	
+//	fColour.rgb += objectColour.rgb;
 	
 }
