@@ -155,6 +155,8 @@
     <ClCompile Include="cShaderManager.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="IOKeyboardMouse.cpp" />
+    <ClCompile Include="LoadModelCode.cpp" />
     <ClCompile Include="theMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +164,7 @@
     <ClInclude Include="cShaderManager.h" />
     <ClInclude Include="cVAOManager.h" />
     <ClInclude Include="globalOpenGLStuff.h" />
+    <ClInclude Include="globalThings.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleFragment.glsl" />
