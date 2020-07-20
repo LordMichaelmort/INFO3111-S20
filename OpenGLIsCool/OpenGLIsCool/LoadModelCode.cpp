@@ -34,7 +34,25 @@ void LoadAllThemodels( unsigned int program,
         pTheVAOManager->LoadModelIntoVAO("assets/models/Mountain_Terrain_xyz_n_rgba_uv.ply",
                                              mdiTerrain, program);
     }
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiIsosphere;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply",
+                                          mdiIsosphere, program);
+    }
     // ENDOF: Loading the models
+
+     // Add to the list of things to draw
+    cMeshObject* pISOBall = new cMeshObject();
+    pISOBall->meshName = "assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply";
+    pISOBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    pISOBall->position.z = -200.0f;
+    pISOBall->isWireframe = true;
+    // If this is false, just don't draw it.
+    pISOBall->isVisible = false;
+    pISOBall->friendlyName = "DebugSphere"; // We can find it later.
+
+    ::g_pVecObjects.push_back(pISOBall);
+
 
      // Add to the list of things to draw
     cMeshObject* pShuttle01 = new cMeshObject();
@@ -46,7 +64,7 @@ void LoadAllThemodels( unsigned int program,
 
     cMeshObject* pShuttle02 = new cMeshObject();
     pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
-    pShuttle02->position.x = +10.0f;
+    pShuttle02->position.x = +22.5f;
     pShuttle02->scale = 1.0f / 100.0f;    // 100th of it's normal size
     pShuttle02->orientation.z = glm::radians(135.0f);
     pShuttle02->colourRGBA = glm::vec4(189.0f / 255.0f, 183.0f / 255.0f, 107.0f / 255.0f, 1.0f);

@@ -10,6 +10,9 @@ cMeshObject::cMeshObject()
 	this->scale = 1.0f;	
 	this->isWireframe = false;
 
+	this->isVisible = true;		
+	this->friendlyName = "UNASSIGNED";
+
 	return;
 }
 

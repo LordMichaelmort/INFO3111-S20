@@ -36,22 +36,34 @@ uniform vec4 specularColour;
 
 uniform vec4 eyeLocation;
 
+// If this is true, then don't apply the lighting calculation.
+// (used for wireframe and debug type objects)
+// (bool is really a float, either 0.0 or non-zero)
+uniform bool hasNoLighting;	
+
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 							
-
 void main()
 {
     //gl_FragColor = vec4(colour, 1.0);
 	//gl_FragColor = colour;
 	//outputColour = fNormal;
-	
+//	
 //	outputColour = fColour;
-	
-	outputColour = calcualteLightContrib( diffuseColour, 
-	                                       vec3(fNormal.xyz),
-										   vec3(fVertWorldPos),
-										   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+
+	if ( hasNoLighting )
+	{
+		outputColour.rgb = diffuseColour.rgb;
+		outputColour.a = 1.0f;					// Set "alpha" to 1.0f
+	}
+	else
+	{	
+		outputColour = calcualteLightContrib( diffuseColour, 
+											   vec3(fNormal.xyz),
+											   vec3(fVertWorldPos),
+											   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+	}
 	
 }
 

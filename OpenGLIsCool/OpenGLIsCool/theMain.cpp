@@ -419,6 +419,9 @@ int main(void)
     GLint theLights_0_param1_LocID = glGetUniformLocation( program, "theLights[0].param1");
     GLint theLights_0_param2_LocID = glGetUniformLocation( program, "theLights[0].param2");
 
+    // 
+    GLint hasNoLighting_LocID = glGetUniformLocation( program, "hasNoLighting" );
+
 
     std::cout << "We're all set! Buckle up!" << std::endl;
 
@@ -565,10 +568,15 @@ int main(void)
             if ( pCurMesh->isWireframe )
             {  
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // Wireframe
+                // Note: there's no "bool", but you pass a float
+                // Turn OFF the lighting on THIS object
+                glUniform1f( hasNoLighting_LocID, (float)GL_TRUE );
             }
             else                        
             {  
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Solid
+                // Turn ON the lighting on THIS object
+                glUniform1f( hasNoLighting_LocID, (float)GL_FALSE );
             }
 
 

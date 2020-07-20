@@ -16,4 +16,8 @@ public:
 	glm::vec3 orientation;	//Rotation:XYZ
 	float scale;
 	bool isWireframe;
+	bool isVisible;			// Added
+
+	// We can assign this to whatever we want
+	std::string friendlyName;
 };
