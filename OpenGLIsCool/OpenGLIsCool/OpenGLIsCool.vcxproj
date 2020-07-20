@@ -156,6 +156,8 @@
     <ClCompile Include="cVAOManager.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="IOKeyboardMouse.cpp" />
+    <ClCompile Include="LightManager\cLightHelper.cpp" />
+    <ClCompile Include="LightManager\cLightManager.cpp" />
     <ClCompile Include="LoadModelCode.cpp" />
     <ClCompile Include="theMain.cpp" />
   </ItemGroup>
@@ -165,6 +167,8 @@
     <ClInclude Include="cVAOManager.h" />
     <ClInclude Include="globalOpenGLStuff.h" />
     <ClInclude Include="globalThings.h" />
+    <ClInclude Include="LightManager\cLightHelper.h" />
+    <ClInclude Include="LightManager\cLightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="simpleFragment.glsl" />

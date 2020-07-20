@@ -22,6 +22,15 @@
 #include "cMeshObject.h"
 #include <vector>
 
+#include "LightManager/cLightManager.h"
+
+// Function signature for DrawObject()
+void DrawObject(cMeshObject* pCurMesh,
+                GLuint program,                // Shader program
+                glm::mat4& matView,            // View matrix
+                glm::mat4& matProjection);      // Projection matrix
+
+
 // Camera stuff
 glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -31,21 +40,27 @@ glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 std::vector< cMeshObject* > g_pVecObjects;
 int g_selectedObjectID = 0;
 
+cLightManager* g_pLightManager = 0;    // or NULL or nullptr
 
-// This a light structure to match what's in the shader
-struct sLight
-{
-    glm::vec4 position;
-    glm::vec4 diffuse;
-    glm::vec4 specular;	// rgb = highlight colour, w = power
-    glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
-    glm::vec4 direction;	// Spot, directional lights
-    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
-                    // 0 = pointlight
-                    // 1 = spot light
-                    // 2 = directional light
-    glm::vec4 param2;	// x = 0 for off, 1 for on
-};
+
+//// This a light structure to match what's in the shader
+//struct sLight
+//{
+//    glm::vec4 position;
+//    glm::vec4 diffuse;
+//    glm::vec4 specular;	// rgb = highlight colour, w = power
+//    glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
+//    glm::vec4 direction;	// Spot, directional lights
+//    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+//                    // 0 = pointlight
+//                    // 1 = spot light
+//                    // 2 = directional light
+//    glm::vec4 param2;	// x = 0 for off, 1 for on
+//
+//    //void TurnONLight();
+//    //void TurnOFFLight();
+//    //void MakeSpotLight();
+//};
 
 
 
@@ -174,6 +189,26 @@ bool g_isWireFrame = false;
 //    return;
 //}
 
+// Returns pointer to zero (NULL) if NOT found
+cMeshObject* findObjectByName(std::string friendlyNameToFind)
+{
+    // Search by name 'till we find the object.
+    for (std::vector<cMeshObject*>::iterator it_pCO = ::g_pVecObjects.begin();
+         it_pCO != ::g_pVecObjects.end(); it_pCO++)
+    {
+        cMeshObject* pCO = *it_pCO;
+
+        // Is this the one? 
+        if ( pCO->friendlyName == friendlyNameToFind )
+        {   
+            // Yes! So return it
+            return pCO;
+        }
+    }
+    // DIDN'T find it, so return 0 or NULL
+    return 0;
+}
+
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -185,6 +220,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
+
+    if (key == GLFW_KEY_1)
+    {
+        ::g_pLightManager->vecLights[0].atten.y *= 0.99f;    // Linear
+    }
+
+    if (key == GLFW_KEY_2)
+    {
+        ::g_pLightManager->vecLights[0].atten.y *= 1.01f;    // Linear
+    }
+    if (key == GLFW_KEY_3)
+    {
+        ::g_pLightManager->vecLights[0].atten.z *= 0.99f;    // Quardatic
+    }
+
+    if (key == GLFW_KEY_4)
+    {
+        ::g_pLightManager->vecLights[0].atten.z *= 1.01f;    // Quadratic
+    }
+
+    std::cout << ::g_pLightManager->vecLights[0].atten.y 
+        << "  " 
+        << ::g_pLightManager->vecLights[0].atten.z << std::endl;
+
 
     if (key == GLFW_KEY_L)
     {
@@ -216,32 +275,38 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     if (key == GLFW_KEY_A) // go "left"
     {   
-        ::g_cameraEye.x -= CAMERASPEED;
+        //::g_cameraEye.x -= CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.x -= CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_D) // go "right"
     {
-        ::g_cameraEye.x += CAMERASPEED;
+        //::g_cameraEye.x += CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.x += CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_S) // go "back" (-ve Z)
     {
-        ::g_cameraEye.z -= CAMERASPEED;
+//        ::g_cameraEye.z -= CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.z += CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_W) // go "forward" (+ve Z)
     {
-        ::g_cameraEye.z += CAMERASPEED;
+        //::g_cameraEye.z += CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.z -= CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_Q) // go "down" (-ve Y)
     {
-        ::g_cameraEye.y -= CAMERASPEED;
+        //::g_cameraEye.y -= CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.y -= CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_E) // go "up" (-ve Y)
     {
-        ::g_cameraEye.y += CAMERASPEED;
+        //::g_cameraEye.y += CAMERASPEED;
+        ::g_pLightManager->vecLights[0].position.y += CAMERASPEED;    
     }
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -401,26 +466,23 @@ int main(void)
 
 
 
+    ::g_pLightManager = new cLightManager();
+
+    ::g_pLightManager->LoadUniformLocations(program);
+
+    ::g_pLightManager->vecLights[0].position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[0].param1.x = 0;   // Point light
+    ::g_pLightManager->vecLights[0].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[0].atten.y = 0.001f;    // Linear
+    ::g_pLightManager->vecLights[0].atten.z = 0.0001f;    // Quadratic
+    ::g_pLightManager->vecLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
 
-    GLint diffuseColour_LocID = glGetUniformLocation( program, "diffuseColour" );
-
-    GLint matModel_LocID = glGetUniformLocation( program, "matModel" );
-    GLint matView_LocID = glGetUniformLocation( program, "matView" );
-    GLint matProj_LocID = glGetUniformLocation( program, "matProj" );
-
-    // Get the uniform locations for the light(s)
-    GLint theLights_0_position_LocID = glGetUniformLocation( program, "theLights[0].position");
-    GLint theLights_0_diffuse_LocID = glGetUniformLocation( program, "theLights[0].diffuse");
-    GLint theLights_0_specular_LocID = glGetUniformLocation( program, "theLights[0].specular");
-    GLint theLights_0_atten_LocID = glGetUniformLocation( program, "theLights[0].atten");
-    GLint theLights_0_direction_LocID = glGetUniformLocation( program, "theLights[0].direction");
-    GLint theLights_0_param1_LocID = glGetUniformLocation( program, "theLights[0].param1");
-    GLint theLights_0_param2_LocID = glGetUniformLocation( program, "theLights[0].param2");
-
-    // 
-    GLint hasNoLighting_LocID = glGetUniformLocation( program, "hasNoLighting" );
 
 
     std::cout << "We're all set! Buckle up!" << std::endl;
@@ -433,7 +495,8 @@ int main(void)
 //        uniform mat4 matModel;	// "model" or "world" matrix
 //        uniform mat4 matView;		// "view" or "camera" or "eye" matrix
 //        uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
-        glm::mat4 matModel;
+
+//        glm::mat4 matModel;   // Moved to DrawObject() function
         glm::mat4 matProjection; 
         glm::mat4 matView; 
         // glm::mat4 mvp;
@@ -471,16 +534,28 @@ int main(void)
                          ::g_cameraTarget,  // "at"  (looking "at")
                          ::g_upVector );    
 
+        
+        // Pass the lighting info to the shader
+        ::g_pLightManager->CopyLightValuesToShader();
 
-        // Set the ligthing for the "scene"
-        glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
-        glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
-        glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
-        glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
-        glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
-        glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
-        //x = 0 for off, 1 for on
-        glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
+        //// Get the uniform locations for the light(s)
+        //GLint theLights_0_position_LocID = glGetUniformLocation(program, "theLights[0].position");
+        //GLint theLights_0_diffuse_LocID = glGetUniformLocation(program, "theLights[0].diffuse");
+        //GLint theLights_0_specular_LocID = glGetUniformLocation(program, "theLights[0].specular");
+        //GLint theLights_0_atten_LocID = glGetUniformLocation(program, "theLights[0].atten");
+        //GLint theLights_0_direction_LocID = glGetUniformLocation(program, "theLights[0].direction");
+        //GLint theLights_0_param1_LocID = glGetUniformLocation(program, "theLights[0].param1");
+        //GLint theLights_0_param2_LocID = glGetUniformLocation(program, "theLights[0].param2");
+
+        //// Set the ligthing for the "scene"
+        //glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
+        //glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
+        //glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
+        //glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
+        //glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
+        //glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
+        ////x = 0 for off, 1 for on
+        //glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
 
 
 
@@ -490,120 +565,64 @@ int main(void)
         for ( std::vector< cMeshObject* >::iterator it_pCurMesh = ::g_pVecObjects.begin();
               it_pCurMesh != ::g_pVecObjects.end(); it_pCurMesh++ )
         {
+            cMeshObject* pTheObject = *it_pCurMesh;
             
-            // For ease, copy the pointer to a sensible variable name
-            cMeshObject* pCurMesh = *it_pCurMesh;
-
-
-            //         mat4x4_identity(m);
-            matModel = glm::mat4(1.0f);
-
-            // ****************************
-            // *** Model transfomations ***
-            // Place the object in the world at 'this' location
-            glm::mat4 matTranslation
-                = glm::translate(glm::mat4(1.0f),
-                                 glm::vec3(pCurMesh->position.x,
-                                           pCurMesh->position.y,
-                                           pCurMesh->position.z));
-            matModel = matModel * matTranslation;
-
-
-            //mat4x4_rotate_Z(m, m, );
-            //*************************************
-            // ROTATE around Z
-            glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
-                                               pCurMesh->orientation.z, // (float) glfwGetTime(), 
-                                               glm::vec3(0.0f, 0.0f, 1.0f));
-            matModel = matModel * matRotateZ;
-            //*************************************
-
-            //*************************************
-            // ROTATE around Y
-            glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
-                                               pCurMesh->orientation.y, // (float) glfwGetTime(), 
-                                               glm::vec3(0.0f, 1.0f, 0.0f));
-            matModel = matModel * matRotateY;
-            //*************************************
-
-            //*************************************
-            // ROTATE around X
-            glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
-                                            pCurMesh->orientation.x, // (float) glfwGetTime(), 
-                                            glm::vec3(1.0f, 0.0, 0.0f));
-            matModel = matModel * rotateX;
-            //*************************************
-
-
-            // Set up a scaling matrix
-            glm::mat4 matScale = glm::mat4(1.0f);
-
-            float theScale = pCurMesh->scale;		// 1.0f;		
-            matScale = glm::scale(glm::mat4(1.0f),
-                                  glm::vec3(theScale, theScale, theScale));
-
-
-            // Apply (multiply) the scaling matrix to 
-            // the existing "model" (or "world") matrix
-            matModel = matModel * matScale;
-
-            // *** Model transfomations ***
-            // *********************************
-
-
-            glUseProgram(program);
-
-            //mat4x4_mul(mvp, p, m);
-            //mvp = p * v * matModel;
-            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-            //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
-
-            glUniformMatrix4fv( matModel_LocID, 1, GL_FALSE, glm::value_ptr(matModel) );
-            glUniformMatrix4fv( matView_LocID, 1, GL_FALSE, glm::value_ptr(matView) );
-            glUniformMatrix4fv( matProj_LocID, 1, GL_FALSE, glm::value_ptr(matProjection) );
-
-
-            // This will change the model to "wireframe" and "solid"
-            // In this example, it's changed by pressing "9" and "0" keys
-            if ( pCurMesh->isWireframe )
-            {  
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // Wireframe
-                // Note: there's no "bool", but you pass a float
-                // Turn OFF the lighting on THIS object
-                glUniform1f( hasNoLighting_LocID, (float)GL_TRUE );
-            }
-            else                        
-            {  
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Solid
-                // Turn ON the lighting on THIS object
-                glUniform1f( hasNoLighting_LocID, (float)GL_FALSE );
-            }
-
-
-            // set the uniform colour info
-            //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
-            glUniform3f( diffuseColour_LocID,
-                         pCurMesh->colourRGBA.r, 
-                         pCurMesh->colourRGBA.g, 
-                         pCurMesh->colourRGBA.b);
-
-
-            sModelDrawInfo mdoModelToDraw;
-            if (::g_pTheVAOManager->FindDrawInfoByModelName( pCurMesh->meshName,
-                                                             mdoModelToDraw))
-            {
-                glBindVertexArray(mdoModelToDraw.VAO_ID);
-
-                glDrawElements( GL_TRIANGLES, 
-                                mdoModelToDraw.numberOfIndices, 
-                                GL_UNSIGNED_INT,     // How big the index values are 
-                                0 );        // Starting index for this model
-
-                glBindVertexArray(0);
-            }
+            // All the draw code was here:
+            DrawObject( pTheObject, program, matView, matProjection );
 
         }//for ( std::vector< cMeshObject* >
-        // ****************************
+
+
+        cMeshObject* pDebugBall = findObjectByName("DebugSphere");
+
+        pDebugBall->isVisible = true;
+        pDebugBall->position = ::g_pLightManager->vecLights[0].position;
+        DrawObject(pDebugBall, program, matView, matProjection );
+        pDebugBall->isVisible = false;
+
+        cLightHelper myHelper;
+        float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000, 
+                                                       g_pLightManager->vecLights[0].atten.x, 
+                                                       g_pLightManager->vecLights[0].atten.y, 
+                                                       g_pLightManager->vecLights[0].atten.z, 
+                                                       50);
+        float dist25 = myHelper.calcApproxDistFromAtten(0.25f, 0.01f, 1000000,
+                                                       g_pLightManager->vecLights[0].atten.x,
+                                                       g_pLightManager->vecLights[0].atten.y,
+                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       50);
+        float dist50 = myHelper.calcApproxDistFromAtten(0.50f, 0.01f, 1000000,
+                                                       g_pLightManager->vecLights[0].atten.x,
+                                                       g_pLightManager->vecLights[0].atten.y,
+                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       50);
+
+        float dist75 = myHelper.calcApproxDistFromAtten(0.75f, 0.01f, 1000000,
+                                                       g_pLightManager->vecLights[0].atten.x,
+                                                       g_pLightManager->vecLights[0].atten.y,
+                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       50);
+
+        // Draw sphere to match the brightness of the light
+        pDebugBall->isVisible = true;
+        pDebugBall->colourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        pDebugBall->scale = dist5;
+        DrawObject(pDebugBall, program, matView, matProjection);
+
+        pDebugBall->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        pDebugBall->scale = dist25;
+        DrawObject(pDebugBall, program, matView, matProjection);
+
+        pDebugBall->colourRGBA = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+        pDebugBall->scale = dist50;
+        DrawObject(pDebugBall, program, matView, matProjection);
+
+        pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+        pDebugBall->scale = dist75;
+        DrawObject(pDebugBall, program, matView, matProjection);
+        pDebugBall->isVisible = false;
+
+       // ****************************
         // **** END OF: Draw scene ****
         // ****************************
 
@@ -624,21 +643,140 @@ int main(void)
 }
 
 
-//
-//
-//void MyThreadedFunction()
-//{
-//    // Do some stuff.
-//    z[ID] = x[ID] + y[ID] + yolo_common;
-//    return;
-//}
-//
-//int x[2560];
-//int y[2560];
-//int z[2560];
-//
-//int yolo_common = 4;
-//for( ..2560.. )
-//{
-//    CreateThread(MyThreadedFunction);
-//}
+
+void DrawObject( cMeshObject* pCurMesh, 
+                 GLuint program,                // Shader program
+                 glm::mat4 &matView,            // View matrix
+                 glm::mat4 &matProjection)      // Projection matrix
+{
+    // For ease, copy the pointer to a sensible variable name
+//    cMeshObject* pCurMesh = *it_pCurMesh;
+
+    if ( !pCurMesh->isVisible )
+    {
+        // Don't draw it
+        return;
+    }
+
+
+    // Get the uniform location variables (can do this outside of call for performance)
+    GLint diffuseColour_LocID = glGetUniformLocation(program, "diffuseColour");
+
+    GLint matModel_LocID = glGetUniformLocation(program, "matModel");
+    GLint matView_LocID = glGetUniformLocation(program, "matView");
+    GLint matProj_LocID = glGetUniformLocation(program, "matProj");
+
+    GLint hasNoLighting_LocID = glGetUniformLocation(program, "hasNoLighting");
+
+
+    glm::mat4 matModel;
+
+    //         mat4x4_identity(m);
+    matModel = glm::mat4(1.0f);
+
+    // ****************************
+    // *** Model transfomations ***
+    // Place the object in the world at 'this' location
+    glm::mat4 matTranslation
+        = glm::translate(glm::mat4(1.0f),
+                         glm::vec3(pCurMesh->position.x,
+                                   pCurMesh->position.y,
+                                   pCurMesh->position.z));
+    matModel = matModel * matTranslation;
+
+
+    //mat4x4_rotate_Z(m, m, );
+    //*************************************
+    // ROTATE around Z
+    glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
+                                       pCurMesh->orientation.z, // (float) glfwGetTime(), 
+                                       glm::vec3(0.0f, 0.0f, 1.0f));
+    matModel = matModel * matRotateZ;
+    //*************************************
+
+    //*************************************
+    // ROTATE around Y
+    glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
+                                       pCurMesh->orientation.y, // (float) glfwGetTime(), 
+                                       glm::vec3(0.0f, 1.0f, 0.0f));
+    matModel = matModel * matRotateY;
+    //*************************************
+
+    //*************************************
+    // ROTATE around X
+    glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
+                                    pCurMesh->orientation.x, // (float) glfwGetTime(), 
+                                    glm::vec3(1.0f, 0.0, 0.0f));
+    matModel = matModel * rotateX;
+    //*************************************
+
+
+    // Set up a scaling matrix
+    glm::mat4 matScale = glm::mat4(1.0f);
+
+    float theScale = pCurMesh->scale;		// 1.0f;		
+    matScale = glm::scale(glm::mat4(1.0f),
+                          glm::vec3(theScale, theScale, theScale));
+
+
+    // Apply (multiply) the scaling matrix to 
+    // the existing "model" (or "world") matrix
+    matModel = matModel * matScale;
+
+    // *** Model transfomations ***
+    // *********************************
+
+
+    glUseProgram(program);
+
+    //mat4x4_mul(mvp, p, m);
+    //mvp = p * v * matModel;
+    //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+    //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+
+    glUniformMatrix4fv(matModel_LocID, 1, GL_FALSE, glm::value_ptr(matModel));
+    glUniformMatrix4fv(matView_LocID, 1, GL_FALSE, glm::value_ptr(matView));
+    glUniformMatrix4fv(matProj_LocID, 1, GL_FALSE, glm::value_ptr(matProjection));
+
+
+    // This will change the model to "wireframe" and "solid"
+    // In this example, it's changed by pressing "9" and "0" keys
+    if (pCurMesh->isWireframe)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // Wireframe
+        // Note: there's no "bool", but you pass a float
+        // Turn OFF the lighting on THIS object
+        glUniform1f(hasNoLighting_LocID, (float)GL_TRUE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // Solid
+        // Turn ON the lighting on THIS object
+        glUniform1f(hasNoLighting_LocID, (float)GL_FALSE);
+    }
+
+
+    // set the uniform colour info
+    //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
+    glUniform3f(diffuseColour_LocID,
+                pCurMesh->colourRGBA.r,
+                pCurMesh->colourRGBA.g,
+                pCurMesh->colourRGBA.b);
+
+
+    sModelDrawInfo mdoModelToDraw;
+    if (::g_pTheVAOManager->FindDrawInfoByModelName(pCurMesh->meshName,
+                                                    mdoModelToDraw))
+    {
+        glBindVertexArray(mdoModelToDraw.VAO_ID);
+
+        glDrawElements(GL_TRIANGLES,
+                       mdoModelToDraw.numberOfIndices,
+                       GL_UNSIGNED_INT,     // How big the index values are 
+                       0);        // Starting index for this model
+
+        glBindVertexArray(0);
+    }
+
+    return;
+}// DrawObject()

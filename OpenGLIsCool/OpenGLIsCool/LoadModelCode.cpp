@@ -45,7 +45,7 @@ void LoadAllThemodels( unsigned int program,
     cMeshObject* pISOBall = new cMeshObject();
     pISOBall->meshName = "assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply";
     pISOBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    pISOBall->position.z = -200.0f;
+    pISOBall->position.z = 0.0f;
     pISOBall->isWireframe = true;
     // If this is false, just don't draw it.
     pISOBall->isVisible = false;
@@ -58,14 +58,14 @@ void LoadAllThemodels( unsigned int program,
     cMeshObject* pShuttle01 = new cMeshObject();
     pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
     pShuttle01->position.x = -10.0f;
-    pShuttle01->scale = 1.0f / 100.0f;    // 100th of it's normal size 0.001
+    pShuttle01->scale = 1.0f;   
     pShuttle01->colourRGBA = glm::vec4(207.0f / 255.0f, 181.0f / 255.0f, 59.0f / 255.0f, 1.0f);
     ::g_pVecObjects.push_back(pShuttle01);
 
     cMeshObject* pShuttle02 = new cMeshObject();
     pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
     pShuttle02->position.x = +22.5f;
-    pShuttle02->scale = 1.0f / 100.0f;    // 100th of it's normal size
+    pShuttle02->scale = 1.0f;    
     pShuttle02->orientation.z = glm::radians(135.0f);
     pShuttle02->colourRGBA = glm::vec4(189.0f / 255.0f, 183.0f / 255.0f, 107.0f / 255.0f, 1.0f);
     ::g_pVecObjects.push_back(pShuttle02);
