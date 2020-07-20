@@ -20,4 +20,11 @@ public:
 
 	// We can assign this to whatever we want
 	std::string friendlyName;
+
+	// This is "read only"
+	unsigned int getUniqueID(void);
+private:
+	unsigned int m_ID;
+	// Note original assignment not set here, but in the cpp file (body of class)
+	static unsigned int s_NextID;
 };
