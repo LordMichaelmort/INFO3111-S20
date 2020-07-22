@@ -26,7 +26,7 @@ void LoadAllThemodels( unsigned int program,
     }
     {// Load the space shuttle, too
         sModelDrawInfo mdiSpeeder;
-        pTheVAOManager->LoadModelIntoVAO("assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv.ply",
+        pTheVAOManager->LoadModelIntoVAO("assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv_2.ply",
                                          mdiSpeeder, program);
     }
     {// Load the space shuttle, too
