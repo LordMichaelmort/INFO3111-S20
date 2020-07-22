@@ -14,32 +14,26 @@ void LoadAllThemodels( unsigned int program,
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager )
 {
-    {// Load the bunny, too
-        sModelDrawInfo mdiRabbit;
-        pTheVAOManager->LoadModelIntoVAO("assets/models/bun_zipper_xyz_n_rgba_uv.ply",
-                                             mdiRabbit, program);
-    }
-    {// Load the space shuttle, too
-        sModelDrawInfo mdiSpaceShuttle;
-        pTheVAOManager->LoadModelIntoVAO("assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply",
-                                             mdiSpaceShuttle, program);
-    }
-    {// Load the space shuttle, too
-        sModelDrawInfo mdiKlingon;
-        pTheVAOManager->LoadModelIntoVAO("assets/models/KlingonCruiser_xyz_n_rgba_uv.ply",
-                                             mdiKlingon, program);
-    }
-    {// Load the space shuttle, too
-        sModelDrawInfo mdiTerrain;
-        pTheVAOManager->LoadModelIntoVAO("assets/models/Mountain_Terrain_xyz_n_rgba_uv.ply",
-                                             mdiTerrain, program);
-    }
     {// Load the space shuttle, too
         sModelDrawInfo mdiIsosphere;
         pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply",
                                           mdiIsosphere, program);
     }
-    // ENDOF: Loading the models
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiATAT;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/00_atat_xyz_n_rgba_uv.ply",
+                                         mdiATAT, program);
+    }
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiSpeeder;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv.ply",
+                                         mdiSpeeder, program);
+    }
+    {// Load the space shuttle, too
+        sModelDrawInfo mditerrain;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/00_terrain_xyz_n_rgba_uv.ply",
+                                         mditerrain, program);
+    }    // ENDOF: Loading the models
 
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();
@@ -55,59 +49,33 @@ void LoadAllThemodels( unsigned int program,
 
 
      // Add to the list of things to draw
-    cMeshObject* pShuttle01 = new cMeshObject();
-    pShuttle01->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
-    pShuttle01->position.x = -10.0f;
-    pShuttle01->scale = 1.0f;   
-    pShuttle01->colourRGBA = glm::vec4(207.0f / 255.0f, 181.0f / 255.0f, 59.0f / 255.0f, 1.0f);
-    ::g_pVecObjects.push_back(pShuttle01);
-
-    cMeshObject* pShuttle02 = new cMeshObject();
-    pShuttle02->meshName = "assets/models/SpaceShuttleOrbiter_xyz_n_rgba_uv.ply";
-    pShuttle02->position.x = +22.5f;
-    pShuttle02->scale = 1.0f;    
-    pShuttle02->orientation.z = glm::radians(135.0f);
-    pShuttle02->colourRGBA = glm::vec4(189.0f / 255.0f, 183.0f / 255.0f, 107.0f / 255.0f, 1.0f);
-    ::g_pVecObjects.push_back(pShuttle02);
-
-    cMeshObject* pBunny = new cMeshObject();
-    pBunny->meshName = "assets/models/bun_zipper_xyz_n_rgba_uv.ply";
-    pBunny->position.y = +10.0f;
-    pBunny->scale = 25.0f;
-    pBunny->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    ::g_pVecObjects.push_back(pBunny);
-
-    cMeshObject* pArena = new cMeshObject();
-    pArena->meshName = "assets/models/free_arena_ASCII_xyz_n_rgba_uv.ply";
-    pArena->position.y = -20.0f;
-    pArena->scale = 1.0f;
-    pArena->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-    ::g_pVecObjects.push_back(pArena);
-
-    cMeshObject* pKling1 = new cMeshObject();
-    pKling1->meshName = "assets/models/KlingonCruiser_xyz_n_rgba_uv.ply";
-    pKling1->position.y = 10.0f;
-    pKling1->position.x = -10.0f;
-    pKling1->scale = 1.0f;
-    pKling1->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-    ::g_pVecObjects.push_back(pKling1);
-
-    cMeshObject* pKling2 = new cMeshObject();
-    pKling2->meshName = "assets/models/KlingonCruiser_xyz_n_rgba_uv.ply";
-    pKling2->position.y = 10.0f;
-    pKling2->position.x = 20.0f;
-    pKling2->scale = 2.0f;
-    pKling2->colourRGBA = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
-    ::g_pVecObjects.push_back(pKling2);
-
     cMeshObject* pTerrain = new cMeshObject();
-    pTerrain->meshName = "assets/models/Mountain_Terrain_xyz_n_rgba_uv.ply";
-    pTerrain->position.y = -150.0f;
-    pTerrain->orientation.y = glm::radians(180.0f);
-    pTerrain->scale = 5.0f;
-    //    pTerrain->isWireframe = true;
-    pTerrain->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
+    pTerrain->scale = 1.0f;
+    pTerrain->position.y = -10.0f;
+    pTerrain->colourRGBA = glm::vec4(0.95f, 0.95f, 0.95f, 1.0f);
     ::g_pVecObjects.push_back(pTerrain);
+
+      // Add to the list of things to draw
+    cMeshObject* pATAT = new cMeshObject();
+    pATAT->meshName = "assets/models/00_atat_xyz_n_rgba_uv.ply";
+    pATAT->scale = 1.0f;
+    pATAT->position.y = 0.0f;
+//    pATAT->isWireframe = true;
+    pATAT->colourRGBA = glm::vec4(0.85f, 0.85f, 0.85f, 1.0f);
+    ::g_pVecObjects.push_back(pATAT);
+
+    // Add to the list of things to draw
+    cMeshObject* pSpeeder = new cMeshObject();
+    pSpeeder->meshName = "assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv_2.ply";
+    pSpeeder->scale = 1.0f;
+    pSpeeder->colourRGBA = glm::vec4(0.91f, 0.80f, 0.85f, 1.0f);
+    pSpeeder->position = glm::vec3(0.0f, 10.0f, 15.0f);
+    pSpeeder->orientation.y = glm::radians(180.0f);
+    //pSpeeder->isWireframe = true;
+    //pSpeeder->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+   ::g_pVecObjects.push_back(pSpeeder);
+
 
     return;
 }

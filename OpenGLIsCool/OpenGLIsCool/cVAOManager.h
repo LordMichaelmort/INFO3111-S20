@@ -74,6 +74,7 @@ struct sModelDrawInfo
 	// Extents: Largest and smallest values ("bounding box" or "hit box")
 	float maxX, maxY, maxZ;
 	float minX, minY, minZ;
+	float centreX, centreY, centreZ;
 	float deltaX, deltaY, deltaZ;	// Length of each side of the "box" 
 	                                // max - min for each side
 	float maxExtent;				// Largest size
@@ -90,6 +91,16 @@ struct sModelDrawInfo
 	unsigned int* pIndices;
 };
 
+struct sModelModifiers
+{
+	sModelModifiers()
+	{
+		this->scale = 1.0f;
+		this->offsetX = this->offsetY = this->offsetZ = 0.0f;
+	}
+	float scale;
+	float offsetX; float offsetY; float offsetZ;
+};
 
 class cVAOManager
 {
@@ -99,11 +110,24 @@ public:
 						  sModelDrawInfo &drawInfo, 
 						  unsigned int shaderProgramID);
 
+	// Add a method like this, maybe?
+	bool LoadModelIntoVAO(std::string fileName, 
+						  sModelDrawInfo &drawInfo, 
+						  sModelModifiers modelModifiers,	// TODO: for the student
+						  unsigned int shaderProgramID);
+
 	// We don't want to return an int, likely
 	bool FindDrawInfoByModelName(std::string filename,
 								 sModelDrawInfo &drawInfo);
 
 	std::string getLastError(bool bAndClear = true);
+
+	// Or something like this to get some information?
+	sModelDrawInfo getModelFileInfo(std::string filename);	// TODO: for the student
+	void ScaleLoadedModel(float scale);						// TODO: for the student
+	void CentreAtOrigin(void);								// TODO: for the student
+
+
 
 private:
 

@@ -33,6 +33,7 @@ sModelDrawInfo::sModelDrawInfo()
 	//  vertices here (determined when you load them):
 	this->maxX = this->maxY = this->maxZ = 0.0f;
 	this->minX = this->minY = this->minZ = 0.0f;
+	this->centreX = this->centreY = this->centreZ = 0.0f;
 	this->deltaX = this->deltaY = this->deltaZ = 0.0f;
 	this->maxExtent = 0.0f;
 	this->scaleForUnitBB = 0.0f;
@@ -295,6 +296,67 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		// Add too... what? 
 		vecTempPlyVerts.push_back(tempVert);
 	}
+
+
+	// Calcualte extents of the model
+
+	// Assume vertex 0 is the min and max (to start)
+	drawInfo.minX = drawInfo.maxX = vecTempPlyVerts[0].pos.x;
+	drawInfo.minY = drawInfo.maxY = vecTempPlyVerts[0].pos.y;
+	drawInfo.minZ = drawInfo.maxZ = vecTempPlyVerts[0].pos.z;
+
+	for (unsigned int index = 0; index != static_cast<unsigned int>(vecTempPlyVerts.size()); index++)
+	{
+		if ( vecTempPlyVerts[index].pos.x < drawInfo.minX ) 
+		{ 
+			drawInfo.minX = vecTempPlyVerts[index].pos.x ;
+		}
+		if ( vecTempPlyVerts[index].pos.y < drawInfo.minY ) 
+		{ 
+			drawInfo.minY = vecTempPlyVerts[index].pos.y ;
+		}
+		if ( vecTempPlyVerts[index].pos.z < drawInfo.minZ ) 
+		{ 
+			drawInfo.minZ = vecTempPlyVerts[index].pos.z ;
+		}
+
+		if (vecTempPlyVerts[index].pos.x > drawInfo.maxX)
+		{
+			drawInfo.maxX = vecTempPlyVerts[index].pos.x;
+		}
+		if (vecTempPlyVerts[index].pos.y > drawInfo.maxY)
+		{
+			drawInfo.maxY = vecTempPlyVerts[index].pos.y;
+		}
+		if (vecTempPlyVerts[index].pos.z > drawInfo.maxZ)
+		{
+			drawInfo.maxZ = vecTempPlyVerts[index].pos.z;
+		}
+	}//for (unsigned int index = 0;
+
+	drawInfo.deltaX = drawInfo.maxX - drawInfo.minX;
+	drawInfo.deltaY = drawInfo.maxY - drawInfo.minY;
+	drawInfo.deltaZ = drawInfo.maxZ - drawInfo.minZ;
+
+	drawInfo.centreX = (drawInfo.deltaX / 2.0f) + drawInfo.minX;	// Middle of deltaX + minX
+	drawInfo.centreY = (drawInfo.deltaY / 2.0f) + drawInfo.minY;	// Middle of deltaX + minX
+	drawInfo.centreZ = (drawInfo.deltaZ / 2.0f) + drawInfo.minZ;	// Middle of deltaX + minX
+
+	drawInfo.maxExtent = drawInfo.deltaX;
+	if (drawInfo.deltaY > drawInfo.maxExtent)
+	{
+		drawInfo.maxExtent = drawInfo.deltaY;
+	}
+	if (drawInfo.deltaZ > drawInfo.maxExtent)
+	{
+		drawInfo.maxExtent = drawInfo.deltaZ;
+	}
+
+	// Multiply by this to make the object scaled to a "unit bounding box"
+	// i.e. it will fit into a box 1x1x1 in size. 
+	// (so all the object will be the same, even though that might not be what you want)
+	drawInfo.scaleForUnitBB = 1.0f / drawInfo.maxExtent;
+
 
 	// Create a local vertex array
 	// Note: The format the file (ply) is DIFFERENT from this array:

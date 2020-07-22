@@ -221,99 +221,72 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     //      - SW are "forward and back"
     //      - QE are "up and down"
 
-    if (key == GLFW_KEY_1)
-    {
-        ::g_pLightManager->vecLights[0].atten.y *= 0.99f;    // Linear
-    }
-
-    if (key == GLFW_KEY_2)
-    {
-        ::g_pLightManager->vecLights[0].atten.y *= 1.01f;    // Linear
-    }
-    if (key == GLFW_KEY_3)
-    {
-        ::g_pLightManager->vecLights[0].atten.z *= 0.99f;    // Quardatic
-    }
-
-    if (key == GLFW_KEY_4)
-    {
-        ::g_pLightManager->vecLights[0].atten.z *= 1.01f;    // Quadratic
-    }
-
-    std::cout << ::g_pLightManager->vecLights[0].atten.y 
-        << "  " 
-        << ::g_pLightManager->vecLights[0].atten.z << std::endl;
+    // if there are NO "modifier" keys (mods), then mods == 0 
 
 
-    if (key == GLFW_KEY_L)
-    {
-        ::g_pVecObjects[::g_selectedObjectID]->orientation.z += glm::radians(CAMERASPEED);
-    }
-    if (key == GLFW_KEY_K)
-    {
-        ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(CAMERASPEED);
-    }
-    if (key == GLFW_KEY_7 && action == GLFW_PRESS)
-    {
-        ::g_selectedObjectID--;
-        if ( ::g_selectedObjectID <= 0 ) { ::g_selectedObjectID = 0; }
-        std::cout << ::g_selectedObjectID << " " 
-            << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
-        //glfwSetWindowTitle()
-    }
-    if (key == GLFW_KEY_8 && action == GLFW_PRESS)
-    {
-        ::g_selectedObjectID++;
-        if ( ::g_selectedObjectID >= static_cast<int>(::g_pVecObjects.size())-1 ) 
-        { 
-            ::g_selectedObjectID = static_cast<int>(::g_pVecObjects.size()) - 1; 
-        }
-        std::cout << ::g_selectedObjectID << " " 
-            << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+    // ONLY shift is down (control light)
+    if ( mods == GLFW_MOD_SHIFT )
+    {  
+        if (key == GLFW_KEY_1) { ::g_pLightManager->vecLights[0].atten.y *= 0.99f;}    // Linear
+        if (key == GLFW_KEY_2) { ::g_pLightManager->vecLights[0].atten.y *= 1.01f;}    // Linear
+        if (key == GLFW_KEY_3) { ::g_pLightManager->vecLights[0].atten.z *= 0.99f;}    // Quardatic
+        if (key == GLFW_KEY_4) { ::g_pLightManager->vecLights[0].atten.z *= 1.01f;}    // Quardatic
 
-    }
+        if (key == GLFW_KEY_A) { ::g_pLightManager->vecLights[0].position.x -= CAMERASPEED; }
+        if (key == GLFW_KEY_D) { ::g_pLightManager->vecLights[0].position.x += CAMERASPEED; }
+        if (key == GLFW_KEY_W) { ::g_pLightManager->vecLights[0].position.z += CAMERASPEED; }
+        if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[0].position.z -= CAMERASPEED; }
+        if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[0].position.y -= CAMERASPEED; }
+        if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[0].position.y += CAMERASPEED; }
+    }//if ( mods == GLFW_MOD_SHIFT )
+            
 
-    if (key == GLFW_KEY_A) // go "left"
-    {   
+    //std::cout << ::g_pLightManager->vecLights[0].atten.y 
+    //    << "  " 
+    //    << ::g_pLightManager->vecLights[0].atten.z << std::endl;
+
+
+    // if ( mods == 0 ) then no "modifiers" are pressed
+    if (mods == 0)
+    {
         //::g_cameraEye.x -= CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.x -= CAMERASPEED;    
-    }
+        if (key == GLFW_KEY_A) { ::g_cameraEye.x -= CAMERASPEED; }
+        if (key == GLFW_KEY_D) { ::g_cameraEye.x += CAMERASPEED; }
+        if (key == GLFW_KEY_W) { ::g_cameraEye.z += CAMERASPEED; }
+        if (key == GLFW_KEY_S) { ::g_cameraEye.z -= CAMERASPEED; }
+        if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= CAMERASPEED; }
+        if (key == GLFW_KEY_E) { ::g_cameraEye.y += CAMERASPEED; }
+    }//if (mods == 0)
 
-    if (key == GLFW_KEY_D) // go "right"
-    {
-        //::g_cameraEye.x += CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.x += CAMERASPEED;    
-    }
+    //if (key == GLFW_KEY_L)
+    //{
+    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z += glm::radians(CAMERASPEED);
+    //}
+    //if (key == GLFW_KEY_K)
+    //{
+    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(CAMERASPEED);
+    //}
+    //if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+    //{
+    //    ::g_selectedObjectID--;
+    //    if ( ::g_selectedObjectID <= 0 ) { ::g_selectedObjectID = 0; }
+    //    std::cout << ::g_selectedObjectID << " " 
+    //        << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+    //    //glfwSetWindowTitle()
+    //}
+    //if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+    //{
+    //    ::g_selectedObjectID++;
+    //    if ( ::g_selectedObjectID >= static_cast<int>(::g_pVecObjects.size())-1 ) 
+    //    { 
+    //        ::g_selectedObjectID = static_cast<int>(::g_pVecObjects.size()) - 1; 
+    //    }
+    //    std::cout << ::g_selectedObjectID << " " 
+    //        << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
 
-    if (key == GLFW_KEY_S) // go "back" (-ve Z)
-    {
-//        ::g_cameraEye.z -= CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.z += CAMERASPEED;    
-    }
+    //}
 
-    if (key == GLFW_KEY_W) // go "forward" (+ve Z)
-    {
-        //::g_cameraEye.z += CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.z -= CAMERASPEED;    
-    }
-
-    if (key == GLFW_KEY_Q) // go "down" (-ve Y)
-    {
-        //::g_cameraEye.y -= CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.y -= CAMERASPEED;    
-    }
-
-    if (key == GLFW_KEY_E) // go "up" (-ve Y)
-    {
-        //::g_cameraEye.y += CAMERASPEED;
-        ::g_pLightManager->vecLights[0].position.y += CAMERASPEED;    
-    }
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-
+ 
     // Switches from wireframe to solid (glPolygonMode)
     if (key == GLFW_KEY_9 && action == GLFW_PRESS ) {::g_isWireFrame = true; }
     if (key == GLFW_KEY_0 && action == GLFW_PRESS ) {::g_isWireFrame = false; }
@@ -470,11 +443,11 @@ int main(void)
 
     ::g_pLightManager->LoadUniformLocations(program);
 
-    ::g_pLightManager->vecLights[0].position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[0].position = glm::vec4(34.0f, 87.0f, 47.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param1.x = 0;   // Point light
     ::g_pLightManager->vecLights[0].atten.x = 0.0f;     // Constant
-    ::g_pLightManager->vecLights[0].atten.y = 0.001f;    // Linear
-    ::g_pLightManager->vecLights[0].atten.z = 0.0001f;    // Quadratic
+    ::g_pLightManager->vecLights[0].atten.y = 0.0150704719f;    // Linear
+    ::g_pLightManager->vecLights[0].atten.z = 2.42356309e-05;    // Quadratic
     ::g_pLightManager->vecLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
@@ -577,6 +550,8 @@ int main(void)
 
         pDebugBall->isVisible = true;
         pDebugBall->position = ::g_pLightManager->vecLights[0].position;
+        pDebugBall->scale = 1.0f;
+        pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
         DrawObject(pDebugBall, program, matView, matProjection );
         pDebugBall->isVisible = false;
 
