@@ -21,6 +21,7 @@
 
 #include "cMeshObject.h"
 #include <vector>
+#include <sstream>          // Stupid name because it's stringstring, not sstream
 
 #include "LightManager/cLightManager.h"
 
@@ -41,6 +42,7 @@ std::vector< cMeshObject* > g_pVecObjects;
 int g_selectedObjectID = 0;
 
 cLightManager* g_pLightManager = 0;    // or NULL or nullptr
+int g_selectedLightID = 0;
 
 
 //// This a light structure to match what's in the shader
@@ -227,17 +229,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     // ONLY shift is down (control light)
     if ( mods == GLFW_MOD_SHIFT )
     {  
-        if (key == GLFW_KEY_1) { ::g_pLightManager->vecLights[0].atten.y *= 0.99f;}    // Linear
-        if (key == GLFW_KEY_2) { ::g_pLightManager->vecLights[0].atten.y *= 1.01f;}    // Linear
-        if (key == GLFW_KEY_3) { ::g_pLightManager->vecLights[0].atten.z *= 0.99f;}    // Quardatic
-        if (key == GLFW_KEY_4) { ::g_pLightManager->vecLights[0].atten.z *= 1.01f;}    // Quardatic
+        if (key == GLFW_KEY_1) { ::g_pLightManager->vecLights[g_selectedLightID].atten.y *= 0.99f;}    // Linear
+        if (key == GLFW_KEY_2) { ::g_pLightManager->vecLights[g_selectedLightID].atten.y *= 1.01f;}    // Linear
+        if (key == GLFW_KEY_3) { ::g_pLightManager->vecLights[g_selectedLightID].atten.z *= 0.99f;}    // Quardatic
+        if (key == GLFW_KEY_4) { ::g_pLightManager->vecLights[g_selectedLightID].atten.z *= 1.01f;}    // Quardatic
 
-        if (key == GLFW_KEY_A) { ::g_pLightManager->vecLights[0].position.x -= CAMERASPEED; }
-        if (key == GLFW_KEY_D) { ::g_pLightManager->vecLights[0].position.x += CAMERASPEED; }
-        if (key == GLFW_KEY_W) { ::g_pLightManager->vecLights[0].position.z += CAMERASPEED; }
-        if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[0].position.z -= CAMERASPEED; }
-        if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[0].position.y -= CAMERASPEED; }
-        if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[0].position.y += CAMERASPEED; }
+        if (key == GLFW_KEY_A) { ::g_pLightManager->vecLights[g_selectedLightID].position.x -= CAMERASPEED; }
+        if (key == GLFW_KEY_D) { ::g_pLightManager->vecLights[g_selectedLightID].position.x += CAMERASPEED; }
+        if (key == GLFW_KEY_W) { ::g_pLightManager->vecLights[g_selectedLightID].position.z += CAMERASPEED; }
+        if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[g_selectedLightID].position.z -= CAMERASPEED; }
+        if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[g_selectedLightID].position.y -= CAMERASPEED; }
+        if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[g_selectedLightID].position.y += CAMERASPEED; }
     }//if ( mods == GLFW_MOD_SHIFT )
             
 
@@ -266,25 +268,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     //{
     //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(CAMERASPEED);
     //}
-    //if (key == GLFW_KEY_7 && action == GLFW_PRESS)
-    //{
-    //    ::g_selectedObjectID--;
-    //    if ( ::g_selectedObjectID <= 0 ) { ::g_selectedObjectID = 0; }
-    //    std::cout << ::g_selectedObjectID << " " 
-    //        << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
-    //    //glfwSetWindowTitle()
-    //}
-    //if (key == GLFW_KEY_8 && action == GLFW_PRESS)
-    //{
-    //    ::g_selectedObjectID++;
-    //    if ( ::g_selectedObjectID >= static_cast<int>(::g_pVecObjects.size())-1 ) 
-    //    { 
-    //        ::g_selectedObjectID = static_cast<int>(::g_pVecObjects.size()) - 1; 
-    //    }
-    //    std::cout << ::g_selectedObjectID << " " 
-    //        << ::g_pVecObjects[::g_selectedObjectID]->meshName << std::endl;
+    if (key == GLFW_KEY_7 && action == GLFW_PRESS)
+    {
+        ::g_selectedLightID--;
+        std::cout << ::g_selectedLightID << std::endl;
+    }
+    if (key == GLFW_KEY_8 && action == GLFW_PRESS)
+    {
+        ::g_selectedLightID++;
+        std::cout << ::g_selectedLightID << std::endl;
 
-    //}
+    }
 
  
     // Switches from wireframe to solid (glPolygonMode)
@@ -452,6 +446,14 @@ int main(void)
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
+    ::g_pLightManager->vecLights[1].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].param1.x = 0;   // Point light
+    ::g_pLightManager->vecLights[1].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[1].atten.y = 0.0150704719f;    // Linear
+    ::g_pLightManager->vecLights[1].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[1].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
@@ -546,10 +548,14 @@ int main(void)
         }//for ( std::vector< cMeshObject* >
 
 
+        // ADD 
+//        if (g_ShowLightDebubShere)
+ //       {
+
         cMeshObject* pDebugBall = findObjectByName("DebugSphere");
 
         pDebugBall->isVisible = true;
-        pDebugBall->position = ::g_pLightManager->vecLights[0].position;
+        pDebugBall->position = ::g_pLightManager->vecLights[g_selectedLightID].position;
         pDebugBall->scale = 1.0f;
         pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
         DrawObject(pDebugBall, program, matView, matProjection );
@@ -557,25 +563,25 @@ int main(void)
 
         cLightHelper myHelper;
         float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000, 
-                                                       g_pLightManager->vecLights[0].atten.x, 
-                                                       g_pLightManager->vecLights[0].atten.y, 
-                                                       g_pLightManager->vecLights[0].atten.z, 
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
                                                        50);
         float dist25 = myHelper.calcApproxDistFromAtten(0.25f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[0].atten.x,
-                                                       g_pLightManager->vecLights[0].atten.y,
-                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
                                                        50);
         float dist50 = myHelper.calcApproxDistFromAtten(0.50f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[0].atten.x,
-                                                       g_pLightManager->vecLights[0].atten.y,
-                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
                                                        50);
 
         float dist75 = myHelper.calcApproxDistFromAtten(0.75f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[0].atten.x,
-                                                       g_pLightManager->vecLights[0].atten.y,
-                                                       g_pLightManager->vecLights[0].atten.z,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
                                                        50);
 
         // Draw sphere to match the brightness of the light
@@ -600,6 +606,21 @@ int main(void)
        // ****************************
         // **** END OF: Draw scene ****
         // ****************************
+
+
+        // Update the window title
+        std::stringstream ssTitle;
+        ssTitle 
+            << "Light# " << g_selectedLightID << " : " 
+            << ::g_pLightManager->vecLights[g_selectedLightID].position.x << ", "
+            << ::g_pLightManager->vecLights[g_selectedLightID].position.y << ", "
+            << ::g_pLightManager->vecLights[g_selectedLightID].position.z << "  "
+            << "Lin:" << ::g_pLightManager->vecLights[g_selectedLightID].atten.y << "  "
+            << "Quad:" << ::g_pLightManager->vecLights[g_selectedLightID].atten.z;
+
+        std::string sTitleText = ssTitle.str();
+
+        glfwSetWindowTitle(window, sTitleText.c_str());
 
 
 

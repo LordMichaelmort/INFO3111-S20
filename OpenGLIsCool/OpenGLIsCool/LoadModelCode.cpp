@@ -70,10 +70,10 @@ void LoadAllThemodels( unsigned int program,
     pSpeeder->meshName = "assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv_2.ply";
     pSpeeder->scale = 1.0f;
     pSpeeder->colourRGBA = glm::vec4(0.91f, 0.80f, 0.85f, 1.0f);
-    pSpeeder->position = glm::vec3(0.0f, 10.0f, 15.0f);
+    pSpeeder->position = glm::vec3(0.0f, 10.0f, 17.0f);
     pSpeeder->orientation.y = glm::radians(180.0f);
-    //pSpeeder->isWireframe = true;
     //pSpeeder->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    //pSpeeder->isWireframe = true;
    ::g_pVecObjects.push_back(pSpeeder);
 
 

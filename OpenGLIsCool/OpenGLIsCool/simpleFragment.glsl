@@ -28,7 +28,7 @@ const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
 
 //const int NUMBEROFLIGHTS = 10;
-const int NUMBEROFLIGHTS = 1;
+const int NUMBEROFLIGHTS = 10;
 uniform sLight theLights[NUMBEROFLIGHTS];  	// 80 uniforms
 
 uniform vec3 diffuseColour;
