@@ -30,6 +30,16 @@ void LoadAllThemodels( unsigned int program,
                                          mdiSpeeder, program);
     }
     {// Load the space shuttle, too
+        sModelDrawInfo mdiYWing;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_y-wing_xyz_n_rgba_uv_2.ply",
+                                         mdiYWing, program);
+    }
+    {// Load the space shuttle, too
+        sModelDrawInfo mdiInvertedNormalSphere;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_Isoshphere_xyz_n_rgba_uv_InvertedNormals.ply",
+                                         mdiInvertedNormalSphere, program);
+    }
+    {// Load the space shuttle, too
         sModelDrawInfo mditerrain;
         pTheVAOManager->LoadModelIntoVAO("assets/models/00_terrain_xyz_n_rgba_uv.ply",
                                          mditerrain, program);
@@ -75,6 +85,28 @@ void LoadAllThemodels( unsigned int program,
     //pSpeeder->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     //pSpeeder->isWireframe = true;
    ::g_pVecObjects.push_back(pSpeeder);
+
+    // Add to the list of things to draw
+    cMeshObject* pYWing = new cMeshObject();
+    pYWing->meshName = "assets/models/0_review_y-wing_xyz_n_rgba_uv_2.ply";
+    pYWing->scale = 1.0f;
+    pYWing->colourRGBA = glm::vec4(0.91f, 0.80f, 0.85f, 1.0f);
+    pYWing->position = glm::vec3(10.0f, 10.0f, 0.0f);
+    pYWing->orientation.x = glm::radians(-90.0f);
+    //pYWing->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    //pYWing->isWireframe = true;
+   ::g_pVecObjects.push_back(pYWing);
+
+    // Add to the list of things to draw
+    cMeshObject* pInvertedNormalSphere = new cMeshObject();
+    pInvertedNormalSphere->meshName = "assets/models/0_review_Isoshphere_xyz_n_rgba_uv_InvertedNormals.ply";
+    pInvertedNormalSphere->scale = 1.0f;
+    pInvertedNormalSphere->colourRGBA = glm::vec4(0.91f, 0.80f, 0.85f, 1.0f);
+    pInvertedNormalSphere->position = glm::vec3(10.0f, 10.0f, -20.0f);
+    pInvertedNormalSphere->orientation.x = glm::radians(-90.0f);
+    //pInvertedNormalSphere->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    //pInvertedNormalSphere->isWireframe = true;
+   ::g_pVecObjects.push_back(pInvertedNormalSphere);
 
 
     return;

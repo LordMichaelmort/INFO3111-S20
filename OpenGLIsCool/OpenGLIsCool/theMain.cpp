@@ -44,6 +44,8 @@ int g_selectedObjectID = 0;
 cLightManager* g_pLightManager = 0;    // or NULL or nullptr
 int g_selectedLightID = 0;
 
+bool g_ShowLightDebugSpheres = true;
+
 
 //// This a light structure to match what's in the shader
 //struct sLight
@@ -240,6 +242,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[g_selectedLightID].position.z -= CAMERASPEED; }
         if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[g_selectedLightID].position.y -= CAMERASPEED; }
         if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[g_selectedLightID].position.y += CAMERASPEED; }
+        
+
+        if ( key==GLFW_KEY_0) { ::g_ShowLightDebugSpheres = true; }
+        if ( key==GLFW_KEY_9) { ::g_ShowLightDebugSpheres = false; }
+
     }//if ( mods == GLFW_MOD_SHIFT )
             
 
@@ -451,9 +458,27 @@ int main(void)
     ::g_pLightManager->vecLights[1].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[1].atten.y = 0.0150704719f;    // Linear
     ::g_pLightManager->vecLights[1].atten.z = 2.42356309e-05;    // Quadratic
-    ::g_pLightManager->vecLights[1].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     ::g_pLightManager->vecLights[1].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[1].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+    ::g_pLightManager->vecLights[2].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
+    ::g_pLightManager->vecLights[2].param1.x = 0;   // Point light
+    ::g_pLightManager->vecLights[2].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[2].atten.y = 0.0150704719f;    // Linear
+    ::g_pLightManager->vecLights[2].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[2].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[2].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[2].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+    ::g_pLightManager->vecLights[3].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
+    ::g_pLightManager->vecLights[3].param1.x = 0;   // Point light
+    ::g_pLightManager->vecLights[3].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[3].atten.y = 0.00150704719f;    // Linear
+    ::g_pLightManager->vecLights[3].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[3].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[3].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[3].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
@@ -549,59 +574,61 @@ int main(void)
 
 
         // ADD 
-//        if (g_ShowLightDebubShere)
- //       {
+        if (::g_ShowLightDebugSpheres)
+        {
 
-        cMeshObject* pDebugBall = findObjectByName("DebugSphere");
+            cMeshObject* pDebugBall = findObjectByName("DebugSphere");
 
-        pDebugBall->isVisible = true;
-        pDebugBall->position = ::g_pLightManager->vecLights[g_selectedLightID].position;
-        pDebugBall->scale = 1.0f;
-        pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        DrawObject(pDebugBall, program, matView, matProjection );
-        pDebugBall->isVisible = false;
+            pDebugBall->isVisible = true;
+            pDebugBall->position = ::g_pLightManager->vecLights[g_selectedLightID].position;
+            pDebugBall->scale = 1.0f;
+            pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            DrawObject(pDebugBall, program, matView, matProjection );
+            pDebugBall->isVisible = false;
 
-        cLightHelper myHelper;
-        float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000, 
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
-                                                       50);
-        float dist25 = myHelper.calcApproxDistFromAtten(0.25f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
-                                                       50);
-        float dist50 = myHelper.calcApproxDistFromAtten(0.50f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
-                                                       50);
+            cLightHelper myHelper;
+            float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000, 
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.z,
+                                                           50);
+            float dist25 = myHelper.calcApproxDistFromAtten(0.25f, 0.01f, 1000000,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.z,
+                                                           50);
+            float dist50 = myHelper.calcApproxDistFromAtten(0.50f, 0.01f, 1000000,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.z,
+                                                           50);
 
-        float dist75 = myHelper.calcApproxDistFromAtten(0.75f, 0.01f, 1000000,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.x,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.y,
-                                                       g_pLightManager->vecLights[g_selectedLightID].atten.z,
-                                                       50);
+            float dist75 = myHelper.calcApproxDistFromAtten(0.75f, 0.01f, 1000000,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.x,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.y,
+                                                           g_pLightManager->vecLights[g_selectedLightID].atten.z,
+                                                           50);
 
-        // Draw sphere to match the brightness of the light
-        pDebugBall->isVisible = true;
-        pDebugBall->colourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        pDebugBall->scale = dist5;
-        DrawObject(pDebugBall, program, matView, matProjection);
+            // Draw sphere to match the brightness of the light
+            pDebugBall->isVisible = true;
+            pDebugBall->colourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            pDebugBall->scale = dist5;
+            DrawObject(pDebugBall, program, matView, matProjection);
 
-        pDebugBall->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-        pDebugBall->scale = dist25;
-        DrawObject(pDebugBall, program, matView, matProjection);
+            pDebugBall->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+            pDebugBall->scale = dist25;
+            DrawObject(pDebugBall, program, matView, matProjection);
 
-        pDebugBall->colourRGBA = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-        pDebugBall->scale = dist50;
-        DrawObject(pDebugBall, program, matView, matProjection);
+            pDebugBall->colourRGBA = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+            pDebugBall->scale = dist50;
+            DrawObject(pDebugBall, program, matView, matProjection);
 
-        pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-        pDebugBall->scale = dist75;
-        DrawObject(pDebugBall, program, matView, matProjection);
-        pDebugBall->isVisible = false;
+            pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+            pDebugBall->scale = dist75;
+            DrawObject(pDebugBall, program, matView, matProjection);
+            pDebugBall->isVisible = false;\
+        
+        }// if (::g_ShowLightDebugSpheres)
 
        // ****************************
         // **** END OF: Draw scene ****
