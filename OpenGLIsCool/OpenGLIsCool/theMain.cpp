@@ -218,6 +218,7 @@ static void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
+
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     const float CAMERASPEED = 1.0f;
@@ -226,6 +227,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     //      - QE are "up and down"
 
     // if there are NO "modifier" keys (mods), then mods == 0 
+   
+
 
 
     // ONLY shift is down (control light)
@@ -453,32 +456,74 @@ int main(void)
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
-    ::g_pLightManager->vecLights[1].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
-    ::g_pLightManager->vecLights[1].param1.x = 0;   // Point light
+    // Engine lights on the Y-Wing
+    ::g_pLightManager->vecLights[1].position = glm::vec4(14.0f, 10.0f, 7.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[1].atten.x = 0.0f;     // Constant
-    ::g_pLightManager->vecLights[1].atten.y = 0.0150704719f;    // Linear
-    ::g_pLightManager->vecLights[1].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[1].atten.y = 0.0001f;    // Linear
+    ::g_pLightManager->vecLights[1].atten.z = 0.457916f;    // Quadratic
     ::g_pLightManager->vecLights[1].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     ::g_pLightManager->vecLights[1].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[1].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
-    ::g_pLightManager->vecLights[2].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
-    ::g_pLightManager->vecLights[2].param1.x = 0;   // Point light
+    ::g_pLightManager->vecLights[2].position = glm::vec4(7.0f, 10.0f, 7.0f, 1.0f);
+    ::g_pLightManager->vecLights[2].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[2].atten.x = 0.0f;     // Constant
-    ::g_pLightManager->vecLights[2].atten.y = 0.0150704719f;    // Linear
-    ::g_pLightManager->vecLights[2].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[2].atten.y = 0.0001f;    // Linear
+    ::g_pLightManager->vecLights[2].atten.z = 0.457916f;    // Quadratic
     ::g_pLightManager->vecLights[2].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     ::g_pLightManager->vecLights[2].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[2].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
-    ::g_pLightManager->vecLights[3].position = glm::vec4(-34.0f, 87.0f, -47.0f, 1.0f);
-    ::g_pLightManager->vecLights[3].param1.x = 0;   // Point light
+    // Light inside the "torpedo" (blue)
+    ::g_pLightManager->vecLights[3].position = glm::vec4(10.0f, 10.0f, -20.0f, 1.0f);
+    ::g_pLightManager->vecLights[3].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[3].atten.x = 0.0f;     // Constant
-    ::g_pLightManager->vecLights[3].atten.y = 0.00150704719f;    // Linear
-    ::g_pLightManager->vecLights[3].atten.z = 2.42356309e-05;    // Quadratic
-    ::g_pLightManager->vecLights[3].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[3].atten.y = 0.0001f;    // Linear
+    ::g_pLightManager->vecLights[3].atten.z = 0.0470901;    // Quadratic
+    ::g_pLightManager->vecLights[3].diffuse = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+
+    // Engine lights for the X-wing
+    ::g_pLightManager->vecLights[4].position = glm::vec4(-4.2f, 5.0f, 24.0f, 1.0f);
+    ::g_pLightManager->vecLights[4].param1.x = 0.0f;   // Point light
+    ::g_pLightManager->vecLights[4].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[4].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[4].atten.z = 3.71354f;    // Quadratic
+    ::g_pLightManager->vecLights[4].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[4].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[4].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+    ::g_pLightManager->vecLights[5].position = glm::vec4(-2.7f, 5.0f, 24.0f, 1.0f);
+    ::g_pLightManager->vecLights[5].param1.x = 0.0f;   // Point light
+    ::g_pLightManager->vecLights[5].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[5].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[5].atten.z = 3.71354f;    // Quadratic
+    ::g_pLightManager->vecLights[5].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[5].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[5].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+    ::g_pLightManager->vecLights[6].position = glm::vec4(-4.2f, 6.7f, 24.0f, 1.0f);
+    ::g_pLightManager->vecLights[6].param1.x = 0.0f;   // Point light
+    ::g_pLightManager->vecLights[6].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[6].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[6].atten.z = 3.71354f;    // Quadratic
+    ::g_pLightManager->vecLights[6].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[6].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[6].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+    ::g_pLightManager->vecLights[7].position = glm::vec4(-2.7f, 6.7f, 24.0f, 1.0f);
+    ::g_pLightManager->vecLights[7].param1.x = 0.0f;   // Point light
+    ::g_pLightManager->vecLights[7].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[7].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[7].atten.z = 3.71354f;    // Quadratic
+    ::g_pLightManager->vecLights[7].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[7].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[7].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+
 
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;

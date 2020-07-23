@@ -14,32 +14,37 @@ void LoadAllThemodels( unsigned int program,
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager )
 {
-    {// Load the space shuttle, too
+    {
         sModelDrawInfo mdiIsosphere;
         pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply",
                                           mdiIsosphere, program);
     }
-    {// Load the space shuttle, too
+    {
         sModelDrawInfo mdiATAT;
         pTheVAOManager->LoadModelIntoVAO("assets/models/00_atat_xyz_n_rgba_uv.ply",
                                          mdiATAT, program);
     }
-    {// Load the space shuttle, too
+    {
         sModelDrawInfo mdiSpeeder;
         pTheVAOManager->LoadModelIntoVAO("assets/models/00_Star Wars Snowspeeder_xyz_n_rgba_uv_2.ply",
                                          mdiSpeeder, program);
     }
-    {// Load the space shuttle, too
+    {
         sModelDrawInfo mdiYWing;
         pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_y-wing_xyz_n_rgba_uv_2.ply",
                                          mdiYWing, program);
     }
-    {// Load the space shuttle, too
+    {
+        sModelDrawInfo mdiXWing;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_X-Wing_Attack_xyz_n_rgba_uv.ply",
+                                         mdiXWing, program);
+    }
+    {
         sModelDrawInfo mdiInvertedNormalSphere;
         pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_Isoshphere_xyz_n_rgba_uv_InvertedNormals.ply",
                                          mdiInvertedNormalSphere, program);
     }
-    {// Load the space shuttle, too
+    {
         sModelDrawInfo mditerrain;
         pTheVAOManager->LoadModelIntoVAO("assets/models/00_terrain_xyz_n_rgba_uv.ply",
                                          mditerrain, program);
@@ -96,6 +101,18 @@ void LoadAllThemodels( unsigned int program,
     //pYWing->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     //pYWing->isWireframe = true;
    ::g_pVecObjects.push_back(pYWing);
+
+    // Add to the list of things to draw
+    cMeshObject* pXWing = new cMeshObject();
+    pXWing->meshName = "assets/models/0_review_X-Wing_Attack_xyz_n_rgba_uv.ply";
+    pXWing->scale = 1.0f;
+    pXWing->colourRGBA = glm::vec4(0.91f, 0.80f, 0.85f, 1.0f);
+    pXWing->position = glm::vec3(-3.5f, 6.0f, 20.0f);
+    pXWing->orientation.x = glm::radians(90.0f);
+    pXWing->orientation.z = glm::radians(180.0f);
+    //pYWing->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    //pYWing->isWireframe = true;
+   ::g_pVecObjects.push_back(pXWing);
 
     // Add to the list of things to draw
     cMeshObject* pInvertedNormalSphere = new cMeshObject();
