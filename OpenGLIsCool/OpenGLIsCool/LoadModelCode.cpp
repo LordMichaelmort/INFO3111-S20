@@ -48,7 +48,12 @@ void LoadAllThemodels( unsigned int program,
         sModelDrawInfo mditerrain;
         pTheVAOManager->LoadModelIntoVAO("assets/models/00_terrain_xyz_n_rgba_uv.ply",
                                          mditerrain, program);
-    }    // ENDOF: Loading the models
+    }    
+    {
+        sModelDrawInfo mdiTorpedo;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_TearDropBullet_inverted_normals_xyz_n_rgba_uv.ply",
+                                         mdiTorpedo, program);
+    }    
 
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();
@@ -59,9 +64,17 @@ void LoadAllThemodels( unsigned int program,
     // If this is false, just don't draw it.
     pISOBall->isVisible = false;
     pISOBall->friendlyName = "DebugSphere"; // We can find it later.
-
     ::g_pVecObjects.push_back(pISOBall);
 
+    cMeshObject* pTorpedo = new cMeshObject();
+    pTorpedo->meshName = "assets/models/0_review_TearDropBullet_inverted_normals_xyz_n_rgba_uv.ply";
+    pTorpedo->colourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    pTorpedo->position = glm::vec3(0.25f, 3.5f, 4.5f);
+    pTorpedo->scale = 1.0f;
+    pTorpedo->friendlyName = "Torpedo";
+    pTorpedo->isWireframe = false;
+    pTorpedo->isVisible = false;
+    ::g_pVecObjects.push_back(pTorpedo);
 
      // Add to the list of things to draw
     cMeshObject* pTerrain = new cMeshObject();

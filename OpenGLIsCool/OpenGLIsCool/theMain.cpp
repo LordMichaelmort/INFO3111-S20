@@ -101,6 +101,10 @@ cVAOManager* g_pTheVAOManager = 0;          // NULL or nullptr
 
 bool g_isWireFrame = false;
 
+// For the AT-AT shooting thing
+glm::vec3 g_TorpedoStartLocation = glm::vec3(0.25f, 3.5f, 4.5f);
+bool g_bTorpedoIsMoving = false;
+
 
 //static const char* vertex_shader_text =
 //"#version 110\n"
@@ -229,6 +233,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     // if there are NO "modifier" keys (mods), then mods == 0 
    
 
+    // Shoot the torpedo (from the AT-AT)
+    if (::g_bTorpedoIsMoving == false)
+    {
+        if ( key == GLFW_KEY_ENTER )
+        {
+            // Reset the torpedo to the end of the AT-AT gun
+            cMeshObject* pTorpedo = findObjectByName("Torpedo");
+            pTorpedo->position = ::g_TorpedoStartLocation;
+            ::g_bTorpedoIsMoving = true;
+        }
+    }//if (::g_bTorpedoIsMoving == false)
 
 
     // ONLY shift is down (control light)
@@ -492,7 +507,7 @@ int main(void)
     ::g_pLightManager->vecLights[4].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[4].atten.y = 0.00001f;    // Linear
     ::g_pLightManager->vecLights[4].atten.z = 3.71354f;    // Quadratic
-    ::g_pLightManager->vecLights[4].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[4].diffuse = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
     ::g_pLightManager->vecLights[4].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[4].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
@@ -522,6 +537,16 @@ int main(void)
     ::g_pLightManager->vecLights[7].diffuse = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
     ::g_pLightManager->vecLights[7].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[7].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
+
+//    ::g_pLightManager->vecLights[8].position = glm::vec4(-2.7f, 6.7f, 24.0f, 1.0f);
+    ::g_pLightManager->vecLights[8].param1.x = 0.0f;   // Point light
+    ::g_pLightManager->vecLights[8].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[8].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[8].atten.z = 0.21354f;    // Quadratic
+    ::g_pLightManager->vecLights[8].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[8].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    // Make light OFF to start
+    ::g_pLightManager->vecLights[8].param2.x = 0.0f;        // 1.0 for on (0.0 for off)
 
 
 
@@ -602,6 +627,57 @@ int main(void)
         ////x = 0 for off, 1 for on
         //glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
 
+
+        // STARTOF: Update anything per frame
+        {
+            cMeshObject* pTorpedo = findObjectByName("Torpedo");
+
+            if ( ::g_bTorpedoIsMoving )
+            {
+                // Update the topedo location
+                const float TORPEDOMOVESPEED = 0.5f;
+                pTorpedo->position.z += TORPEDOMOVESPEED;
+                
+                // Place the light inside the torpedo (i.e. at the same location)
+                ::g_pLightManager->vecLights[8].position = glm::vec4(pTorpedo->position, 1.0f);
+                // Turn light ON
+                ::g_pLightManager->vecLights[8].param2.x = 1.0f;
+
+                // Make torpedo visible
+                pTorpedo->isVisible = true;
+
+                // How far is the topedo?
+                const float MAXTORPEDODISTANCE = 300.0f;
+                if (glm::distance(pTorpedo->position, ::g_TorpedoStartLocation) > MAXTORPEDODISTANCE)
+                {
+                    ::g_bTorpedoIsMoving = false;
+                }
+            }
+            else
+            {
+                // Turn light OFF
+                ::g_pLightManager->vecLights[8].param2.x = 0.0f;
+                // Hide torpedo
+                pTorpedo->isVisible = false;
+            }
+
+            // "flicker" the engine lights on the X-Wing (not on exam, just something you could do...
+            for (unsigned int index = 4; index != 8; index++)
+            {
+                ::g_pLightManager->vecLights[index].atten.x = 0.0f;         // Constant
+                ::g_pLightManager->vecLights[index].atten.y = 0.00001f;    // Linear
+                ::g_pLightManager->vecLights[index].atten.z = 3.71354f;    // Quadratic
+
+                float rPerterb = ((float)rand() / (RAND_MAX));
+                // Pick a number between 0.25 and 0.5f;
+//                rPerterb /= 2.0f;
+//                rPerterb += 0.25f;
+                ::g_pLightManager->vecLights[index].atten.y += rPerterb;    // Linear
+            }
+
+
+        }
+        // ENDOF: Update anything per frame
 
 
         // *******************************************
