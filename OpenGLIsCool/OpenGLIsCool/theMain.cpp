@@ -812,6 +812,8 @@ void DrawObject( cMeshObject* pCurMesh,
 
     GLint hasNoLighting_LocID = glGetUniformLocation(program, "hasNoLighting");
 
+    GLint bUseVertexColours_LocID = glGetUniformLocation(program, "bUseVertexColours");
+    glUniform1f(bUseVertexColours_LocID, (float)GL_TRUE);
 
     glm::mat4 matModel;
 

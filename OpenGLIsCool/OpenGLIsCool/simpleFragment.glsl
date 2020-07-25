@@ -32,6 +32,7 @@ const int NUMBEROFLIGHTS = 10;
 uniform sLight theLights[NUMBEROFLIGHTS];  	// 80 uniforms
 
 uniform vec3 diffuseColour;
+uniform bool bUseVertexColours;		// ADDED: July 25 help session
 uniform vec4 specularColour;
 
 uniform vec4 eyeLocation;
@@ -59,11 +60,21 @@ void main()
 	}
 	else
 	{	
-		outputColour = calcualteLightContrib( diffuseColour, 
-											   vec3(fNormal.xyz),
-											   vec3(fVertWorldPos),
-											   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
-	}
+		if ( bUseVertexColours )		// ADDED: July 25 help session
+		{
+			outputColour = calcualteLightContrib( fColour.rgb, 
+												   vec3(fNormal.xyz),
+												   vec3(fVertWorldPos),
+												   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+		}
+		else
+		{
+			outputColour = calcualteLightContrib( diffuseColour, 
+												   vec3(fNormal.xyz),
+												   vec3(fVertWorldPos),
+												   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+		}//if ( bUseVertexColours )
+	}//if ( hasNoLighting )
 	
 }
 
