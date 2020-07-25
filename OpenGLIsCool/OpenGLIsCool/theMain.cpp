@@ -711,15 +711,17 @@ int main(void)
             // "flicker" the engine lights on the X-Wing (not on exam, just something you could do...
             for (unsigned int index = 4; index != 8; index++)
             {
+                 
                 ::g_pLightManager->vecLights[index].atten.x = 0.0f;         // Constant
                 ::g_pLightManager->vecLights[index].atten.y = 0.00001f;    // Linear
                 ::g_pLightManager->vecLights[index].atten.z = 3.71354f;    // Quadratic
 
+                // Rand number between 0.0 and 1.0
                 float rPerterb = ((float)rand() / (RAND_MAX));
                 // Pick a number between 0.25 and 0.5f;
 //                rPerterb /= 2.0f;
 //                rPerterb += 0.25f;
-                ::g_pLightManager->vecLights[index].atten.y += rPerterb;    // Linear
+                ::g_pLightManager->vecLights[index].atten.x += rPerterb;    // Linear
             }
 
 
