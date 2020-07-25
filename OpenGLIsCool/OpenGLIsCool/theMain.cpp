@@ -32,6 +32,12 @@ void DrawObject(cMeshObject* pCurMesh,
                 glm::mat4& matProjection);      // Projection matrix
 
 
+// THIS IS ****NOT***** on the mid-term, but a student asked about it
+// (mouse callback)
+void mouse_position_callback(GLFWwindow* window, double xpos, double ypos);
+
+
+
 // Camera stuff
 glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -45,6 +51,7 @@ cLightManager* g_pLightManager = 0;    // or NULL or nullptr
 int g_selectedLightID = 0;
 
 bool g_ShowLightDebugSpheres = true;
+bool g_Show3AxisCursor = true;      // July 25th help session
 
 
 //// This a light structure to match what's in the shader
@@ -283,7 +290,41 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         if (key == GLFW_KEY_S) { ::g_cameraEye.z -= CAMERASPEED; }
         if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= CAMERASPEED; }
         if (key == GLFW_KEY_E) { ::g_cameraEye.y += CAMERASPEED; }
+
+        // Place camera at specific locations:
+        // Just behind the X - wing, looking forward->press "B"
+        if (key == GLFW_KEY_B)
+        {
+            ::g_cameraEye = glm::vec3(-6.0f, 7.0f, 27.0f);
+            ::g_cameraTarget = glm::vec3(10.0f, 10.0f, -20.0f);
+        }
+            
+        // Just behind the AT - AT, looking at the X - wing->press "N"
+        if (key == GLFW_KEY_N)
+        {
+            ::g_cameraEye = glm::vec3(4.0f, 3.0f, -9.0f);
+            ::g_cameraTarget = glm::vec3(-3.0f, 6.0f, 25.0f);
+        }
+
+
+
     }//if (mods == 0)
+
+    if (mods == GLFW_MOD_CONTROL)
+    {   
+        // move target
+        //::g_cameraEye.x -= CAMERASPEED;
+        if (key == GLFW_KEY_A) { ::g_cameraTarget.x -= CAMERASPEED; }
+        if (key == GLFW_KEY_D) { ::g_cameraTarget.x += CAMERASPEED; }
+        if (key == GLFW_KEY_W) { ::g_cameraTarget.z += CAMERASPEED; }
+        if (key == GLFW_KEY_S) { ::g_cameraTarget.z -= CAMERASPEED; }
+        if (key == GLFW_KEY_Q) { ::g_cameraTarget.y -= CAMERASPEED; }
+        if (key == GLFW_KEY_E) { ::g_cameraTarget.y += CAMERASPEED; }
+
+        // Turns off or on the "target" 3 Axis Cursor
+        if ( key==GLFW_KEY_0) { ::g_Show3AxisCursor = true; }
+        if ( key==GLFW_KEY_9) { ::g_Show3AxisCursor = false; }
+    }
 
     //if (key == GLFW_KEY_L)
     //{
@@ -361,6 +402,9 @@ int main(void)
     }
 
     glfwSetKeyCallback(window, key_callback);
+    // Mouse callback (****NOT*** on mid-term)
+    glfwSetCursorPosCallback(window, mouse_position_callback);
+
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
@@ -466,7 +510,7 @@ int main(void)
     ::g_pLightManager->vecLights[0].param1.x = 0;   // Point light
     ::g_pLightManager->vecLights[0].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[0].atten.y = 0.0150704719f;    // Linear
-    ::g_pLightManager->vecLights[0].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[0].atten.z = 2.42356309e-05f;    // Quadratic
     ::g_pLightManager->vecLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
@@ -495,7 +539,7 @@ int main(void)
     ::g_pLightManager->vecLights[3].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[3].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[3].atten.y = 0.0001f;    // Linear
-    ::g_pLightManager->vecLights[3].atten.z = 0.0470901;    // Quadratic
+    ::g_pLightManager->vecLights[3].atten.z = 0.0470901f;    // Quadratic
     ::g_pLightManager->vecLights[3].diffuse = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
@@ -600,9 +644,9 @@ int main(void)
         //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
         //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
-                         ::g_cameraTarget,  // "at"  (looking "at")
-                         ::g_upVector );    
+        matView = glm::lookAt(  ::g_cameraEye,     // "position" "eye"
+                                ::g_cameraTarget,  // "at"  (looking "at")
+                                ::g_upVector );    
 
         
         // Pass the lighting info to the shader
@@ -637,6 +681,9 @@ int main(void)
                 // Update the topedo location
                 const float TORPEDOMOVESPEED = 0.5f;
                 pTorpedo->position.z += TORPEDOMOVESPEED;
+
+                // Have the camera look at the torpedo
+//                ::g_cameraTarget = pTorpedo->position;
                 
                 // Place the light inside the torpedo (i.e. at the same location)
                 ::g_pLightManager->vecLights[8].position = glm::vec4(pTorpedo->position, 1.0f);
@@ -747,9 +794,17 @@ int main(void)
             pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
             pDebugBall->scale = dist75;
             DrawObject(pDebugBall, program, matView, matProjection);
-            pDebugBall->isVisible = false;\
+            pDebugBall->isVisible = false;
         
         }// if (::g_ShowLightDebugSpheres)
+
+
+        {   // Camera target 3 axis cursor
+            cMeshObject* p3AxisCursor = findObjectByName("3 Axis Cursor");
+            p3AxisCursor->position = ::g_cameraTarget;
+
+            p3AxisCursor->isVisible = ::g_Show3AxisCursor;
+        }
 
        // ****************************
         // **** END OF: Draw scene ****
@@ -813,7 +868,7 @@ void DrawObject( cMeshObject* pCurMesh,
     GLint hasNoLighting_LocID = glGetUniformLocation(program, "hasNoLighting");
 
     GLint bUseVertexColours_LocID = glGetUniformLocation(program, "bUseVertexColours");
-    glUniform1f(bUseVertexColours_LocID, (float)GL_TRUE);
+ //   glUniform1f(bUseVertexColours_LocID, (float)GL_TRUE);
 
     glm::mat4 matModel;
 
@@ -926,3 +981,14 @@ void DrawObject( cMeshObject* pCurMesh,
 
     return;
 }// DrawObject()
+
+
+
+
+// THIS IS ****NOT***** on the mid-term, but a student asked about it
+// (mouse callback)
+static void mouse_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+//    std::cout << "Mouse: " << xpos << ", " << ypos << std::endl;
+    return;
+}

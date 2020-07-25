@@ -15,6 +15,11 @@ void LoadAllThemodels( unsigned int program,
                        cVAOManager* pTheVAOManager )
 {
     {
+        sModelDrawInfo mdi3AxisCursor;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/three_axis_cursor_xyz_n_rgba_uv.ply",
+                                         mdi3AxisCursor, program);
+    }
+    {
         sModelDrawInfo mdiIsosphere;
         pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply",
                                           mdiIsosphere, program);
@@ -138,6 +143,12 @@ void LoadAllThemodels( unsigned int program,
     //pInvertedNormalSphere->isWireframe = true;
    ::g_pVecObjects.push_back(pInvertedNormalSphere);
 
+    cMeshObject* p3AxisCursor = new cMeshObject();
+    p3AxisCursor->meshName = "assets/models/three_axis_cursor_xyz_n_rgba_uv.ply";
+    p3AxisCursor->scale = 1.0f;
+    p3AxisCursor->colourRGBA = glm::vec4(0.47f, 0.19f, 0.33f, 1.0f); // Hot pink
+    p3AxisCursor->friendlyName = "3 Axis Cursor";
+   ::g_pVecObjects.push_back(p3AxisCursor);
 
     return;
 }
