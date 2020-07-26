@@ -247,13 +247,19 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 //    }
 
     // Left mouse down = 10x faster camera speed
-    int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-    if (state == GLFW_PRESS)
+    int stateLeftMouseButton = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    if (stateLeftMouseButton == GLFW_PRESS)
     {
         // Increase the camera speed
         cameraMovementSpeed *= 10.0f;
     }
-   
+    int stateRightMouseButton = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+    if (stateRightMouseButton == GLFW_PRESS)
+    {
+        // Decrease the camera speed
+        cameraMovementSpeed /= 10.0f;
+    }
+  
 
     // Shoot the torpedo (from the AT-AT)
     if (::g_bTorpedoIsMoving == false)
