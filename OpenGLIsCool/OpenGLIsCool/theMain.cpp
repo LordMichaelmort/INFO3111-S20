@@ -39,7 +39,7 @@ void mouse_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
+glm::vec3 g_cameraEye = glm::vec3(0.0, 53.0, -1200.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -232,12 +232,27 @@ static void error_callback(int error, const char* description)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    const float CAMERASPEED = 1.0f;
+//    const float cameraMovementSpeed = 1.0f;
+    float cameraMovementSpeed = 1.0f;
     // WSAD - AD are "right and left"
     //      - SW are "forward and back"
     //      - QE are "up and down"
 
     // if there are NO "modifier" keys (mods), then mods == 0 
+
+//    if (mods == GLFW_MOD_ALT)
+//   {
+//        // Increase the camera speed
+//        cameraMovementSpeed *= 10.0f;
+//    }
+
+    // Left mouse down = 10x faster camera speed
+    int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    if (state == GLFW_PRESS)
+    {
+        // Increase the camera speed
+        cameraMovementSpeed *= 10.0f;
+    }
    
 
     // Shoot the torpedo (from the AT-AT)
@@ -261,12 +276,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         if (key == GLFW_KEY_3) { ::g_pLightManager->vecLights[g_selectedLightID].atten.z *= 0.99f;}    // Quardatic
         if (key == GLFW_KEY_4) { ::g_pLightManager->vecLights[g_selectedLightID].atten.z *= 1.01f;}    // Quardatic
 
-        if (key == GLFW_KEY_A) { ::g_pLightManager->vecLights[g_selectedLightID].position.x -= CAMERASPEED; }
-        if (key == GLFW_KEY_D) { ::g_pLightManager->vecLights[g_selectedLightID].position.x += CAMERASPEED; }
-        if (key == GLFW_KEY_W) { ::g_pLightManager->vecLights[g_selectedLightID].position.z += CAMERASPEED; }
-        if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[g_selectedLightID].position.z -= CAMERASPEED; }
-        if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[g_selectedLightID].position.y -= CAMERASPEED; }
-        if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[g_selectedLightID].position.y += CAMERASPEED; }
+        if (key == GLFW_KEY_A) { ::g_pLightManager->vecLights[g_selectedLightID].position.x -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_D) { ::g_pLightManager->vecLights[g_selectedLightID].position.x += cameraMovementSpeed; }
+        if (key == GLFW_KEY_W) { ::g_pLightManager->vecLights[g_selectedLightID].position.z += cameraMovementSpeed; }
+        if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[g_selectedLightID].position.z -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[g_selectedLightID].position.y -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[g_selectedLightID].position.y += cameraMovementSpeed; }
         
 
         if ( key==GLFW_KEY_0) { ::g_ShowLightDebugSpheres = true; }
@@ -283,13 +298,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     // if ( mods == 0 ) then no "modifiers" are pressed
     if (mods == 0)
     {
-        //::g_cameraEye.x -= CAMERASPEED;
-        if (key == GLFW_KEY_A) { ::g_cameraEye.x -= CAMERASPEED; }
-        if (key == GLFW_KEY_D) { ::g_cameraEye.x += CAMERASPEED; }
-        if (key == GLFW_KEY_W) { ::g_cameraEye.z += CAMERASPEED; }
-        if (key == GLFW_KEY_S) { ::g_cameraEye.z -= CAMERASPEED; }
-        if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= CAMERASPEED; }
-        if (key == GLFW_KEY_E) { ::g_cameraEye.y += CAMERASPEED; }
+        //::g_cameraEye.x -= cameraMovementSpeed;
+        if (key == GLFW_KEY_A) { ::g_cameraEye.x -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_D) { ::g_cameraEye.x += cameraMovementSpeed; }
+        if (key == GLFW_KEY_W) { ::g_cameraEye.z += cameraMovementSpeed; }
+        if (key == GLFW_KEY_S) { ::g_cameraEye.z -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_E) { ::g_cameraEye.y += cameraMovementSpeed; }
 
         // Place camera at specific locations:
         // Just behind the X - wing, looking forward->press "B"
@@ -313,13 +328,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     if (mods == GLFW_MOD_CONTROL)
     {   
         // move target
-        //::g_cameraEye.x -= CAMERASPEED;
-        if (key == GLFW_KEY_A) { ::g_cameraTarget.x -= CAMERASPEED; }
-        if (key == GLFW_KEY_D) { ::g_cameraTarget.x += CAMERASPEED; }
-        if (key == GLFW_KEY_W) { ::g_cameraTarget.z += CAMERASPEED; }
-        if (key == GLFW_KEY_S) { ::g_cameraTarget.z -= CAMERASPEED; }
-        if (key == GLFW_KEY_Q) { ::g_cameraTarget.y -= CAMERASPEED; }
-        if (key == GLFW_KEY_E) { ::g_cameraTarget.y += CAMERASPEED; }
+        //::g_cameraEye.x -= cameraMovementSpeed;
+        if (key == GLFW_KEY_A) { ::g_cameraTarget.x -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_D) { ::g_cameraTarget.x += cameraMovementSpeed; }
+        if (key == GLFW_KEY_W) { ::g_cameraTarget.z += cameraMovementSpeed; }
+        if (key == GLFW_KEY_S) { ::g_cameraTarget.z -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_Q) { ::g_cameraTarget.y -= cameraMovementSpeed; }
+        if (key == GLFW_KEY_E) { ::g_cameraTarget.y += cameraMovementSpeed; }
 
         // Turns off or on the "target" 3 Axis Cursor
         if ( key==GLFW_KEY_0) { ::g_Show3AxisCursor = true; }
@@ -328,11 +343,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     //if (key == GLFW_KEY_L)
     //{
-    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z += glm::radians(CAMERASPEED);
+    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z += glm::radians(cameraMovementSpeed);
     //}
     //if (key == GLFW_KEY_K)
     //{
-    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(CAMERASPEED);
+    //    ::g_pVecObjects[::g_selectedObjectID]->orientation.z -= glm::radians(cameraMovementSpeed);
     //}
     if (key == GLFW_KEY_7 && action == GLFW_PRESS)
     {
@@ -515,13 +530,13 @@ int main(void)
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
-    // Engine lights on the Y-Wing
-    ::g_pLightManager->vecLights[1].position = glm::vec4(14.0f, 10.0f, 7.0f, 1.0f);
+    // Engine lights on the Star Destroyer
+    ::g_pLightManager->vecLights[1].position = glm::vec4(54.0f, 273.0f, 766.0f, 1.0f);    
     ::g_pLightManager->vecLights[1].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[1].atten.x = 0.0f;     // Constant
-    ::g_pLightManager->vecLights[1].atten.y = 0.0001f;    // Linear
-    ::g_pLightManager->vecLights[1].atten.z = 0.457916f;    // Quadratic
-    ::g_pLightManager->vecLights[1].diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[1].atten.y = 0.0f;    // Linear
+    ::g_pLightManager->vecLights[1].atten.z = 0.00228031f;    // Quadratic
+    ::g_pLightManager->vecLights[1].diffuse = glm::vec4(76.0f/255.0f, 247.0f / 255.0f, 219.0f / 255.0f, 1.0f);
     ::g_pLightManager->vecLights[1].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[1].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
@@ -624,25 +639,12 @@ int main(void)
         glEnable(GL_DEPTH_TEST);
         glCullFace(GL_BACK);
 
-
-        //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-//        glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-//                                        (float)glfwGetTime(),
-//                                        glm::vec3(0.0f, 0.0, 1.0f));
-//
-//       m = m * rotateZ;
-
-        //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         matProjection = glm::perspective( 0.6f,
                                           ratio,
                                           0.1f,          // Near plane
                                           10000.0f);      // Far plane
 
         matView = glm::mat4(1.0f);
-
-        //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
-        //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
         matView = glm::lookAt(  ::g_cameraEye,     // "position" "eye"
                                 ::g_cameraTarget,  // "at"  (looking "at")
@@ -651,25 +653,6 @@ int main(void)
         
         // Pass the lighting info to the shader
         ::g_pLightManager->CopyLightValuesToShader();
-
-        //// Get the uniform locations for the light(s)
-        //GLint theLights_0_position_LocID = glGetUniformLocation(program, "theLights[0].position");
-        //GLint theLights_0_diffuse_LocID = glGetUniformLocation(program, "theLights[0].diffuse");
-        //GLint theLights_0_specular_LocID = glGetUniformLocation(program, "theLights[0].specular");
-        //GLint theLights_0_atten_LocID = glGetUniformLocation(program, "theLights[0].atten");
-        //GLint theLights_0_direction_LocID = glGetUniformLocation(program, "theLights[0].direction");
-        //GLint theLights_0_param1_LocID = glGetUniformLocation(program, "theLights[0].param1");
-        //GLint theLights_0_param2_LocID = glGetUniformLocation(program, "theLights[0].param2");
-
-        //// Set the ligthing for the "scene"
-        //glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
-        //glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
-        //glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
-        //glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
-        //glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
-        //glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
-        ////x = 0 for off, 1 for on
-        //glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
 
 
         // STARTOF: Update anything per frame
@@ -994,3 +977,4 @@ static void mouse_position_callback(GLFWwindow* window, double xpos, double ypos
 //    std::cout << "Mouse: " << xpos << ", " << ypos << std::endl;
     return;
 }
+

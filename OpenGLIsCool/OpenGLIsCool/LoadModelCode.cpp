@@ -59,6 +59,13 @@ void LoadAllThemodels( unsigned int program,
         pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_TearDropBullet_inverted_normals_xyz_n_rgba_uv.ply",
                                          mdiTorpedo, program);
     }    
+    {
+        // NOTE: this file is 7z compressed, since git has a limit of 100M files. 
+        // Ah git, you are so just barely adequate...
+        sModelDrawInfo mdiStarDestroyer;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Stardestroyer_xyz_n_rgba_uv.ply",
+                                         mdiStarDestroyer, program);
+    }    
 
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();
@@ -85,7 +92,7 @@ void LoadAllThemodels( unsigned int program,
     cMeshObject* pTerrain = new cMeshObject();
     pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
     pTerrain->scale = 1.0f;
-    pTerrain->position.y = -10.0f;
+    pTerrain->position.y = -150.0f;
     pTerrain->colourRGBA = glm::vec4(0.95f, 0.95f, 0.95f, 1.0f);
     ::g_pVecObjects.push_back(pTerrain);
 
@@ -149,6 +156,16 @@ void LoadAllThemodels( unsigned int program,
     p3AxisCursor->colourRGBA = glm::vec4(0.47f, 0.19f, 0.33f, 1.0f); // Hot pink
     p3AxisCursor->friendlyName = "3 Axis Cursor";
    ::g_pVecObjects.push_back(p3AxisCursor);
+
+    cMeshObject* pStarDestroyer = new cMeshObject();
+    pStarDestroyer->meshName = "assets/models/Stardestroyer_xyz_n_rgba_uv.ply";
+    pStarDestroyer->scale = 1.0f;
+    pStarDestroyer->position.y = 400.0f;
+    pStarDestroyer->position.x = -200.0f;
+    pStarDestroyer->colourRGBA = glm::vec4(0.85f, 0.85f, 0.85f, 1.0f);
+    //pStarDestroyer->colourRGBA = glm::vec4(0.47f, 0.19f, 0.33f, 1.0f); // Hot pink
+    //pStarDestroyer->isWireframe = true;
+   ::g_pVecObjects.push_back(pStarDestroyer);
 
     return;
 }
