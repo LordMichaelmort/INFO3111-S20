@@ -5,6 +5,7 @@
 
 #include "cVAOManager.h"
 #include "cMeshObject.h"
+#include <iostream>
 
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager, 
@@ -59,6 +60,21 @@ void LoadAllThemodels( unsigned int program,
         pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_TearDropBullet_inverted_normals_xyz_n_rgba_uv.ply",
                                          mdiTorpedo, program);
     }    
+    {
+        sModelDrawInfo mdiIsland;
+        if (pTheVAOManager->LoadModelIntoVAO("assets/models/SM_Env_Rock_Skull_01.ply",
+                                             mdiIsland, program))
+        {
+            std::cout << "Loaded the island. Hazzah!" << std::endl;
+        }
+    }    
+     // Add to the list of things to draw
+    cMeshObject* pIsland = new cMeshObject();
+    pIsland->meshName = "assets/models/SM_Env_Rock_Skull_01.ply";
+    pIsland->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    pIsland->position.x = 10.0f;
+ //   pIsland->isWireframe = true;
+    ::g_pVecObjects.push_back(pIsland);
 
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();

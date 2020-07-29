@@ -958,6 +958,8 @@ void DrawObject( cMeshObject* pCurMesh,
         glUniform1f(hasNoLighting_LocID, (float)GL_FALSE);
     }
 
+    GLint useVertColours_LocID = glGetUniformLocation(program, "bUseVertexColours");
+    glUniform1f(useVertColours_LocID, 1.0f);
 
     // set the uniform colour info
     //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
