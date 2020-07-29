@@ -1,0 +1,63 @@
+ Volume in drive D has no label.
+ Volume Serial Number is C201-A99C
+
+ Directory of D:\3111_3D\2020\Code\INFO3111-S20\OpenGLIsCool\OpenGLIsCool\assets\models
+
+2020-07-29  05:15 PM         4,314,668 FeeneyIslandSeed1295.ply
+2020-07-20  10:58 AM            92,104 ISO_Shphere_flat_3div_xyz_n_rgba_uv.ply
+2020-07-20  10:59 AM           375,818 ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply
+2020-07-27  12:26 PM            15,339 SM_Env_Bush_01.ply
+2020-07-27  12:25 PM            13,281 SM_Env_Bush_02.ply
+2020-07-27  10:32 AM            18,163 SM_Env_Fern_01.ply
+2020-07-27  12:24 PM            20,183 SM_Env_Flowers_01.ply
+2020-07-27  12:23 PM           101,615 SM_Env_Flowers_02.ply
+2020-07-27  12:23 PM            23,566 SM_Env_Mangrove_Roots_01.ply
+2020-07-27  12:22 PM            86,048 SM_Env_Mangrove_Tree_01.ply
+2020-07-27  12:21 PM            79,805 SM_Env_Mangrove_Tree_02.ply
+2020-07-27  12:20 PM            35,026 SM_Env_PalmBush_03.ply
+2020-07-27  12:19 PM            52,977 SM_Env_PalmTree_01.ply
+2020-07-27  12:19 PM            52,875 SM_Env_PalmTree_02.ply
+2020-07-27  12:18 PM            49,536 SM_Env_PalmTree_03.ply
+2020-07-27  12:17 PM            54,033 SM_Env_PalmTree_04.ply
+2020-07-27  12:16 PM            52,442 SM_Env_PalmTree_Tall_01.ply
+2020-07-27  12:15 PM            52,849 SM_Env_PalmTree_Tall_02.ply
+2020-07-27  12:14 PM            28,123 SM_Env_Plants_01.ply
+2020-07-27  12:13 PM            18,272 SM_Env_Plants_02.ply
+2020-07-27  12:12 PM            27,539 SM_Env_Plants_03.ply
+2020-07-27  11:33 AM            14,761 SM_Env_Rocks_01.ply
+2020-07-27  11:31 AM            16,332 SM_Env_Rocks_02.ply
+2020-07-27  11:28 AM             4,551 SM_Env_Rocks_03.ply
+2020-07-27  12:12 PM             8,856 SM_Env_Rock_01.ply
+2020-07-27  12:11 PM             8,865 SM_Env_Rock_02.ply
+2020-07-27  12:10 PM            14,338 SM_Env_Rock_03.ply
+2020-07-27  11:37 AM            62,407 SM_Env_Rock_Arch_01.ply
+2020-07-27  11:39 AM            33,751 SM_Env_Rock_Huge_01.ply
+2020-07-27  12:09 PM            33,828 SM_Env_Rock_Huge_02.ply
+2020-07-27  12:09 PM            33,886 SM_Env_Rock_Huge_03.ply
+2020-07-27  12:08 PM            14,094 SM_Env_Rock_Huge_04.ply
+2020-07-27  12:07 PM            21,490 SM_Env_Rock_Large_01.ply
+2020-07-27  11:35 AM            40,289 SM_Env_Rock_Large_010.ply
+2020-07-27  11:34 AM            57,255 SM_Env_Rock_Large_011.ply
+2020-07-27  12:06 PM            56,942 SM_Env_Rock_Large_02.ply
+2020-07-27  12:05 PM            57,145 SM_Env_Rock_Large_03.ply
+2020-07-27  12:05 PM            40,086 SM_Env_Rock_Large_04.ply
+2020-07-27  12:03 PM            29,629 SM_Env_Rock_Large_05.ply
+2020-07-27  11:50 AM            54,214 SM_Env_Rock_Large_06.ply
+2020-07-27  11:49 AM            40,251 SM_Env_Rock_Large_07.ply
+2020-07-27  11:48 AM            55,731 SM_Env_Rock_Large_08.ply
+2020-07-27  11:48 AM            85,450 SM_Env_Rock_Large_09.ply
+2020-07-27  10:54 AM           122,265 SM_Env_Rock_Skull_01.ply
+2020-07-27  11:25 AM            27,516 SM_Env_Seaweed_01.ply
+2020-07-27  10:48 AM             2,165 SM_Env_SmallRock_01.ply
+2020-07-27  10:48 AM             2,625 SM_Env_SmallRock_02.ply
+2020-07-27  11:23 AM            93,529 SM_Env_Tree_Base_01.ply
+2020-07-27  11:21 AM            28,888 SM_Env_Tree_Base_02.ply
+2020-07-27  11:19 AM            45,021 SM_Env_Tree_Canopy_01.ply
+2020-07-27  10:52 AM            79,179 SM_Env_Tree_Canopy_02.ply
+2020-07-27  10:51 AM            90,568 SM_Env_Tree_Canopy_03.ply
+2020-07-27  10:47 AM            74,630 SM_Env_Tree_Canopy_04.ply
+2020-07-27  10:48 AM            24,262 SM_Env_Tree_Dead_01.ply
+2020-07-27  10:48 AM            64,889 SM_Env_Tree_Large_01.ply
+2020-07-27  10:48 AM            64,846 SM_Env_Tree_Large_02.ply
+              56 File(s)      7,068,796 bytes
+               0 Dir(s)  162,087,419,904 bytes free

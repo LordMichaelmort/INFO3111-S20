@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 // The vertex structure 
 //	that's ON THE GPU (eventually) 
@@ -57,8 +58,12 @@ struct sVert_xyzw_n_rgba_UVx2
 struct sModelDrawInfo
 {
 	sModelDrawInfo(); 
+	sModelDrawInfo(std::string meshFileNameNoPath);
+
+	void Reset(void);
 
 	std::string meshName;
+	std::string fileFileNameWithPath;
 
 	unsigned int VAO_ID;
 
@@ -106,12 +111,16 @@ class cVAOManager
 {
 public:
 
-	bool LoadModelIntoVAO(std::string fileName, 
+	bool LoadModelsInfoVAO( std::vector<sModelDrawInfo> &vecDrawInfos, 
+						    unsigned int shaderProgramID, 
+						    std::string &Errors );
+
+	bool LoadModelIntoVAO(std::string fileNameNoPath,
 						  sModelDrawInfo &drawInfo, 
 						  unsigned int shaderProgramID);
 
 	// Add a method like this, maybe?
-	bool LoadModelIntoVAO(std::string fileName, 
+	bool LoadModelIntoVAO(std::string fileNameNoPath,
 						  sModelDrawInfo &drawInfo, 
 						  sModelModifiers modelModifiers,	// TODO: for the student
 						  unsigned int shaderProgramID);
@@ -127,9 +136,12 @@ public:
 	void ScaleLoadedModel(float scale);						// TODO: for the student
 	void CentreAtOrigin(void);								// TODO: for the student
 
-
+	void setBaseLoadPath(std::string basepath);
+	std::string getBaseLoadPath(void);
 
 private:
+
+	std::string baseLoadPath;
 
 	std::map< std::string /*model name*/,
 		      sModelDrawInfo /* info needed to draw*/ >

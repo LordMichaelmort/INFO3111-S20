@@ -14,6 +14,21 @@
 
 sModelDrawInfo::sModelDrawInfo()
 {
+	this->Reset();
+	return;
+}
+
+sModelDrawInfo::sModelDrawInfo(std::string meshFileNameNoPath)
+{
+	this->Reset();
+	this->meshName = meshFileNameNoPath;
+	return;
+}
+
+
+
+void sModelDrawInfo::Reset(void)
+{
 	this->VAO_ID = 0;
 
 	this->VertexBufferID = 0;
@@ -40,6 +55,8 @@ sModelDrawInfo::sModelDrawInfo()
 
 	return;
 }
+
+
 
 
 bool cVAOManager::LoadModelIntoVAO(
@@ -183,13 +200,17 @@ bool cVAOManager::FindDrawInfoByModelName(
 }
 
 
-bool cVAOManager::m_LoadTheModel(std::string fileName,
+bool cVAOManager::m_LoadTheModel(std::string fileNameNoPath,
 								 sModelDrawInfo &drawInfo )
 {
 	// Open the file. 
 	// Read until we hit the word "vertex"
 	// Read until we hit the word "face"
 	// Read until we hit the word "end_header"
+
+	std::string fileName = this->baseLoadPath + fileNameNoPath;
+
+	drawInfo.fileFileNameWithPath = fileName;
 
 	std::ifstream thePlyFile( fileName.c_str() );
 	if ( ! thePlyFile.is_open() )
@@ -414,10 +435,6 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 			       >> tempTriangle.vindex[1]
 			       >> tempTriangle.vindex[2];
 
-		//// Look up the vertex that matches the triangle index values.
-		//tempTriangle.verts[0] = vecTempPlyVerts[ tempTriangle.vindex[0] ];
-		//tempTriangle.verts[1] = vecTempPlyVerts[ tempTriangle.vindex[1] ];
-		//tempTriangle.verts[2] = vecTempPlyVerts[ tempTriangle.vindex[2] ];
 
 		vecTempPlyTriangles.push_back( tempTriangle );
 	}//for ( unsigned int index...
@@ -455,28 +472,6 @@ bool cVAOManager::m_LoadTheModel(std::string fileName,
 		drawInfo.pIndices[indexBufferIndex + 0] = curTri.vindex[0];
 		drawInfo.pIndices[indexBufferIndex + 1] = curTri.vindex[1];
 		drawInfo.pIndices[indexBufferIndex + 2] = curTri.vindex[2];
-
-		//pVertices[ vertIndex + 0 ].x = curTri.verts[0].pos.x;
-		//pVertices[ vertIndex + 0 ].y = curTri.verts[0].pos.y;
-		//pVertices[ vertIndex + 0 ].z = curTri.verts[0].pos.z;
-		//pVertices[ vertIndex + 0 ].r = curTri.verts[0].colour.x;
-		//pVertices[ vertIndex + 0 ].g = curTri.verts[0].colour.y;
-		//pVertices[ vertIndex + 0 ].b = curTri.verts[0].colour.z;
-//
-		//pVertices[ vertIndex + 1 ].x = curTri.verts[1].pos.x;
-		//pVertices[ vertIndex + 1 ].y = curTri.verts[1].pos.y;
-		//pVertices[ vertIndex + 1 ].z = curTri.verts[1].pos.z;
-		//pVertices[ vertIndex + 1 ].r = curTri.verts[1].colour.x;
-		//pVertices[ vertIndex + 1 ].g = curTri.verts[1].colour.y;
-		//pVertices[ vertIndex + 1 ].b = curTri.verts[1].colour.z;
-//
-		//pVertices[ vertIndex + 2 ].x = curTri.verts[2].pos.x;
-		//pVertices[ vertIndex + 2 ].y = curTri.verts[2].pos.y;
-		//pVertices[ vertIndex + 2 ].z = curTri.verts[2].pos.z;
-		//pVertices[ vertIndex + 2 ].r = curTri.verts[2].colour.x;
-		//pVertices[ vertIndex + 2 ].g = curTri.verts[2].colour.y;
-		//pVertices[ vertIndex + 2 ].b = curTri.verts[2].colour.z;
-//
 	}// for ( unsigned int triIndex = 0...
 
 	return true;
@@ -511,4 +506,37 @@ void cVAOManager::m_AppendTextToLastError(std::string text, bool addNewLineBefor
 
 	return;
 
+}
+
+
+void cVAOManager::setBaseLoadPath(std::string basepath)
+{
+	this->baseLoadPath = basepath;
+	return;
+}
+
+std::string cVAOManager::getBaseLoadPath(void)
+{
+	return this->baseLoadPath;
+}
+
+bool cVAOManager::LoadModelsInfoVAO(std::vector<sModelDrawInfo> &vecDrawInfos, 
+					   unsigned int shaderProgramID, std::string &Errors)
+{
+	bool bAllGood = true;
+
+	for (std::vector<sModelDrawInfo>::iterator itDI = vecDrawInfos.begin();
+		 itDI != vecDrawInfos.end(); itDI++)
+	{
+
+		if (! this->LoadModelIntoVAO(itDI->meshName, *itDI, shaderProgramID))
+		{
+			Errors += "Didn't load ";
+			Errors += itDI->meshName;
+			Errors += "\n";
+			bAllGood = false;
+		}
+	}
+
+	return bAllGood;
 }

@@ -608,58 +608,10 @@ int main(void)
         // Pass the lighting info to the shader
         ::g_pLightManager->CopyLightValuesToShader();
 
-        //// Get the uniform locations for the light(s)
-        //GLint theLights_0_position_LocID = glGetUniformLocation(program, "theLights[0].position");
-        //GLint theLights_0_diffuse_LocID = glGetUniformLocation(program, "theLights[0].diffuse");
-        //GLint theLights_0_specular_LocID = glGetUniformLocation(program, "theLights[0].specular");
-        //GLint theLights_0_atten_LocID = glGetUniformLocation(program, "theLights[0].atten");
-        //GLint theLights_0_direction_LocID = glGetUniformLocation(program, "theLights[0].direction");
-        //GLint theLights_0_param1_LocID = glGetUniformLocation(program, "theLights[0].param1");
-        //GLint theLights_0_param2_LocID = glGetUniformLocation(program, "theLights[0].param2");
-
-        //// Set the ligthing for the "scene"
-        //glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
-        //glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
-        //glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
-        //glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
-        //glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
-        //glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
-        ////x = 0 for off, 1 for on
-        //glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
-
+ 
 
         // STARTOF: Update anything per frame
         {
-            cMeshObject* pTorpedo = findObjectByName("Torpedo");
-
-            if ( ::g_bTorpedoIsMoving )
-            {
-                // Update the topedo location
-                const float TORPEDOMOVESPEED = 0.5f;
-                pTorpedo->position.z += TORPEDOMOVESPEED;
-                
-                // Place the light inside the torpedo (i.e. at the same location)
-                ::g_pLightManager->vecLights[8].position = glm::vec4(pTorpedo->position, 1.0f);
-                // Turn light ON
-                ::g_pLightManager->vecLights[8].param2.x = 1.0f;
-
-                // Make torpedo visible
-                pTorpedo->isVisible = true;
-
-                // How far is the topedo?
-                const float MAXTORPEDODISTANCE = 300.0f;
-                if (glm::distance(pTorpedo->position, ::g_TorpedoStartLocation) > MAXTORPEDODISTANCE)
-                {
-                    ::g_bTorpedoIsMoving = false;
-                }
-            }
-            else
-            {
-                // Turn light OFF
-                ::g_pLightManager->vecLights[8].param2.x = 0.0f;
-                // Hide torpedo
-                pTorpedo->isVisible = false;
-            }
 
             // "flicker" the engine lights on the X-Wing (not on exam, just something you could do...
             for (unsigned int index = 4; index != 8; index++)
