@@ -81,5 +81,8 @@
     <None Include="simpleVertex.glsl">
       <Filter>Shader Stuff</Filter>
     </None>
+    <None Include="fragShowVertexColours.glsl">
+      <Filter>Shader Stuff</Filter>
+    </None>
   </ItemGroup>
 </Project>

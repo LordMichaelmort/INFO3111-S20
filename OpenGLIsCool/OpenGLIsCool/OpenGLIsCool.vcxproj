@@ -171,6 +171,7 @@
     <ClInclude Include="LightManager\cLightManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fragShowVertexColours.glsl" />
     <None Include="simpleFragment.glsl" />
     <None Include="simpleVertex.glsl" />
   </ItemGroup>

@@ -18,6 +18,8 @@ public:
 	bool isWireframe;
 	bool isVisible;			// Added
 
+	bool bUseVertexColours;
+
 	// We can assign this to whatever we want
 	std::string friendlyName;
 

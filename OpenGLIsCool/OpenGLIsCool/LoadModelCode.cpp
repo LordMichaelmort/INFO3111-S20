@@ -12,6 +12,7 @@
 //                       std::string modelsToLoad );
 
 
+
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager )
 {
@@ -77,6 +78,7 @@ void LoadAllThemodels( unsigned int program,
     vecDrawInfos.push_back(sModelDrawInfo("SM_Env_Tree_Dead_01.ply"));
     vecDrawInfos.push_back(sModelDrawInfo("SM_Env_Tree_Large_01.ply"));
     vecDrawInfos.push_back(sModelDrawInfo("SM_Env_Tree_Large_02.ply"));
+    vecDrawInfos.push_back(sModelDrawInfo("three_axis_cursor_xyz_n_rgba_uv.ply"));
 
 
     if (!pTheVAOManager->LoadModelsInfoVAO( vecDrawInfos, program, ErrorString ))
@@ -106,7 +108,43 @@ void LoadAllThemodels( unsigned int program,
     pISOBall->friendlyName = "DebugSphere"; // We can find it later.
     ::g_pVecObjects.push_back(pISOBall);
 
+    cMeshObject* p3AxisCursor = new cMeshObject();
+    p3AxisCursor->meshName = "three_axis_cursor_xyz_n_rgba_uv.ply";
+    p3AxisCursor->scale = 1.0f;
+    p3AxisCursor->colourRGBA = glm::vec4(0.47f, 0.19f, 0.33f, 1.0f); // Hot pink
+    p3AxisCursor->friendlyName = "3 Axis Cursor";
+    ::g_pVecObjects.push_back(p3AxisCursor);
 
+    cMeshObject* pIsland = new cMeshObject();
+    pIsland->meshName = "FeeneyIslandSeed1295.ply";
+    pIsland->scale = 1.0f;
+    pIsland->bUseVertexColours = true;      // Use colours from the file
+    ::g_pVecObjects.push_back(pIsland);
+
+    cMeshObject* pSkull = new cMeshObject();
+    pSkull->meshName = "SM_Env_Rock_Skull_01.ply";
+    pSkull->scale = 1.0f;
+    pSkull->bUseVertexColours = false;      // Use colours from the file
+    pSkull->colourRGBA = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f); // "light stone grey"
+    pSkull->position.y = 50.0f;
+    //pSkull->colourRGBA = glm::vec4(0.47f, 0.19f, 0.33f, 1.0f); // Hot pink
+    //pSkull->isWireframe = true;
+    ::g_pVecObjects.push_back(pSkull);
+
+    cMeshObject* pTreeCanopy = new cMeshObject();
+    pTreeCanopy->meshName = "SM_Env_Tree_Canopy_01.ply";
+    pTreeCanopy->scale = 1.0f;
+    pTreeCanopy->bUseVertexColours = false;      // Use colours from colourRGB
+    pTreeCanopy->colourRGBA = glm::vec4(0.58f, 0.95f, 0.11f, 1.0f); // "dark green"
+    pTreeCanopy->position.y = 5.0f;
+    ::g_pVecObjects.push_back(pTreeCanopy);
+
+    cMeshObject* pTreeTrunk = new cMeshObject();
+    pTreeTrunk->meshName = "SM_Env_Tree_Base_01.ply";
+    pTreeTrunk->scale = 1.0f;
+    pTreeTrunk->bUseVertexColours = false;      // Use colours from colourRGB
+    pTreeTrunk->colourRGBA = glm::vec4(0.4539f, 0.3208f, 0.2253f, 1.0f); // "dark brown"
+    ::g_pVecObjects.push_back(pTreeTrunk);
 
     return;
 }
