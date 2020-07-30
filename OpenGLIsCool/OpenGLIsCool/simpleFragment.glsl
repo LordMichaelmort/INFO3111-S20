@@ -122,6 +122,15 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		// Contribution for this light
 		vec3 vLightToVertex = theLights[index].position.xyz - vertexWorldPos.xyz;
 		float distanceToLight = length(vLightToVertex);	
+
+		// Distance cut off (for performance)
+//		if (distanceToLight > theLights[index].atten.w)
+//		{
+//			// Light is too far away, skip this light
+//			// i.e. light is "black" at this distance
+//			continue;
+//		}
+
 		vec3 lightVector = normalize(vLightToVertex);
 		float dotProduct = dot(lightVector, vertexNormal.xyz);	 
 		

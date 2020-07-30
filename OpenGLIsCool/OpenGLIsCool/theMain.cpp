@@ -466,7 +466,7 @@ int main(void)
     ::g_pLightManager->vecLights[0].param1.x = 0;   // Point light
     ::g_pLightManager->vecLights[0].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[0].atten.y = 0.0150704719f;    // Linear
-    ::g_pLightManager->vecLights[0].atten.z = 2.42356309e-05;    // Quadratic
+    ::g_pLightManager->vecLights[0].atten.z = 2.42356309e-05f;    // Quadratic
     ::g_pLightManager->vecLights[0].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[0].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
@@ -495,7 +495,7 @@ int main(void)
     ::g_pLightManager->vecLights[3].param1.x = 0.0f;   // Point light
     ::g_pLightManager->vecLights[3].atten.x = 0.0f;     // Constant
     ::g_pLightManager->vecLights[3].atten.y = 0.0001f;    // Linear
-    ::g_pLightManager->vecLights[3].atten.z = 0.0470901;    // Quadratic
+    ::g_pLightManager->vecLights[3].atten.z = 0.0470901f;    // Quadratic
     ::g_pLightManager->vecLights[3].diffuse = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     ::g_pLightManager->vecLights[3].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
@@ -667,6 +667,8 @@ int main(void)
                 ::g_pLightManager->vecLights[index].atten.x = 0.0f;         // Constant
                 ::g_pLightManager->vecLights[index].atten.y = 0.00001f;    // Linear
                 ::g_pLightManager->vecLights[index].atten.z = 3.71354f;    // Quadratic
+                // Limit the light distance to a finite amount
+//                ::g_pLightManager->vecLights[index].atten.w = 1.0f;         // No light beyond 5 units
 
                 float rPerterb = ((float)rand() / (RAND_MAX));
                 // Pick a number between 0.25 and 0.5f;
@@ -708,7 +710,7 @@ int main(void)
             pDebugBall->isVisible = false;
 
             cLightHelper myHelper;
-            float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000, 
+            float dist5 = myHelper.calcApproxDistFromAtten(0.05f, 0.01f, 1000000,
                                                            g_pLightManager->vecLights[g_selectedLightID].atten.x,
                                                            g_pLightManager->vecLights[g_selectedLightID].atten.y,
                                                            g_pLightManager->vecLights[g_selectedLightID].atten.z,

@@ -11,7 +11,7 @@ sLight::sLight()
 	this->position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	this->diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	this->specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);  // rgb = highlight colour, w = power
-	this->atten = glm::vec4(0.0f, 0.1f, 0.1, 10.0f);		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
+	this->atten = glm::vec4(0.0f, 0.1f, 0.1, 1000000.0f);		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
 	this->direction = glm::vec4( 0.0f, -1.0f, 0.0f, 1.0f);	// Spot, directional lights (default is pointing down in y direction)
 	
 	//glm::vec4 param1;		// x = lightType, y = inner angle, z = outer angle, w = TBD
@@ -203,6 +203,22 @@ void cLightManager::CopyLightValuesToShader(void)
 		//	g_light0_position.y, g_light0_position.z, 1.0f);		// make the 4th a 1.0, if you don't know what to make it
 
 		// vec4 theLights[X]position;	in the shader, so glUniform4f()
+
+		// Calculate the distance cut off for the lights.
+		// i.e. the maximum distance from the light that I'm going to bother 
+		// running the light equations.
+		cLightHelper myHelper;
+		for (unsigned int index = 0; index != (float)this->vecLights.size(); index++)
+		{
+			// Calculate the distance when the light is at 1% brightness
+			float distanceLightIsBlack = myHelper.calcApproxDistFromAtten(0.01f, 0.01f, 1000000,
+														   this->vecLights[index].atten.x,
+														   this->vecLights[index].atten.y,
+														   this->vecLights[index].atten.z,
+														   50);
+			this->vecLights[index].atten.w = distanceLightIsBlack;
+		}
+
 		
 		glUniform4f( 
 			this->vecLights[index].position_UniLoc,
