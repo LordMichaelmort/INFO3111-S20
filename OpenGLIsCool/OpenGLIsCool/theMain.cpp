@@ -260,7 +260,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         if (key == GLFW_KEY_S) { ::g_pLightManager->vecLights[g_selectedLightID].position.z -= CAMERASPEED; }
         if (key == GLFW_KEY_Q) { ::g_pLightManager->vecLights[g_selectedLightID].position.y -= CAMERASPEED; }
         if (key == GLFW_KEY_E) { ::g_pLightManager->vecLights[g_selectedLightID].position.y += CAMERASPEED; }
-        
+
+        // Change the angle of the spotlight
+        // "Inner" angle of spot
+        if (key == GLFW_KEY_I ) { ::g_pLightManager->vecLights[g_selectedLightID].param1.y -= 0.1f; }
+        if (key == GLFW_KEY_O ) { ::g_pLightManager->vecLights[g_selectedLightID].param1.y += 0.1f; }
+        // "Outer" angle of spot
+        if (key == GLFW_KEY_L ) { ::g_pLightManager->vecLights[g_selectedLightID].param1.z -= 0.1f; }
+        if (key == GLFW_KEY_K ) { ::g_pLightManager->vecLights[g_selectedLightID].param1.z += 0.1f; }
 
         if ( key==GLFW_KEY_0) { ::g_ShowLightDebugSpheres = true; }
         if ( key==GLFW_KEY_9) { ::g_ShowLightDebugSpheres = false; }
@@ -548,7 +555,32 @@ int main(void)
     // Make light OFF to start
     ::g_pLightManager->vecLights[8].param2.x = 0.0f;        // 1.0 for on (0.0 for off)
 
+    ::g_pLightManager->vecLights[9].position = glm::vec4(0.0f, 20.0f, 0.0f, 1.0f);
+    ::g_pLightManager->vecLights[9].param1.x = 1.0f;   // Spot light
+    ::g_pLightManager->vecLights[9].atten.x = 0.0f;     // Constant
+    ::g_pLightManager->vecLights[9].atten.y = 0.00001f;    // Linear
+    ::g_pLightManager->vecLights[9].atten.z = 0.002f;    // Quadratic
+    ::g_pLightManager->vecLights[9].diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[9].specular = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    ::g_pLightManager->vecLights[9].param2.x = 1.0f;        // 1.0 for on (0.0 for off)
 
+    // Direction is relative to the light
+    // 0, -1, 0 is stright down from the light
+    ::g_pLightManager->vecLights[9].direction = glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
+//    ::g_pLightManager->vecLights[9].direction = glm::vec4(-1.0f, 0.0f, 0.0f, 1.0f);
+
+    // If you do what you're looking at minus the position of spot, 
+    //  that will give you a spot light that will "follow" objects. 
+
+    // Pick the inner and outer angle of spot in degrees (this shader uses degrees)
+    ::g_pLightManager->vecLights[9].param1.y = 15.0f;   // y = inner angle
+    ::g_pLightManager->vecLights[9].param1.z = 30.0f;   // z = outer angle
+
+
+    //for (unsigned int index = 0; index != 9; index++)
+    //{
+    //    ::g_pLightManager->vecLights[index].param2.x = 0.0f;
+    //}
 
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
@@ -601,31 +633,17 @@ int main(void)
         //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
         matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
-                         ::g_cameraTarget,  // "at"  (looking "at")
-                         ::g_upVector );    
+                               ::g_cameraTarget,  // "at"  (looking "at")
+                               ::g_upVector );    
 
+        GLint eyeLocation_UniLoc = glGetUniformLocation( program, "eyeLocation");
+        glUniform4f( eyeLocation_UniLoc, 
+                    ::g_cameraEye.x, ::g_cameraEye.y, ::g_cameraEye.z, 
+                    1.0f);  // Not using 4th, so set to 1.0f
         
         // Pass the lighting info to the shader
         ::g_pLightManager->CopyLightValuesToShader();
 
-        //// Get the uniform locations for the light(s)
-        //GLint theLights_0_position_LocID = glGetUniformLocation(program, "theLights[0].position");
-        //GLint theLights_0_diffuse_LocID = glGetUniformLocation(program, "theLights[0].diffuse");
-        //GLint theLights_0_specular_LocID = glGetUniformLocation(program, "theLights[0].specular");
-        //GLint theLights_0_atten_LocID = glGetUniformLocation(program, "theLights[0].atten");
-        //GLint theLights_0_direction_LocID = glGetUniformLocation(program, "theLights[0].direction");
-        //GLint theLights_0_param1_LocID = glGetUniformLocation(program, "theLights[0].param1");
-        //GLint theLights_0_param2_LocID = glGetUniformLocation(program, "theLights[0].param2");
-
-        //// Set the ligthing for the "scene"
-        //glUniform4f( theLights_0_position_LocID, 50.0f, 100.0f, 100.0f, 1.0f);      // "theLights[0].position");
-        //glUniform4f( theLights_0_diffuse_LocID, 1.0f, 1.0f, 1.0f, 1.0f);            //"theLights[0].diffuse");
-        //glUniform4f( theLights_0_specular_LocID, 1.0f, 1.0f, 1.0f, 1.0f);       //"theLights[0].specular");
-        //glUniform4f( theLights_0_atten_LocID, 0.0f, 0.01f, 0.0f, 1.0f );         //"theLights[0].atten");
-        //glUniform4f( theLights_0_direction_LocID, 0.0f, 0.0f, 0.0f, 1.0f);      //"theLights[0].direction");
-        //glUniform4f( theLights_0_param1_LocID, 0.0f, 0.0f, 0.0f, 0.0f );        //"theLights[0].param1");
-        ////x = 0 for off, 1 for on
-        //glUniform4f( theLights_0_param2_LocID, 1.0f, 0.0f, 0.0f, 1.0f );        //  "theLights[0].param2");
 
 
         // STARTOF: Update anything per frame
@@ -705,7 +723,7 @@ int main(void)
             pDebugBall->isVisible = true;
             pDebugBall->position = ::g_pLightManager->vecLights[g_selectedLightID].position;
             pDebugBall->scale = 1.0f;
-            pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            pDebugBall->diffuseRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             DrawObject(pDebugBall, program, matView, matProjection );
             pDebugBall->isVisible = false;
 
@@ -734,19 +752,19 @@ int main(void)
 
             // Draw sphere to match the brightness of the light
             pDebugBall->isVisible = true;
-            pDebugBall->colourRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            pDebugBall->diffuseRGBA = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
             pDebugBall->scale = dist5;
             DrawObject(pDebugBall, program, matView, matProjection);
 
-            pDebugBall->colourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+            pDebugBall->diffuseRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
             pDebugBall->scale = dist25;
             DrawObject(pDebugBall, program, matView, matProjection);
 
-            pDebugBall->colourRGBA = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+            pDebugBall->diffuseRGBA = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
             pDebugBall->scale = dist50;
             DrawObject(pDebugBall, program, matView, matProjection);
 
-            pDebugBall->colourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+            pDebugBall->diffuseRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
             pDebugBall->scale = dist75;
             DrawObject(pDebugBall, program, matView, matProjection);
             pDebugBall->isVisible = false;\
@@ -767,6 +785,14 @@ int main(void)
             << ::g_pLightManager->vecLights[g_selectedLightID].position.z << "  "
             << "Lin:" << ::g_pLightManager->vecLights[g_selectedLightID].atten.y << "  "
             << "Quad:" << ::g_pLightManager->vecLights[g_selectedLightID].atten.z;
+
+        if (::g_pLightManager->vecLights[g_selectedLightID].param1.x == 1.0f)
+        {
+            // It's a spot light, so print angles, too
+            ssTitle << "  "
+                << "Inner: " << ::g_pLightManager->vecLights[g_selectedLightID].param1.y << "   "
+                << "Outer: " << ::g_pLightManager->vecLights[g_selectedLightID].param1.z;
+        }
 
         std::string sTitleText = ssTitle.str();
 
@@ -806,7 +832,13 @@ void DrawObject( cMeshObject* pCurMesh,
 
 
     // Get the uniform location variables (can do this outside of call for performance)
-    GLint diffuseColour_LocID = glGetUniformLocation(program, "diffuseColour");
+    GLint diffuseColourRGBA_LocID = glGetUniformLocation(program, "diffuseColourRGBA");
+    GLint specularColour_LocID = glGetUniformLocation(program, "specularColour");
+    if (specularColour_LocID == -1)
+    {
+        std::cout << "Can't find specularColour uniform in shader" << std::endl;
+    }
+
 
     GLint matModel_LocID = glGetUniformLocation(program, "matModel");
     GLint matView_LocID = glGetUniformLocation(program, "matView");
@@ -901,13 +933,38 @@ void DrawObject( cMeshObject* pCurMesh,
         glUniform1f(hasNoLighting_LocID, (float)GL_FALSE);
     }
 
+    // Alpha transparency using the "blend" function
+    // it's a "2 pass" effect, reading then writing to the "back buffer" (the screen)
+    // If we DON'T need it, then disable it
+    // The "alpha" value can be from 0.0 to 1.0f
+    // If it's 1.0, then there's NO transparency, so there's no reason to enable this
+    if (pCurMesh->diffuseRGBA.a < 1.0f)
+    {
+        // Enable transparency 
+        glEnable(GL_BLEND);
+    }
+    else
+    {
+        // Disable 
+        glDisable(GL_BLEND);
+    }
+    // This sets the state of the blend function
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+
 
     // set the uniform colour info
     //  GLint objectColour_LocID = glGetUniformLocation(program, "objectColour");
-    glUniform3f(diffuseColour_LocID,
-                pCurMesh->colourRGBA.r,
-                pCurMesh->colourRGBA.g,
-                pCurMesh->colourRGBA.b);
+    glUniform4f(diffuseColourRGBA_LocID,
+                pCurMesh->diffuseRGBA.r,        
+                pCurMesh->diffuseRGBA.g,        
+                pCurMesh->diffuseRGBA.b,        
+                pCurMesh->diffuseRGBA.a);       
+    glUniform4f(specularColour_LocID,
+                pCurMesh->specularRGB_Power.r,
+                pCurMesh->specularRGB_Power.g,
+                pCurMesh->specularRGB_Power.b,
+                pCurMesh->specularRGB_Power.w); 
 
 
     sModelDrawInfo mdoModelToDraw;

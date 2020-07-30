@@ -31,7 +31,8 @@ const int DIRECTIONAL_LIGHT_TYPE = 2;
 const int NUMBEROFLIGHTS = 10;
 uniform sLight theLights[NUMBEROFLIGHTS];  	// 80 uniforms
 
-uniform vec3 diffuseColour;
+// This is the objects colour ('material')
+uniform vec4 diffuseColourRGBA;
 uniform vec4 specularColour;
 
 uniform vec4 eyeLocation;
@@ -54,17 +55,23 @@ void main()
 
 	if ( hasNoLighting )
 	{
-		outputColour.rgb = diffuseColour.rgb;
-		outputColour.a = 1.0f;					// Set "alpha" to 1.0f
+		outputColour.rgb = diffuseColourRGBA.rgb;
 	}
 	else
 	{	
-		outputColour = calcualteLightContrib( diffuseColour, 
-											   vec3(fNormal.xyz),
-											   vec3(fVertWorldPos),
-											   vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+		// Now passing specular, too
+		outputColour = calcualteLightContrib( diffuseColourRGBA.rgb, 
+											  vec3(fNormal.xyz),
+											  vec3(fVertWorldPos),
+											  specularColour.rgba );
 	}
 	
+	
+	// With alpha blending, there is hardware 
+	// that reads the 4th value (the "alpha channel")
+	// directly. 
+	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
+
 }
 
 
@@ -213,7 +220,7 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		
 		
 					
-		finalObjectColour.rgb += (vertexMaterialColour.rgb * lightDiffuseContrib.rgb);
+		finalObjectColour.rgb += (vertexMaterialColour.rgb * lightDiffuseContrib.rgb)
 								  + (vertexSpecular.rgb * lightSpecularContrib.rgb );
 	}//for(intindex=0...
 	finalObjectColour.a = 1.0f;

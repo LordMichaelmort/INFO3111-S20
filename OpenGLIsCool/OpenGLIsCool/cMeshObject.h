@@ -12,7 +12,18 @@ public:
 	~cMeshObject()  {};
 	std::string meshName;
 	glm::vec3 position;		//xyz
-	glm::vec4 colourRGBA;	//RGBA
+
+	glm::vec4 diffuseRGBA;				// RGB colour (or the object)
+										// "A" for "alpha transparency"
+										// 0.0f is completely transparent
+										// 1.0f is solid 
+
+	glm::vec4 specularRGB_Power;		// RGB highlight colour
+										// Power (w or 4th value)
+										// How "shiny" something is
+										// Power STARTS at 1.0
+										// Can go up to 1000s 
+
 	glm::vec3 orientation;	//Rotation:XYZ
 	float scale;
 	bool isWireframe;

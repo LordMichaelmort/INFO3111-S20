@@ -8,7 +8,6 @@ cMeshObject::cMeshObject()
 {
 	// Clear the glm numbers
 	this->position = glm::vec3(0.0f,0.0f,0.0f);
-	this->colourRGBA = glm::vec4(0.0f,0.0f,0.0f,1.0f);
 	this->orientation = glm::vec3(0.0f,0.0f,0.0f);
 
 	this->scale = 1.0f;	
@@ -16,6 +15,11 @@ cMeshObject::cMeshObject()
 
 	this->isVisible = true;		
 	this->friendlyName = "UNASSIGNED";
+
+	this->diffuseRGBA = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+	// Specular highlight COLOUR is white
+	// Power is 1.0 (which is really "no" shininess)
+	this->specularRGB_Power = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	this->m_ID = cMeshObject::s_NextID;
 	cMeshObject::s_NextID++;
