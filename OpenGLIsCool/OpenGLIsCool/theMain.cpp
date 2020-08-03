@@ -46,6 +46,8 @@ int g_selectedLightID = 0;
 
 bool g_ShowLightDebugSpheres = true;
 
+cBasicTextureManager* g_pTheTextureManager = NULL;  // Or 0 or nullprt
+
 
 //// This a light structure to match what's in the shader
 //struct sLight
@@ -584,6 +586,26 @@ int main(void)
 
     // Get the locations for the "uniform variables"
     //  uniform vec4 objectColour;
+
+
+    // Create a texture manager
+    ::g_pTheTextureManager = new cBasicTextureManager();
+    ::g_pTheTextureManager->SetBasePath("assets/textures");
+
+    if (::g_pTheTextureManager->Create2DTextureFromBMPFile("cobblestone.bmp", true))
+    {
+        std::cout << "Texture loaded OK" << std::endl;
+    }
+    else
+    {
+        std::cout << "Error: Didn't load texture" << ::g_pTheTextureManager->getLastError() << std::endl;
+    }
+    // Force cout to flush to screen.
+    std::cout.flush();
+    
+    // This is a fairly big texture, so comment it out if your Debug build is taking a long
+    //   time to load... 
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
 
 
 

@@ -5,6 +5,7 @@
 #include "globalOpenGLStuff.h"
 #include "cMeshObject.h"
 #include "cVAOManager.h"
+#include "cBasicTextureManager/cBasicTextureManager.h"
 #include <vector>
 #include <glm/vec3.hpp>
 
@@ -20,6 +21,7 @@ extern std::vector< cMeshObject* > g_pVecObjects;
 extern glm::vec3 g_TorpedoStartLocation;    // glm::vec3(0.25f, 3.5f, 4.5f);
 extern bool g_bTorpedoIsMoving;             // = false
 
+extern cBasicTextureManager* g_pTheTextureManager;
 
 
 #endif 

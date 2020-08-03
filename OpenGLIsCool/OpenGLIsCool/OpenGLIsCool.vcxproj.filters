@@ -18,6 +18,9 @@
     <Filter Include="LightManager">
       <UniqueIdentifier>{f3868e69-e241-4dc2-9205-95c6d00e9770}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TexureManager">
+      <UniqueIdentifier>{d769db62-0573-466e-9bb4-8c18bb5c102c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -50,6 +53,15 @@
     <ClCompile Include="LightManager\cLightManager.cpp">
       <Filter>LightManager</Filter>
     </ClCompile>
+    <ClCompile Include="cBasicTextureManager\C24BitBMPpixel.cpp">
+      <Filter>TexureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="cBasicTextureManager\cBasicTextureManager.cpp">
+      <Filter>TexureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="cBasicTextureManager\CTextureFromBMP.cpp">
+      <Filter>TexureManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -72,6 +84,15 @@
     </ClInclude>
     <ClInclude Include="LightManager\cLightManager.h">
       <Filter>LightManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\CTextureFromBMP.h">
+      <Filter>TexureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\C24BitBMPpixel.h">
+      <Filter>TexureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cBasicTextureManager\cBasicTextureManager.h">
+      <Filter>TexureManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
