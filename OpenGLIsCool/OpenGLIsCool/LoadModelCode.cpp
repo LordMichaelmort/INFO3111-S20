@@ -79,6 +79,27 @@ void LoadAllThemodels( unsigned int program,
     ::g_pVecObjects.push_back(pBunny);
 
 
+    // Add to the list of things to draw
+    cMeshObject* pTerrain = new cMeshObject();
+    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
+    pTerrain->scale = 1.0f;
+    pTerrain->position.y = -10.0f;
+    pTerrain->diffuseRGBA = glm::vec4(0.95f, 0.95f, 0.95f, 1.0f);
+    // Make the ground shiny 
+
+    // Specular HIGHLIGHT colour 
+    pTerrain->specularRGB_Power.r = 1.0f;
+    pTerrain->specularRGB_Power.g = 0.0f;
+    pTerrain->specularRGB_Power.b = 0.0f;
+    //    229, 234, 145
+        // Specular highlight POWER
+    pTerrain->specularRGB_Power.w = 1000.0f;
+
+    pTerrain->textureNames[0] = "fauci.bmp";
+    pTerrain->texRatios[0] = 1.0f;
+
+    ::g_pVecObjects.push_back(pTerrain);
+
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();
     pISOBall->meshName = "assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply";
@@ -100,22 +121,7 @@ void LoadAllThemodels( unsigned int program,
     pTorpedo->isVisible = false;
     ::g_pVecObjects.push_back(pTorpedo);
 
-     // Add to the list of things to draw
-    cMeshObject* pTerrain = new cMeshObject();
-    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
-    pTerrain->scale = 1.0f;
-    pTerrain->position.y = -10.0f;
-    pTerrain->diffuseRGBA = glm::vec4(0.95f, 0.95f, 0.95f, 1.0f);
-    // Make the ground shiny 
 
-    // Specular HIGHLIGHT colour 
-    pTerrain->specularRGB_Power.r = 1.0f;
-    pTerrain->specularRGB_Power.g = 0.0f; 
-    pTerrain->specularRGB_Power.b = 0.0f; 
-//    229, 234, 145
-    // Specular highlight POWER
-    pTerrain->specularRGB_Power.w = 1000.0f;            
-    ::g_pVecObjects.push_back(pTerrain);
 
 
     // Add to the list of things to draw

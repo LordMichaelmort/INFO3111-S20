@@ -877,13 +877,14 @@ void DrawObject( cMeshObject* pCurMesh,
     // Cobblestone: Pick texture unit 0
     glActiveTexture( GL_TEXTURE0 ); // Choose texture unit #0
     // Get texture id (from the name we loaded using the texture manager)
-    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName("cobblestone.bmp");
-//    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[0]);
+//    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName("cobblestone.bmp");
+    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[0]);
     // Make that texture "current" (aka "bind" it)
     glBindTexture( GL_TEXTURE_2D, cobblestoneText_ID );    // This is the "current" texture
     // Connect the sampler to the "Texture Unit"
     glUniform1i( texture0A_UniLoc, 0 );     // Note: we pass a NUMBER, not an enum (GL_TEXTURE0)
 
+    // TODO: You will have to set these texture names form the cMeshObject, too
     glActiveTexture( GL_TEXTURE1 );
     GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
     glBindTexture( GL_TEXTURE_2D, fauci_TextID );
@@ -900,16 +901,16 @@ void DrawObject( cMeshObject* pCurMesh,
     //uniform vec4 textureRatios;
     GLint textureRatio_UniLoc = glGetUniformLocation( program, "textureRatios" );
 
-    glUniform4f( textureRatio_UniLoc, 
-                 0.0f,      // Cobblestone
-                 1.0f,      // Fauci
-                 0.0f,      // (Undefined - texture will be black)
-                 0.0f );    // (Undefined - texture will be black)
     //glUniform4f( textureRatio_UniLoc, 
-    //             pCurMesh->texRatios[0],      // Cobblestone
-    //             0.0f,      // Fauci
+    //             0.0f,      // Cobblestone
+    //             1.0f,      // Fauci
     //             0.0f,      // (Undefined - texture will be black)
     //             0.0f );    // (Undefined - texture will be black)
+    glUniform4f( textureRatio_UniLoc, 
+                 pCurMesh->texRatios[0],      
+                 pCurMesh->texRatios[1],
+                 pCurMesh->texRatios[2],     
+                 pCurMesh->texRatios[3]);    
 
 
 

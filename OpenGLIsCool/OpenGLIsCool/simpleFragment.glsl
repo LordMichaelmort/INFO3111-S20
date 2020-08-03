@@ -90,7 +90,8 @@ void main()
 	vec4 texRGBAPixel_0B = texture( texture0B, fUVx2.st );
 	vec4 texRGBAPixel_0C = texture( texture0C, fUVx2.st );
 	vec4 texRGBAPixel_0D = texture( texture0D, fUVx2.st );
-		
+
+//	This is a uniform (see the top of the file)		
 //	vec4 texRatios = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
 	vec4 finalTexColour =   ( texRGBAPixel_0A * textureRatios.x ) 
