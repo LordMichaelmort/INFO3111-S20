@@ -78,6 +78,11 @@ void main()
 	// that reads the 4th value (the "alpha channel")
 	// directly. 
 	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
+	
+	// Make "black"
+	outputColour.rgb *= 0.01f; 		// essentially black
+
+	outputColour.rg += fUVx2.st;		
 
 }
 
