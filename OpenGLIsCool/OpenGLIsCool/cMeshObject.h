@@ -34,8 +34,9 @@ public:
 	std::string friendlyName;
 
 	// This are the textures of this object
-	std::vector< std::string >  vec_textureNames;
-	float texRatios[4];			// four texture "ratios"
+	static const unsigned int NUMBEROFTEXTURES = 4;
+	std::string  textureNames[NUMBEROFTEXTURES];	// four texture names
+	float texRatios[NUMBEROFTEXTURES];				// four texture "ratios"
 
 
 	// This is "read only"

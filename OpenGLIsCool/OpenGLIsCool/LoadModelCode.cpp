@@ -59,8 +59,24 @@ void LoadAllThemodels( unsigned int program,
         pTheVAOManager->LoadModelIntoVAO("assets/models/LightPole_xyz_n_rgba_uv.ply",
                                          mdiLightPole, program);
     }    
+    {
+        sModelDrawInfo mdiBunny;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply",
+                                         mdiBunny, program);
+    }    
 
+     // Add to the list of things to draw
+    cMeshObject* pBunny = new cMeshObject();
+    pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
+    pBunny->position.y = 10.0f;
 
+    pBunny->textureNames[0] = "cobblestone.bmp";
+    pBunny->texRatios[0] = 1.0f;
+
+    pBunny->textureNames[1] = "fauci.bmp";
+    pBunny->texRatios[1] = 0.0f;
+
+    ::g_pVecObjects.push_back(pBunny);
 
 
      // Add to the list of things to draw
@@ -167,6 +183,7 @@ void LoadAllThemodels( unsigned int program,
    pATAT->meshName = "assets/models/00_atat_xyz_n_rgba_uv.ply";
    pATAT->scale = 1.0f;
    pATAT->position.y = 0.0f;
+   pATAT->position.x = 50.0f;
    //    pATAT->isWireframe = true;
    pATAT->diffuseRGBA = glm::vec4(0.85f, 0.85f, 0.85f, 0.5f);
    // Specular HIGHLIGHT colour 

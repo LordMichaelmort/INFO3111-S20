@@ -24,6 +24,11 @@ cMeshObject::cMeshObject()
 	this->m_ID = cMeshObject::s_NextID;
 	cMeshObject::s_NextID++;
 
+	for (unsigned int index = 0; index != cMeshObject::NUMBEROFTEXTURES; index++)
+	{
+		this->texRatios[index] = 0.0f;
+	}
+
 	return;
 }
 

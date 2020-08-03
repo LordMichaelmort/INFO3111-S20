@@ -43,10 +43,13 @@ uniform vec4 eyeLocation;
 uniform bool hasNoLighting;	
 
 // Can't make arrays of samplers
-uniform sampler2D texture0A;
-uniform sampler2D texture0B;
+uniform sampler2D texture0A;		// Cobblestone texture
+uniform sampler2D texture0B;		// Fauci texture
 uniform sampler2D texture0C;
 uniform sampler2D texture0D;
+
+uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
+
 
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
@@ -81,8 +84,25 @@ void main()
 	
 	// Make "black"
 	outputColour.rgb *= 0.01f; 		// essentially black
+	
+	// "Sample" a pixel from the texture sampler "texture0A"
+	vec4 texRGBAPixel_0A = texture( texture0A, fUVx2.st );
+	vec4 texRGBAPixel_0B = texture( texture0B, fUVx2.st );
+	vec4 texRGBAPixel_0C = texture( texture0C, fUVx2.st );
+	vec4 texRGBAPixel_0D = texture( texture0D, fUVx2.st );
+		
+//	vec4 texRatios = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
-	outputColour.rg += fUVx2.st;		
+	vec4 finalTexColour =   ( texRGBAPixel_0A * textureRatios.x ) 
+	                      + ( texRGBAPixel_0B * textureRatios.y )
+	                      + ( texRGBAPixel_0C * textureRatios.z )
+	                      + ( texRGBAPixel_0D * textureRatios.w );
+						  
+	
+	outputColour.rgb += finalTexColour.rgb;
+	
+//
+//	outputColour.rg += fUVx2.st;	// s = u or x, t = v or y;
 
 }
 

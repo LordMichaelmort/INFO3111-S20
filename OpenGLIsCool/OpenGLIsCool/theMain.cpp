@@ -852,6 +852,14 @@ void DrawObject( cMeshObject* pCurMesh,
         return;
     }
 
+
+
+    // ***********************************************************
+    //    _____        _                  ___ _         __  __ 
+    //   |_   _|____ _| |_ _  _ _ _ ___  / __| |_ _  _ / _|/ _|
+    //     | |/ -_) \ /  _| || | '_/ -_) \__ \  _| || |  _|  _|
+    //     |_|\___/_\_\\__|\_,_|_| \___| |___/\__|\_,_|_| |_|  
+    //                                                         
     // glActiveTexture(GL_TEXTURE1 );	
     // glBindTexture(GL_TEXTURE_2D, 15);
     // glUniform1i(UniformLoc_Sampler0A, GL_TEXTURE1);
@@ -862,22 +870,56 @@ void DrawObject( cMeshObject* pCurMesh,
 
     GLint texture0A_UniLoc = glGetUniformLocation( program, "texture0A" );
     GLint texture0B_UniLoc = glGetUniformLocation( program, "texture0B" );
+    GLint texture0C_UniLoc = glGetUniformLocation( program, "texture0C" );
+    GLint texture0D_UniLoc = glGetUniformLocation( program, "texture0D" );
 
     // Choose texture units for the textures
     // Cobblestone: Pick texture unit 0
     glActiveTexture( GL_TEXTURE0 ); // Choose texture unit #0
     // Get texture id (from the name we loaded using the texture manager)
     GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName("cobblestone.bmp");
+//    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[0]);
     // Make that texture "current" (aka "bind" it)
     glBindTexture( GL_TEXTURE_2D, cobblestoneText_ID );    // This is the "current" texture
     // Connect the sampler to the "Texture Unit"
     glUniform1i( texture0A_UniLoc, 0 );     // Note: we pass a NUMBER, not an enum (GL_TEXTURE0)
 
-    glActiveTexture( GL_TEXTURE7 );
+    glActiveTexture( GL_TEXTURE1 );
     GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
     glBindTexture( GL_TEXTURE_2D, fauci_TextID );
-    glUniform1i( texture0B_UniLoc, 7 );     // Note the integer '7' instead of GL_TEXTURE7
-    
+    glUniform1i( texture0B_UniLoc, 1 );     // Note the integer '1' instead of GL_TEXTURE7
+
+    glActiveTexture( GL_TEXTURE2 );
+    GLuint whatever_TextID = ::g_pTheTextureManager->getTextureIDFromName("Whatever.bmp");
+    glBindTexture( GL_TEXTURE_2D, whatever_TextID );
+    glUniform1i( texture0C_UniLoc, 2 );     // Note the integer '1' instead of GL_TEXTURE7
+
+    // ...and so on
+
+
+    //uniform vec4 textureRatios;
+    GLint textureRatio_UniLoc = glGetUniformLocation( program, "textureRatios" );
+
+    glUniform4f( textureRatio_UniLoc, 
+                 0.0f,      // Cobblestone
+                 1.0f,      // Fauci
+                 0.0f,      // (Undefined - texture will be black)
+                 0.0f );    // (Undefined - texture will be black)
+    //glUniform4f( textureRatio_UniLoc, 
+    //             pCurMesh->texRatios[0],      // Cobblestone
+    //             0.0f,      // Fauci
+    //             0.0f,      // (Undefined - texture will be black)
+    //             0.0f );    // (Undefined - texture will be black)
+
+
+
+    //    _____        _                  ___ _         __  __ 
+    //   |_   _|____ _| |_ _  _ _ _ ___  / __| |_ _  _ / _|/ _|
+    //     | |/ -_) \ /  _| || | '_/ -_) \__ \  _| || |  _|  _|
+    //     |_|\___/_\_\\__|\_,_|_| \___| |___/\__|\_,_|_| |_|  
+    //                                                         
+     // ***********************************************************
+
 
     // Get the uniform location variables (can do this outside of call for performance)
     GLint diffuseColourRGBA_LocID = glGetUniformLocation(program, "diffuseColourRGBA");
