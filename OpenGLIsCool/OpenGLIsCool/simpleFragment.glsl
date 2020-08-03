@@ -42,6 +42,13 @@ uniform vec4 eyeLocation;
 // (bool is really a float, either 0.0 or non-zero)
 uniform bool hasNoLighting;	
 
+// Can't make arrays of samplers
+uniform sampler2D texture0A;
+uniform sampler2D texture0B;
+uniform sampler2D texture0C;
+uniform sampler2D texture0D;
+
+
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 							

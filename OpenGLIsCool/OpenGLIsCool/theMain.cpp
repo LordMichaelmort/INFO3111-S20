@@ -852,6 +852,32 @@ void DrawObject( cMeshObject* pCurMesh,
         return;
     }
 
+    // glActiveTexture(GL_TEXTURE1 );	
+    // glBindTexture(GL_TEXTURE_2D, 15);
+    // glUniform1i(UniformLoc_Sampler0A, GL_TEXTURE1);
+
+    // Inside the shader, we have these samplers:
+    // uniform sampler2D texture0A;
+    // uniform sampler2D texture0B;
+
+    GLint texture0A_UniLoc = glGetUniformLocation( program, "texture0A" );
+    GLint texture0B_UniLoc = glGetUniformLocation( program, "texture0B" );
+
+    // Choose texture units for the textures
+    // Cobblestone: Pick texture unit 0
+    glActiveTexture( GL_TEXTURE0 ); // Choose texture unit #0
+    // Get texture id (from the name we loaded using the texture manager)
+    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName("cobblestone.bmp");
+    // Make that texture "current" (aka "bind" it)
+    glBindTexture( GL_TEXTURE_2D, cobblestoneText_ID );    // This is the "current" texture
+    // Connect the sampler to the "Texture Unit"
+    glUniform1i( texture0A_UniLoc, 0 );     // Note: we pass a NUMBER, not an enum (GL_TEXTURE0)
+
+    glActiveTexture( GL_TEXTURE7 );
+    GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
+    glBindTexture( GL_TEXTURE_2D, fauci_TextID );
+    glUniform1i( texture0B_UniLoc, 7 );     // Note the integer '7' instead of GL_TEXTURE7
+    
 
     // Get the uniform location variables (can do this outside of call for performance)
     GLint diffuseColourRGBA_LocID = glGetUniformLocation(program, "diffuseColourRGBA");

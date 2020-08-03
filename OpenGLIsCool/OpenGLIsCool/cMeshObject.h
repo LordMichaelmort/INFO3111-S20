@@ -32,6 +32,11 @@ public:
 	// We can assign this to whatever we want
 	std::string friendlyName;
 
+	// This are the textures of this object
+	std::vector< std::string >  vec_textureNames;
+	float texRatios[4];			// four texture "ratios"
+
+
 	// This is "read only"
 	unsigned int getUniqueID(void);
 private:
