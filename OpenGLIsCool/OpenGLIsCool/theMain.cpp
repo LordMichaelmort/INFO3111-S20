@@ -25,6 +25,10 @@
 
 #include "LightManager/cLightManager.h"
 
+bool StartErUp(std::vector<std::string> vecCommands);
+bool ShutErDown(void);
+
+
 // Function signature for DrawObject()
 void DrawObject(cMeshObject* pCurMesh,
                 GLuint program,                // Shader program
@@ -36,6 +40,9 @@ void DrawObject(cMeshObject* pCurMesh,
 glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
 glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+
+extern cJoystickManager* g_pJoysticks;
+extern cFlyCamera* g_pFlyCamera;
 
 // The objects we are drawing go in here! Hazzah!
 std::vector< cMeshObject* > g_pVecObjects;
@@ -49,52 +56,8 @@ bool g_ShowLightDebugSpheres = true;
 cBasicTextureManager* g_pTheTextureManager = NULL;  // Or 0 or nullprt
 
 
-//// This a light structure to match what's in the shader
-//struct sLight
-//{
-//    glm::vec4 position;
-//    glm::vec4 diffuse;
-//    glm::vec4 specular;	// rgb = highlight colour, w = power
-//    glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
-//    glm::vec4 direction;	// Spot, directional lights
-//    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
-//                    // 0 = pointlight
-//                    // 1 = spot light
-//                    // 2 = directional light
-//    glm::vec4 param2;	// x = 0 for off, 1 for on
-//
-//    //void TurnONLight();
-//    //void TurnOFFLight();
-//    //void MakeSpotLight();
-//};
-
-
-
-//struct sVertex
-//{
-//    float x, y, z;      // NEW! With Zs
-//    float r, g, b;
-//};
-//
-//int g_numberOfVerts = 0;
-//sVertex* g_pVertexBuffer = 0;     // or NULL or nullptr
-
-
-
-//sVertex myArray[100];                       // STACK  
-//sVertex* pMyArray = new sVertex[100];       // HEAP 
-//delete [] pMyArray;
-//
-//sVertex vertices[6] =
-//{
-//    { -0.6f, -0.4f, 0.0f /*z*/, 1.0f, 0.0f, 0.0f },         // 0
-//    {  0.6f, -0.4f, 0.0f /*z*/, 0.0f, 1.0f, 0.0f },         // 1 
-//    {  0.0f,  0.6f, 0.0f /*z*/, 0.0f, 0.0f, 1.0f },         // 2
-//    { -0.6f,  0.4f, 0.0f /*z*/, 1.0f, 0.0f, 0.0f },         // 3
-//    {  0.6f,  0.4f, 0.0f /*z*/, 0.0f, 1.0f, 0.0f },
-//    {  0.0f,  1.6f, 0.0f /*z*/, 0.0f, 0.0f, 1.0f }          // 5
-//};
-
+cJoystickManager* g_pJoysticks = NULL;  // Or 0 or nullprt;
+cFlyCamera* g_pFlyCamera = NULL;  // Or 0 or nullprt;
 
 // Yes, it's global. Just be calm, for now.
 cShaderManager* g_pShaderManager = 0;       // NULL
@@ -107,97 +70,6 @@ bool g_isWireFrame = false;
 glm::vec3 g_TorpedoStartLocation = glm::vec3(0.25f, 3.5f, 4.5f);
 bool g_bTorpedoIsMoving = false;
 
-
-//static const char* vertex_shader_text =
-//"#version 110\n"
-//"uniform mat4 MVP;\n"
-//"attribute vec3 vCol;\n"        
-//"attribute vec3 vPos;\n"        
-//"varying vec3 color;\n"
-//"void main()\n"
-//"{\n"
-//"    gl_Position = MVP * vec4(vPos, 1.0);\n"
-//"    color = vCol;\n"
-//"}\n";
-//
-//static const char* fragment_shader_text =
-//"#version 110\n"
-//"varying vec3 color;\n"
-//"void main()\n"
-//"{\n"
-//"    gl_FragColor = vec4(color, 1.0);\n"
-//"}\n";
-
-//void LoadPlyFile( std::string fileName )
-//{
-//    std::ifstream theFile( fileName.c_str() );
-//
-//    if (!theFile.is_open())
-//    {
-//        std::cout << "Oh NO!!" << std::endl;
-//        return;
-//    }
-//
-//    // Look for the work "vertex"
-//    std::string temp;
-//
-//    bool bKeepReading = true;
-//
-//    while (bKeepReading)
-//    {
-//        theFile >> temp;    // Read next string
-//        if (temp == "vertex")
-//        {
-//            bKeepReading = false;
-//        }
-//    }//while
-//
-////    int numberOfVerts = 0;
-//    theFile >> ::g_numberOfVerts;
-//    std::cout << ::g_numberOfVerts << std::endl;
-//
-//    // Make the vertex buffer the size we need
-//    // Allocate "this" number of vertices
-//    ::g_pVertexBuffer = new sVertex[::g_numberOfVerts];
-//
-//    while (true)
-//    {
-//        theFile >> temp;    // Read next string
-//        if (temp == "face")
-//        {
-//            break;
-//        }
-//    }//while
-//
-//    int numberOfTriangles = 0;
-//    theFile >> numberOfTriangles;
-//    std::cout << numberOfTriangles << std::endl;
-//
-//
-//    while (true)
-//    {
-//        theFile >> temp;    // Read next string
-//        if (temp == "end_header")
-//        {
-//            break;
-//        }
-//    }//while
-//
-//    for (int index = 0; index != ::g_numberOfVerts; index++)
-//    {
-//        float x,y,z,r,g,b,a;
-//        theFile >> x >> y >> z >> r >> g >> b >> a;
-//
-//        ::g_pVertexBuffer[index].x = x;
-//        ::g_pVertexBuffer[index].y = y;
-//        ::g_pVertexBuffer[index].z = z;
-//        ::g_pVertexBuffer[index].r = r / 255.0f;
-//        ::g_pVertexBuffer[index].g = g / 255.0f;
-//        ::g_pVertexBuffer[index].b = b / 255.0f;
-//    }
-//
-//    return;
-//}
 
 // Returns pointer to zero (NULL) if NOT found
 cMeshObject* findObjectByName(std::string friendlyNameToFind)
@@ -370,25 +242,20 @@ int main(void)
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorEnterCallback(window, cursor_enter_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+
+    glfwSetWindowSizeCallback(window, window_size_callback);
+
+
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
 
-//    // NOTE: OpenGL error checks have been omitted for brevity
-//    glGenBuffers(1, &vertex_buffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-//
-//    //sVertex vertices[6]
-//    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-//
-//    unsigned int sizeOfVertBufferInBytes = sizeof(sVertex) * ::g_numberOfVerts;
-//
-//    glBufferData( GL_ARRAY_BUFFER, 
-//                  sizeOfVertBufferInBytes,      // Size in bytes
-//                  ::g_pVertexBuffer,            // Pointer to START of local array
-//                  GL_STATIC_DRAW);
 
-    //cShaderManager* g_pShaderManager = 0;
     ::g_pShaderManager = new cShaderManager();          // HEAP  
 
     cShaderManager::cShader vertShader;
@@ -413,18 +280,6 @@ int main(void)
     }
     //createProgramFromFile
 
-    //vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    //glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    //glCompileShader(vertex_shader);
-//
-    //fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    //glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    //glCompileShader(fragment_shader);
-//
-    //program = glCreateProgram();
-    //glAttachShader(program, vertex_shader);
-    //glAttachShader(program, fragment_shader);
-    //glLinkProgram(program);
 
     program = ::g_pShaderManager->getIDFromFriendlyName("SimpleShaderProg");
 
@@ -432,24 +287,6 @@ int main(void)
     vpos_location = glGetAttribLocation(program, "vPos");
     vcol_location = glGetAttribLocation(program, "vCol");
 
-//    glEnableVertexAttribArray(vpos_location);
-//    glVertexAttribPointer(vpos_location, 
-//                          3, GL_FLOAT, 
-//                          GL_FALSE,
-//                          sizeof(sVertex),      // "stride"
-//                          (void*)offsetof(sVertex, x) );
-//    //struct sVertex
-    //{
-    //    float x, y, z;      // NEW! With Zs
-    //    float r, g, b;
-    //};
-//
-//    glEnableVertexAttribArray(vcol_location);
-//    glVertexAttribPointer(vcol_location, 
-//                          3, GL_FLOAT, 
-//                          GL_FALSE,
-//                          sizeof(sVertex),               // "stride"
-//                          (void*)offsetof(sVertex, r) ); // "offset" (how many bytes 'in' is this member?)
 
     // STARTOF: Loading the models
     ::g_pTheVAOManager = new cVAOManager();
@@ -579,14 +416,6 @@ int main(void)
     ::g_pLightManager->vecLights[9].param1.z = 30.0f;   // z = outer angle
 
 
-    //for (unsigned int index = 0; index != 9; index++)
-    //{
-    //    ::g_pLightManager->vecLights[index].param2.x = 0.0f;
-    //}
-
-    // Get the locations for the "uniform variables"
-    //  uniform vec4 objectColour;
-
 
     // Create a texture manager
     ::g_pTheTextureManager = new cBasicTextureManager();
@@ -608,6 +437,33 @@ int main(void)
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
 
 
+    // STARTOF: Joysticks
+    ::g_pJoysticks = new cJoystickManager();
+    ::g_pJoysticks->InitOrReset();
+    if (::g_pJoysticks->getNumberOfJoysticksPresent() > 0)
+    {
+        std::cout << "Found " << ::g_pJoysticks->getNumberOfJoysticksPresent() << " joysticks" << std::endl;
+        for (int index = 0; index != ::g_pJoysticks->getNumberOfJoysticksPresent(); index++)
+        {
+            cJoystickManager::sJoyInfo joyInfo;
+            ::g_pJoysticks->GetJoystickInfo(index, joyInfo, true);
+
+            std::cout << "Joystick #" << index << " is a: " << joyInfo.getJoystickTypeAsString() << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Didn't find any joystocks." << std::endl;
+    }
+    // ENDOF: Joysticks
+
+    
+    // STARTOF: Fly Camera
+    ::g_pFlyCamera = new cFlyCamera();
+    ::g_pFlyCamera->eye = glm::vec3(0.0f, 30.0, -180.0);
+    ::g_pFlyCamera->movementSpeed = 0.25f;
+    ::g_pFlyCamera->movementSpeed = 2.5f;
+    // ENDOF: Fly Camera
 
     std::cout << "We're all set! Buckle up!" << std::endl;
 
@@ -615,12 +471,8 @@ int main(void)
     {
         float ratio;
         int width, height;
-        //       mat4x4 m, p, mvp;
-//        uniform mat4 matModel;	// "model" or "world" matrix
-//        uniform mat4 matView;		// "view" or "camera" or "eye" matrix
-//        uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
 
-//        glm::mat4 matModel;   // Moved to DrawObject() function
+
         glm::mat4 matProjection; 
         glm::mat4 matView; 
         // glm::mat4 mvp;
@@ -635,12 +487,6 @@ int main(void)
         glCullFace(GL_BACK);
 
 
-        //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-//        glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
-//                                        (float)glfwGetTime(),
-//                                        glm::vec3(0.0f, 0.0, 1.0f));
-//
-//       m = m * rotateZ;
 
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         matProjection = glm::perspective( 0.6f,
@@ -650,17 +496,21 @@ int main(void)
 
         matView = glm::mat4(1.0f);
 
-        //glm::vec3 cameraEye = glm::vec3(0.0, 0.0, -4.0f);
-        //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-        //glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+        //matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
+        //                       ::g_cameraTarget,  // "at"  (looking "at")
+        //                       ::g_upVector );    
 
-        matView = glm::lookAt( ::g_cameraEye,     // "position" "eye"
-                               ::g_cameraTarget,  // "at"  (looking "at")
-                               ::g_upVector );    
+        matView = glm::lookAt( ::g_pFlyCamera->getEye(),     // "position" "eye"
+                               ::g_pFlyCamera->getAt(),  // "at"  (looking "at")
+                               ::g_pFlyCamera->getUp());
+
 
         GLint eyeLocation_UniLoc = glGetUniformLocation( program, "eyeLocation");
+        //glUniform4f( eyeLocation_UniLoc, 
+        //            ::g_cameraEye.x, ::g_cameraEye.y, ::g_cameraEye.z, 
+        //            1.0f);  // Not using 4th, so set to 1.0f
         glUniform4f( eyeLocation_UniLoc, 
-                    ::g_cameraEye.x, ::g_cameraEye.y, ::g_cameraEye.z, 
+                    ::g_pFlyCamera->getEye().x, ::g_pFlyCamera->getEye().y, ::g_pFlyCamera->getEye().z,
                     1.0f);  // Not using 4th, so set to 1.0f
         
         // Pass the lighting info to the shader
@@ -821,6 +671,10 @@ int main(void)
         glfwSetWindowTitle(window, sTitleText.c_str());
 
 
+        ProcessAsyncKeys(window);
+        ProcessAsyncMouse(window);
+        ::g_pJoysticks->Update();
+        ProcessAsyncJoysticks();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -828,7 +682,7 @@ int main(void)
     }//while ( ! glfwWindowShouldClose(window) )
 
 
-    delete ::g_pShaderManager;
+    ShutErDown();
 
 
     glfwDestroyWindow(window);
@@ -1074,3 +928,31 @@ void DrawObject( cMeshObject* pCurMesh,
 
     return;
 }// DrawObject()
+
+
+bool StartErUp(std::vector<std::string> vecCommands)
+{
+
+
+    return true;
+}
+
+bool ShutErDown(void)
+{
+    if (::g_pShaderManager)
+    {
+        delete ::g_pShaderManager;
+    }
+
+    if (::g_pTheTextureManager)
+    {
+        delete ::g_pTheTextureManager;
+    }
+
+    if (::g_pLightManager)
+    {
+        delete ::g_pLightManager;
+    }
+
+    return true;
+}

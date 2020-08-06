@@ -21,6 +21,12 @@
     <Filter Include="TexureManager">
       <UniqueIdentifier>{d769db62-0573-466e-9bb4-8c18bb5c102c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{7056673f-9c5b-4cd9-b646-ebe32e1a3b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Joystick">
+      <UniqueIdentifier>{f4264f9e-3bec-4469-8772-2e099890a37b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="theMain.cpp">
@@ -62,6 +68,12 @@
     <ClCompile Include="cBasicTextureManager\CTextureFromBMP.cpp">
       <Filter>TexureManager</Filter>
     </ClCompile>
+    <ClCompile Include="FlyCamera\cFlyCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Joystick\cJoystickManager.cpp">
+      <Filter>Joystick</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cShaderManager.h">
@@ -93,6 +105,15 @@
     </ClInclude>
     <ClInclude Include="cBasicTextureManager\cBasicTextureManager.h">
       <Filter>TexureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyCamera\iCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyCamera\cFlyCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Joystick\cJoystickManager.h">
+      <Filter>Joystick</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

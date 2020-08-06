@@ -157,8 +157,10 @@
     <ClCompile Include="cShader.cpp" />
     <ClCompile Include="cShaderManager.cpp" />
     <ClCompile Include="cVAOManager.cpp" />
+    <ClCompile Include="FlyCamera\cFlyCamera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="IOKeyboardMouse.cpp" />
+    <ClCompile Include="Joystick\cJoystickManager.cpp" />
     <ClCompile Include="LightManager\cLightHelper.cpp" />
     <ClCompile Include="LightManager\cLightManager.cpp" />
     <ClCompile Include="LoadModelCode.cpp" />
@@ -171,8 +173,11 @@
     <ClInclude Include="cMeshObject.h" />
     <ClInclude Include="cShaderManager.h" />
     <ClInclude Include="cVAOManager.h" />
+    <ClInclude Include="FlyCamera\cFlyCamera.h" />
+    <ClInclude Include="FlyCamera\iCamera.h" />
     <ClInclude Include="globalOpenGLStuff.h" />
     <ClInclude Include="globalThings.h" />
+    <ClInclude Include="Joystick\cJoystickManager.h" />
     <ClInclude Include="LightManager\cLightHelper.h" />
     <ClInclude Include="LightManager\cLightManager.h" />
   </ItemGroup>

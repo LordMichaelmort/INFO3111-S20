@@ -66,6 +66,7 @@ void main()
 	if ( hasNoLighting )
 	{
 		outputColour.rgb = diffuseColourRGBA.rgb;
+		return;
 	}
 	else
 	{	
