@@ -5,6 +5,11 @@
 
 #include "cVAOManager.h"
 #include "cMeshObject.h"
+#include "cBasicTextureManager/cBasicTextureManager.h"
+#include <iostream>
+
+
+extern cBasicTextureManager* g_pTheTextureManager;
 
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager, 
@@ -14,6 +19,27 @@ void LoadAllThemodels( unsigned int program,
 void LoadAllThemodels( unsigned int program, 
                        cVAOManager* pTheVAOManager )
 {
+    ::g_pTheTextureManager->SetBasePath("assets/textures");
+
+    if (::g_pTheTextureManager->Create2DTextureFromBMPFile("cobblestone.bmp", true))
+    {
+        std::cout << "Texture loaded OK" << std::endl;
+    }
+    else
+    {
+        std::cout << "Error: Didn't load texture" << ::g_pTheTextureManager->getLastError() << std::endl;
+    }
+    // Force cout to flush to screen.
+    std::cout.flush();
+
+    // This is a fairly big texture, so comment it out if your Debug build is taking a long
+    //   time to load... 
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("DarkGrey.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("IslandHeightMap.bmp", true);
+
+
+
     {
         sModelDrawInfo mdiIsosphere;
         pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Shphere_flat_4div_xyz_n_rgba_uv.ply",
@@ -50,6 +76,11 @@ void LoadAllThemodels( unsigned int program,
                                          mditerrain, program);
     }    
     {
+        sModelDrawInfo mdiFLATterrain;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply",
+                                         mdiFLATterrain, program);
+    }    
+    {
         sModelDrawInfo mdiTorpedo;
         pTheVAOManager->LoadModelIntoVAO("assets/models/0_review_TearDropBullet_inverted_normals_xyz_n_rgba_uv.ply",
                                          mdiTorpedo, program);
@@ -68,6 +99,8 @@ void LoadAllThemodels( unsigned int program,
      // Add to the list of things to draw
     cMeshObject* pBunny = new cMeshObject();
     pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
+    pBunny->friendlyName = "Bugs";
+    
     pBunny->position.y = 10.0f;
 
     pBunny->textureNames[0] = "cobblestone.bmp";
@@ -81,21 +114,22 @@ void LoadAllThemodels( unsigned int program,
 
     // Add to the list of things to draw
     cMeshObject* pTerrain = new cMeshObject();
-    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
-    pTerrain->scale = 1.0f;
-    pTerrain->position.y = -10.0f;
-    pTerrain->diffuseRGBA = glm::vec4(0.95f, 0.95f, 0.95f, 1.0f);
-    // Make the ground shiny 
+//    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
+    pTerrain->meshName = "assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply";
 
+    pTerrain->friendlyName = "terrain";
+
+    pTerrain->scale = 2.0f;
+    pTerrain->position.y = -10.0f;
+    pTerrain->diffuseRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    pTerrain->isWireframe = true;
     // Specular HIGHLIGHT colour 
     pTerrain->specularRGB_Power.r = 1.0f;
-    pTerrain->specularRGB_Power.g = 0.0f;
-    pTerrain->specularRGB_Power.b = 0.0f;
-    //    229, 234, 145
-        // Specular highlight POWER
+    pTerrain->specularRGB_Power.g = 1.0f;
+    pTerrain->specularRGB_Power.b = 1.0f;
     pTerrain->specularRGB_Power.w = 1000.0f;
 
-    pTerrain->textureNames[0] = "fauci.bmp";
+    pTerrain->textureNames[0] = "IslandHeightMap.bmp";
     pTerrain->texRatios[0] = 1.0f;
 
     ::g_pVecObjects.push_back(pTerrain);
@@ -190,45 +224,52 @@ void LoadAllThemodels( unsigned int program,
    pATAT->scale = 1.0f;
    pATAT->position.y = 0.0f;
    pATAT->position.x = 50.0f;
+
+   pATAT->textureNames[0] = "DarkGrey.bmp";
+   pATAT->texRatios[0] = 1.0f;
+
    //    pATAT->isWireframe = true;
-   pATAT->diffuseRGBA = glm::vec4(0.85f, 0.85f, 0.85f, 0.5f);
+   pATAT->diffuseRGBA = glm::vec4(0.85f, 0.85f, 0.85f, 1.0f);
    // Specular HIGHLIGHT colour 
    pATAT->specularRGB_Power.r = 1.0f;
    pATAT->specularRGB_Power.g = 1.0f;
    pATAT->specularRGB_Power.b = 1.0f;
    // Specular highlight POWER
    pATAT->specularRGB_Power.w = 1000.0f;
+
+   pATAT->friendlyName = "ATAT";
+
    ::g_pVecObjects.push_back(pATAT);
 
 
 
-   // Lots of bunnies
-   float boxLimit = 400.0f;
-   float boxStep = 100.0f;
-   for (float x = -boxLimit; x <= boxLimit; x += boxStep)
-   {
-       for (float y = -boxLimit; y <= boxLimit; y += boxStep)
-       {
-           for (float z = 0.0f; z <= (boxLimit*2.0f); z += boxStep)
-           {
-               // Add to the list of things to draw
-               cMeshObject* pBunny = new cMeshObject();
-               pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
-               pBunny->scale = 3.0f;
+   //// Lots of bunnies
+   //float boxLimit = 400.0f;
+   //float boxStep = 100.0f;
+   //for (float x = -boxLimit; x <= boxLimit; x += boxStep)
+   //{
+   //    for (float y = -boxLimit; y <= boxLimit; y += boxStep)
+   //    {
+   //        for (float z = 0.0f; z <= (boxLimit*2.0f); z += boxStep)
+   //        {
+   //            // Add to the list of things to draw
+   //            cMeshObject* pBunny = new cMeshObject();
+   //            pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
+   //            pBunny->scale = 3.0f;
 
-               pBunny->textureNames[0] = "cobblestone.bmp";
-               pBunny->texRatios[0] = 1.0f;
+   //            pBunny->textureNames[0] = "cobblestone.bmp";
+   //            pBunny->texRatios[0] = 1.0f;
 
-               pBunny->textureNames[1] = "fauci.bmp";
-               pBunny->texRatios[1] = 0.0f;
+   //            pBunny->textureNames[1] = "fauci.bmp";
+   //            pBunny->texRatios[1] = 0.0f;
 
-               pBunny->position = glm::vec3(x,y,z);
-               pBunny->diffuseRGBA.a = 0.35f;
+   //            pBunny->position = glm::vec3(x,y,z);
+   //            pBunny->diffuseRGBA.a = 0.35f;
 
-               ::g_pVecObjects.push_back(pBunny);
-           }
-        }
-   }
+   //            ::g_pVecObjects.push_back(pBunny);
+   //        }
+   //     }
+   //}
 
     return;
 }

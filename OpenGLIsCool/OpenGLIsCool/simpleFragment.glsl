@@ -69,19 +69,12 @@ void main()
 		outputColour.rgb = diffuseColourRGBA.rgb;
 		return;
 	}
-	else
-	{	
-		// Now passing specular, too
-		outputColour = calcualteLightContrib( diffuseColourRGBA.rgb, 
-											  vec3(fNormal.xyz),
-											  vec3(fVertWorldPos),
-											  specularColour.rgba );
-	}
 	
 	
-	
+	// Else regular ligthing
+
+	// Now passing specular, too
 	// Make "black"
-	outputColour.rgb *= 0.01f; 		// essentially black
 	
 	// "Sample" a pixel from the texture sampler "texture0A"
 	// 					uniform sampler2D texture0A;
@@ -94,12 +87,18 @@ void main()
 //	vec4 texRatios = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
 	vec4 finalTexColour =   ( texRGBAPixel_0A * textureRatios.x ) 
-	                      + ( texRGBAPixel_0B * textureRatios.y )
-	                      + ( texRGBAPixel_0C * textureRatios.z )
-	                      + ( texRGBAPixel_0D * textureRatios.w );
-						  
+						  + ( texRGBAPixel_0B * textureRatios.y )
+						  + ( texRGBAPixel_0C * textureRatios.z )
+						  + ( texRGBAPixel_0D * textureRatios.w );
+
+
+	outputColour = calcualteLightContrib( finalTexColour.rgb,		// diffuseColourRGBA.rgb, 
+										  vec3(fNormal.xyz),
+										  vec3(fVertWorldPos),
+										  specularColour.rgba );
+
 	
-	outputColour.rgb += finalTexColour.rgb;
+//	outputColour.rgb += finalTexColour.rgb;
 	
 //	outputColour.rgb *= 0.0001f;
 //	outputColour.rg += fUVx2.st;

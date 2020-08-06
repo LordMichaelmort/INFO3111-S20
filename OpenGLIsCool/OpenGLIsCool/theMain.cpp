@@ -337,6 +337,9 @@ int main(void)
         std::cout << "Error: " << ::g_pTheVAOManager->getLastError() << std::endl;
     }
 
+    // Create a texture manager
+    ::g_pTheTextureManager = new cBasicTextureManager();
+
 
     // Load the models
     LoadAllThemodels( program, ::g_pTheVAOManager );
@@ -456,24 +459,7 @@ int main(void)
 
 
 
-    // Create a texture manager
-    ::g_pTheTextureManager = new cBasicTextureManager();
-    ::g_pTheTextureManager->SetBasePath("assets/textures");
 
-    if (::g_pTheTextureManager->Create2DTextureFromBMPFile("cobblestone.bmp", true))
-    {
-        std::cout << "Texture loaded OK" << std::endl;
-    }
-    else
-    {
-        std::cout << "Error: Didn't load texture" << ::g_pTheTextureManager->getLastError() << std::endl;
-    }
-    // Force cout to flush to screen.
-    std::cout.flush();
-    
-    // This is a fairly big texture, so comment it out if your Debug build is taking a long
-    //   time to load... 
-    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
 
 
     // STARTOF: Joysticks
@@ -604,6 +590,17 @@ int main(void)
 //                rPerterb += 0.25f;
                 ::g_pLightManager->vecLights[index].atten.y += rPerterb;    // Linear
             }
+
+
+            // Point the spot light at the AT-AT
+            cMeshObject* pATAT = findObjectByName("ATAT");
+
+            // Take the position of the ATAT - position of the light
+            glm::vec3 spotDirection = pATAT->position - glm::vec3(::g_pLightManager->vecLights[9].position);
+            // "Normalize", making ray a length of 1.0f; 
+            spotDirection = glm::normalize(spotDirection);
+
+            ::g_pLightManager->vecLights[9].direction = glm::vec4(spotDirection, 1.0f);
 
 
         }
@@ -846,7 +843,6 @@ void DrawObject( cMeshObject* pCurMesh,
 
     // ...and so on
 
-
     //uniform vec4 textureRatios;
     GLint textureRatio_UniLoc = glGetUniformLocation( program, "textureRatios" );
 
@@ -862,6 +858,25 @@ void DrawObject( cMeshObject* pCurMesh,
                  pCurMesh->texRatios[3]);    
 
 
+    // Height map in vertex shader
+    GLint textureHeightMap_UniLoc = glGetUniformLocation( program, "textureHeightMap" );
+    GLint bUseHeightMap_UniLoc = glGetUniformLocation( program, "bUseHeightMap" );
+
+    // HACK: If this is the terrain, then set these uniforms
+    if (pCurMesh->friendlyName == "terrain")
+    {
+        glUniform1f(bUseHeightMap_UniLoc, (float)GL_TRUE );
+
+        // 
+        glActiveTexture(GL_TEXTURE30);
+        GLuint heightMap_TextID = ::g_pTheTextureManager->getTextureIDFromName("IslandHeightMap.bmp");
+        glBindTexture(GL_TEXTURE_2D, heightMap_TextID);
+        glUniform1i(textureHeightMap_UniLoc, 30);     // Note the integer '30' instead of GL_TEXTUREXX
+    }
+    else
+    {
+        glUniform1f(bUseHeightMap_UniLoc, (float)GL_FALSE );
+    }
 
     //    _____        _                  ___ _         __  __ 
     //   |_   _|____ _| |_ _  _ _ _ ___  / __| |_ _  _ / _|/ _|

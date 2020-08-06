@@ -17,9 +17,21 @@ uniform mat4 matModel;		// "model" or "world" matrix
 uniform mat4 matView;		// "view" or "camera" or "eye" matrix
 uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
 
+// Using textures as DATA, not just images
+uniform sampler2D textureHeightMap;
+uniform bool bUseHeightMap;
+
 void main()
 {
 	vec3 positionXYZ = vec3( vPos.xyz );
+	
+	if ( bUseHeightMap )
+	{
+		vec4 texHeight = texture( textureHeightMap, vUVx2.st );
+		float height = (texHeight.r + texHeight.g + texHeight.b)/3.0f;
+		const float SCALERATIO = 5.0f;
+		positionXYZ.y += (height * SCALERATIO);
+	}
 	
 	// Note reverse order because we need to apply these
 	// in order of M, then V, then P, and matrix multiply goes "backwards"
