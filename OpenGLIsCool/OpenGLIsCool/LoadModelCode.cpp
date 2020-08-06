@@ -201,5 +201,34 @@ void LoadAllThemodels( unsigned int program,
    ::g_pVecObjects.push_back(pATAT);
 
 
+
+   // Lots of bunnies
+   float boxLimit = 400.0f;
+   float boxStep = 100.0f;
+   for (float x = -boxLimit; x <= boxLimit; x += boxStep)
+   {
+       for (float y = -boxLimit; y <= boxLimit; y += boxStep)
+       {
+           for (float z = 0.0f; z <= (boxLimit*2.0f); z += boxStep)
+           {
+               // Add to the list of things to draw
+               cMeshObject* pBunny = new cMeshObject();
+               pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
+               pBunny->scale = 3.0f;
+
+               pBunny->textureNames[0] = "cobblestone.bmp";
+               pBunny->texRatios[0] = 1.0f;
+
+               pBunny->textureNames[1] = "fauci.bmp";
+               pBunny->texRatios[1] = 0.0f;
+
+               pBunny->position = glm::vec3(x,y,z);
+               pBunny->diffuseRGBA.a = 0.35f;
+
+               ::g_pVecObjects.push_back(pBunny);
+           }
+        }
+   }
+
     return;
 }

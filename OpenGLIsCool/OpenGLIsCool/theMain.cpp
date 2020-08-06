@@ -22,6 +22,7 @@
 #include "cMeshObject.h"
 #include <vector>
 #include <sstream>          // Stupid name because it's stringstring, not sstream
+#include <algorithm>
 
 #include "LightManager/cLightManager.h"
 
@@ -204,6 +205,44 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 
+// Predicate function
+bool IsACloserToCamera(cMeshObject* pA, cMeshObject* pB)
+{
+    float distToCamera_A = glm::distance( pA->position, ::g_pFlyCamera->getEye() );
+    float distToCamera_B = glm::distance( pB->position, ::g_pFlyCamera->getEye() );
+
+    if (distToCamera_A < distToCamera_B)
+    {
+        return true;
+    }
+    return false;
+}
+
+// Functor for sorting the objects back to front
+class cIsACloserToCamera
+{
+public:
+    cIsACloserToCamera(glm::vec3 cameraEye) 
+    {
+        this->m_CameraEye = cameraEye;
+        return;
+    }
+
+    // No one uses operator()
+    bool operator() (cMeshObject* pA, cMeshObject* pB)
+    {
+        float distToCamera_A = glm::distance( pA->position, this->m_CameraEye);
+        float distToCamera_B = glm::distance( pB->position, this->m_CameraEye);
+
+        if (distToCamera_A < distToCamera_B)
+        {
+            return true;
+        }
+        return false;
+    }
+private:
+    glm::vec3 m_CameraEye;
+};
 
 
 int main(void)
@@ -572,10 +611,43 @@ int main(void)
 
 
         // *******************************************
-        // **** Draw the entire scene of objects *****
+        //    ____                       ____                       
+        //   |  _ \ _ __ __ ___      __ / ___|  ___ ___ _ __   ___  
+        //   | | | | '__/ _` \ \ /\ / / \___ \ / __/ _ \ '_ \ / _ \ 
+        //   | |_| | | | (_| |\ V  V /   ___) | (_|  __/ | | |  __/ 
+        //   |____/|_|  \__,_| \_/\_/   |____/ \___\___|_| |_|\___| 
+        //                                                          
         // *******************************************
-        for ( std::vector< cMeshObject* >::iterator it_pCurMesh = ::g_pVecObjects.begin();
-              it_pCurMesh != ::g_pVecObjects.end(); it_pCurMesh++ )
+
+        // Separate non-transparent and transparent
+        std::vector< cMeshObject* > vecTransparentObjects;
+        std::vector< cMeshObject* > vecOpaqueObjects;
+
+        for (std::vector< cMeshObject* >::iterator it_pCurMesh = ::g_pVecObjects.begin();
+             it_pCurMesh != ::g_pVecObjects.end(); it_pCurMesh++)
+        {
+            cMeshObject* pCO = *it_pCurMesh;
+
+            if (pCO->diffuseRGBA.a < 1.0f)
+            {
+                // It's transparent
+                vecTransparentObjects.push_back(pCO);
+            }
+            else
+            {
+                vecOpaqueObjects.push_back(pCO);
+            }
+        }
+
+
+        // Sort the transparent object from FAR to CLOSE (relative to the camer)
+//        std::sort(vecOpaqueObjects.begin(), vecOpaqueObjects.end(), IsACloserToCamera);
+        std::sort(vecOpaqueObjects.begin(), vecOpaqueObjects.end(), cIsACloserToCamera(::g_pFlyCamera->getEye() ) );
+
+
+        // Draw the opaque things first 
+        for ( std::vector< cMeshObject* >::iterator it_pCurMesh = vecOpaqueObjects.begin();
+              it_pCurMesh != vecOpaqueObjects.end(); it_pCurMesh++ )
         {
             cMeshObject* pTheObject = *it_pCurMesh;
             
@@ -583,6 +655,29 @@ int main(void)
             DrawObject( pTheObject, program, matView, matProjection );
 
         }//for ( std::vector< cMeshObject* >
+
+
+
+
+        // Draw the opaque things first 
+        for ( std::vector< cMeshObject* >::iterator it_pCurMesh = vecTransparentObjects.begin();
+              it_pCurMesh != vecTransparentObjects.end(); it_pCurMesh++ )
+        {
+            cMeshObject* pTheObject = *it_pCurMesh;
+            
+            // All the draw code was here:
+            DrawObject( pTheObject, program, matView, matProjection );
+
+        }//for ( std::vector< cMeshObject* >
+
+        // *******************************************
+        //    ____                       ____                       
+        //   |  _ \ _ __ __ ___      __ / ___|  ___ ___ _ __   ___  
+        //   | | | | '__/ _` \ \ /\ / / \___ \ / __/ _ \ '_ \ / _ \ 
+        //   | |_| | | | (_| |\ V  V /   ___) | (_|  __/ | | |  __/ 
+        //   |____/|_|  \__,_| \_/\_/   |____/ \___\___|_| |_|\___| 
+        //                                                          
+        // *******************************************
 
 
         // ADD 
@@ -736,11 +831,13 @@ void DrawObject( cMeshObject* pCurMesh,
     // Connect the sampler to the "Texture Unit"
     glUniform1i( texture0A_UniLoc, 0 );     // Note: we pass a NUMBER, not an enum (GL_TEXTURE0)
 
+
     // TODO: You will have to set these texture names form the cMeshObject, too
     glActiveTexture( GL_TEXTURE1 );
     GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
     glBindTexture( GL_TEXTURE_2D, fauci_TextID );
     glUniform1i( texture0B_UniLoc, 1 );     // Note the integer '1' instead of GL_TEXTURE7
+
 
     glActiveTexture( GL_TEXTURE2 );
     GLuint whatever_TextID = ::g_pTheTextureManager->getTextureIDFromName("Whatever.bmp");

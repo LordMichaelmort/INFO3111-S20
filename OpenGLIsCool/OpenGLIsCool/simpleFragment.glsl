@@ -48,6 +48,7 @@ uniform sampler2D texture0B;		// Fauci texture
 uniform sampler2D texture0C;
 uniform sampler2D texture0D;
 
+
 uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
 
@@ -78,15 +79,12 @@ void main()
 	}
 	
 	
-	// With alpha blending, there is hardware 
-	// that reads the 4th value (the "alpha channel")
-	// directly. 
-	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
 	
 	// Make "black"
 	outputColour.rgb *= 0.01f; 		// essentially black
 	
 	// "Sample" a pixel from the texture sampler "texture0A"
+	// 					uniform sampler2D texture0A;
 	vec4 texRGBAPixel_0A = texture( texture0A, fUVx2.st );
 	vec4 texRGBAPixel_0B = texture( texture0B, fUVx2.st );
 	vec4 texRGBAPixel_0C = texture( texture0C, fUVx2.st );
@@ -103,8 +101,14 @@ void main()
 	
 	outputColour.rgb += finalTexColour.rgb;
 	
-//
-//	outputColour.rg += fUVx2.st;	// s = u or x, t = v or y;
+//	outputColour.rgb *= 0.0001f;
+//	outputColour.rg += fUVx2.st;
+	
+	
+	// With alpha blending, there is hardware 
+	// that reads the 4th value (the "alpha channel")
+	// directly. 
+	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
 
 }
 
