@@ -37,9 +37,9 @@ void DrawObject(cMeshObject* pCurMesh,
 
 
 // Camera stuff
-glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
-glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 g_cameraEye = glm::vec3(0.0, 0.0, +100.0f);
+//glm::vec3 g_cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+//glm::vec3 g_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 
 extern cJoystickManager* g_pJoysticks;
 extern cFlyCamera* g_pFlyCamera;
@@ -155,16 +155,16 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 
     // if ( mods == 0 ) then no "modifiers" are pressed
-    if (mods == 0)
-    {
-        //::g_cameraEye.x -= CAMERASPEED;
-        if (key == GLFW_KEY_A) { ::g_cameraEye.x -= CAMERASPEED; }
-        if (key == GLFW_KEY_D) { ::g_cameraEye.x += CAMERASPEED; }
-        if (key == GLFW_KEY_W) { ::g_cameraEye.z += CAMERASPEED; }
-        if (key == GLFW_KEY_S) { ::g_cameraEye.z -= CAMERASPEED; }
-        if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= CAMERASPEED; }
-        if (key == GLFW_KEY_E) { ::g_cameraEye.y += CAMERASPEED; }
-    }//if (mods == 0)
+    //if (mods == 0)
+    //{
+    //    //::g_cameraEye.x -= CAMERASPEED;
+    //    if (key == GLFW_KEY_A) { ::g_cameraEye.x -= CAMERASPEED; }
+    //    if (key == GLFW_KEY_D) { ::g_cameraEye.x += CAMERASPEED; }
+    //    if (key == GLFW_KEY_W) { ::g_cameraEye.z += CAMERASPEED; }
+    //    if (key == GLFW_KEY_S) { ::g_cameraEye.z -= CAMERASPEED; }
+    //    if (key == GLFW_KEY_Q) { ::g_cameraEye.y -= CAMERASPEED; }
+    //    if (key == GLFW_KEY_E) { ::g_cameraEye.y += CAMERASPEED; }
+    //}//if (mods == 0)
 
     //if (key == GLFW_KEY_L)
     //{
@@ -240,13 +240,13 @@ int main(void)
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-
+    
+    // Note the additional GLFW callbacks (we only had the key and error callbacks)
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetCursorEnterCallback(window, cursor_enter_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     glfwSetWindowSizeCallback(window, window_size_callback);
 
@@ -462,7 +462,6 @@ int main(void)
     ::g_pFlyCamera = new cFlyCamera();
     ::g_pFlyCamera->eye = glm::vec3(0.0f, 30.0, -180.0);
     ::g_pFlyCamera->movementSpeed = 0.25f;
-    ::g_pFlyCamera->movementSpeed = 2.5f;
     // ENDOF: Fly Camera
 
     std::cout << "We're all set! Buckle up!" << std::endl;
@@ -669,7 +668,6 @@ int main(void)
         std::string sTitleText = ssTitle.str();
 
         glfwSetWindowTitle(window, sTitleText.c_str());
-
 
         ProcessAsyncKeys(window);
         ProcessAsyncMouse(window);

@@ -104,7 +104,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 
-
+// Callback when you use the mouse scroll wheel
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	// A regular mouse wheel returns the y value
