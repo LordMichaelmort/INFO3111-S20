@@ -38,6 +38,7 @@ public:
 	std::string  textureNames[NUMBEROFTEXTURES];	// four texture names
 	float texRatios[NUMBEROFTEXTURES];				// four texture "ratios"
 
+	std::string discardTexture;
 
 	// This is "read only"
 	unsigned int getUniqueID(void);

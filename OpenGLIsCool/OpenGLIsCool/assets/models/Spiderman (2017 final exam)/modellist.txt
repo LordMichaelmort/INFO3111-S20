@@ -1,0 +1,20 @@
+ Volume in drive D has no label.
+ Volume Serial Number is C201-A99C
+
+ Directory of D:\3111_3D\2020\Code\INFO3111-S20\OpenGLIsCool\OpenGLIsCool\assets\models\Spiderman (2017 final exam)
+
+2020-08-10  01:31 PM    <DIR>          .
+2020-08-10  01:31 PM    <DIR>          ..
+2020-08-10  12:45 PM            34,549 legospiderman_body.ply
+2020-08-10  12:45 PM           536,727 legospiderman_head.ply
+2020-08-10  12:45 PM            20,250 legospiderman_Hips.ply
+2020-08-10  12:46 PM            30,566 legospiderman_Left_arm.ply
+2020-08-10  12:46 PM            10,484 legospiderman_Left_hand.ply
+2020-08-10  12:47 PM            23,349 legospiderman_Left_leg.ply
+2020-08-10  12:47 PM            30,815 legospiderman_Right_arm.ply
+2020-08-10  12:47 PM            10,594 legospiderman_Right_hand.ply
+2020-08-10  12:48 PM            23,616 legospiderman_Right_leg.ply
+2020-08-10  01:31 PM                 0 modellist.txt
+2017-06-16  06:36 AM         1,080,054 SpidermanUV_square.bmp
+              11 File(s)      1,801,004 bytes
+               2 Dir(s)  200,015,355,904 bytes free

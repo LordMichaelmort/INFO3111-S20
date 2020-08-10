@@ -279,7 +279,18 @@ int main(void)
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    
+
+    //// Print out some texture stats
+    //GLint texture_units = 0;
+    //glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units);
+    //std::cout << "GL_MAX_TEXTURE_IMAGE_UNITS = " << texture_units << std::endl;
+    //std::cout << "(aka, the MAXIMUM number of texture units that can be run AT THE SAME TIME)" << std::endl;
+    //
+    //GLint combined_texture_unit_count = 0;
+    //glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combined_texture_unit_count);
+    //std::cout << "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = " << combined_texture_unit_count << std::endl;
+
+
     // Note the additional GLFW callbacks (we only had the key and error callbacks)
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -801,6 +812,30 @@ void DrawObject( cMeshObject* pCurMesh,
     }
 
 
+    // STARTOF: Discard texture portion
+
+    // If the object has a "discard" texutre, then enable this
+    GLint bUseDiscardTexture_UniLoc = glGetUniformLocation(program, "bUseDiscardTexture");
+    if (pCurMesh->discardTexture != "")
+    {
+        // uniform sampler2D textureDiscard;
+        // uniform bool bUseDiscardTexture;
+        GLint textureDiscardSampler_UniLoc = glGetUniformLocation(program, "textureDiscard");
+
+        glUniform1f( bUseDiscardTexture_UniLoc, (float)GL_TRUE);
+
+        glActiveTexture(GL_TEXTURE16);
+        GLuint discardTextureID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->discardTexture);
+        glBindTexture(GL_TEXTURE_2D, discardTextureID);
+
+        glUniform1i(textureDiscardSampler_UniLoc, 16);  // Note 16, not GL_TEXTURE16
+    }
+    else
+    {
+        glUniform1f( bUseDiscardTexture_UniLoc, (float)GL_FALSE);
+    }//if (pCurMesh->discardTexture != "")
+
+    // ENDOF: Discard texture portion
 
     // ***********************************************************
     //    _____        _                  ___ _         __  __ 

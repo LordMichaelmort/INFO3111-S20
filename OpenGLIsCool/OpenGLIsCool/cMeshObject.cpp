@@ -29,6 +29,8 @@ cMeshObject::cMeshObject()
 		this->texRatios[index] = 0.0f;
 	}
 
+	this->discardTexture = "";
+
 	return;
 }
 

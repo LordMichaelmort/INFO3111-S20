@@ -32,7 +32,7 @@ const int NUMBEROFLIGHTS = 10;
 uniform sLight theLights[NUMBEROFLIGHTS];  	// 80 uniforms
 
 // This is the objects colour ('material')
-uniform vec4 diffuseColourRGBA;
+uniform vec4 diffuseColourRGBA;				// A is alpha transparency
 uniform vec4 specularColour;
 
 uniform vec4 eyeLocation;
@@ -47,9 +47,12 @@ uniform sampler2D texture0A;		// Cobblestone texture
 uniform sampler2D texture0B;		// Fauci texture
 uniform sampler2D texture0C;
 uniform sampler2D texture0D;
-
-
 uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
+
+// A "mask" or "discard" texture
+uniform sampler2D textureDiscard;
+uniform bool bUseDiscardTexture;	
+
 
 
 
@@ -70,6 +73,22 @@ void main()
 		return;
 	}
 	
+	// For when we want to completely elimiate part of the model
+	if ( bUseDiscardTexture )
+	{
+		vec4 textDiscard = texture( textureDiscard, fUVx2.st );
+		
+		// Discard is black or white
+		// Just compare one of the colours, say red
+		if ( textDiscard.r > 0.5f )
+		{
+			// Discard this fragment
+			discard;
+		}
+	
+	}//if ( bUseDiscardTexture )
+
+	
 	
 	// Else regular ligthing
 
@@ -86,10 +105,12 @@ void main()
 //	This is a uniform (see the top of the file)		
 //	vec4 texRatios = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 
-	vec4 finalTexColour =   ( texRGBAPixel_0A * textureRatios.x ) 
-						  + ( texRGBAPixel_0B * textureRatios.y )
+
+	vec4 finalTexColour =   ( texRGBAPixel_0A * textureRatios.x )   
+						  + ( texRGBAPixel_0B * textureRatios.y )   
 						  + ( texRGBAPixel_0C * textureRatios.z )
 						  + ( texRGBAPixel_0D * textureRatios.w );
+						  					  
 
 
 	outputColour = calcualteLightContrib( finalTexColour.rgb,		// diffuseColourRGBA.rgb, 

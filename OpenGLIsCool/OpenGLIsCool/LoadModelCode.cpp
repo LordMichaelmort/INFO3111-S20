@@ -42,7 +42,13 @@ void LoadAllThemodels( unsigned int program,
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("SandTexture.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("WaterSurfaceTexture.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("pool-water-caustic.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("SpidermanUV_square.bmp", true);
 
+    // This is an example of a "mask" or "discard" texture
+    // Using the texture to "discard" parts of the model
+    // (like holes, chain link fence, etc.)
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("HeyThereTexture_Mask_or_discard.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("PolkaDotMask.bmp", true);
 
 
     {
@@ -100,6 +106,51 @@ void LoadAllThemodels( unsigned int program,
         pTheVAOManager->LoadModelIntoVAO("assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply",
                                          mdiBunny, program);
     }    
+    {
+        sModelDrawInfo mdiSpiderman;
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_head.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_body.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Hips.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Left_arm.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Left_hand.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Left_leg.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Right_arm.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Right_hand.ply", mdiSpiderman, program);
+        pTheVAOManager->LoadModelIntoVAO("assets/models/Spiderman (2017 final exam)/legospiderman_Right_leg.ply", mdiSpiderman, program);
+ 
+    
+        // Add to the list of things to draw
+        cMeshObject* pSpiderHead = new cMeshObject();
+        pSpiderHead->meshName = "assets/models/Spiderman (2017 final exam)/legospiderman_head.ply";
+        pSpiderHead->textureNames[0] = "SpidermanUV_square.bmp";
+        pSpiderHead->texRatios[0] = 1.0f;
+        pSpiderHead->scale = 10.0f;
+        pSpiderHead->position.y = 10.0f;
+        pSpiderHead->orientation.x = glm::radians(-90.0f);
+        ::g_pVecObjects.push_back(pSpiderHead);
+
+        cMeshObject* pSpiderBody = new cMeshObject();
+        pSpiderBody->meshName = "assets/models/Spiderman (2017 final exam)/legospiderman_body.ply";
+        pSpiderBody->textureNames[0] = "SpidermanUV_square.bmp";
+        pSpiderBody->texRatios[0] = 1.0f;
+        pSpiderBody->scale = 10.0f;
+        pSpiderBody->position.y = 10.0f;
+        pSpiderBody->orientation.x = glm::radians(-90.0f);
+        ::g_pVecObjects.push_back(pSpiderBody);
+
+        cMeshObject* pSpiderLeftArm = new cMeshObject();
+        pSpiderLeftArm->meshName = "assets/models/Spiderman (2017 final exam)/legospiderman_Left_arm.ply";
+        pSpiderLeftArm->textureNames[0] = "SpidermanUV_square.bmp";
+        pSpiderLeftArm->texRatios[0] = 1.0f;
+        pSpiderLeftArm->scale = 10.0f;
+        pSpiderLeftArm->position.y = 10.0f;
+        pSpiderLeftArm->orientation.x = glm::radians(-90.0f);
+        ::g_pVecObjects.push_back(pSpiderLeftArm);
+    }    
+
+
+
+
 
      // Add to the list of things to draw
     cMeshObject* pBunny = new cMeshObject();
@@ -144,6 +195,7 @@ void LoadAllThemodels( unsigned int program,
 
     ::g_pVecObjects.push_back(pSeaFloor);
 
+
     // Add to the list of things to draw
     cMeshObject* pWaterSurface = new cMeshObject();
     pWaterSurface->meshName = "assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply";
@@ -152,7 +204,7 @@ void LoadAllThemodels( unsigned int program,
     pWaterSurface->position.y = 35.0f;
     pWaterSurface->specularRGB_Power.r = 1.0f;
     pWaterSurface->specularRGB_Power.g = 1.0f;
-    pWaterSurface->specularRGB_Power.b = 1.0f;
+    pWaterSurface->specularRGB_Power.b = 0.0f;
     pWaterSurface->specularRGB_Power.w = 1000.0f;        // REALLY shinny
     pWaterSurface->textureNames[0] = "WaterSurfaceTexture.bmp";
     pWaterSurface->textureNames[1] = "";
@@ -161,7 +213,13 @@ void LoadAllThemodels( unsigned int program,
 
     pWaterSurface->texRatios[0] = 1.0f;
 
-    pWaterSurface->diffuseRGBA.a = 0.65f;    // Semi-transparent
+ //   pWaterSurface->diffuseRGBA.a = 0.65f;    // Semi-transparent
+    pWaterSurface->diffuseRGBA.a = 1.0f;  
+
+    // This "water" object will now have a "discard" or "masking" texture
+    pWaterSurface->discardTexture = "HeyThereTexture_Mask_or_discard.bmp";
+    pWaterSurface->discardTexture = "PolkaDotMask.bmp";
+
     ::g_pVecObjects.push_back(pWaterSurface);
 
 
