@@ -781,6 +781,9 @@ int main(void)
 }
 
 
+// HACK: 
+static glm::vec2 heightMapTextureOffset = glm::vec2(0.0f, 0.0f);
+
 
 void DrawObject( cMeshObject* pCurMesh, 
                  GLuint program,                // Shader program
@@ -859,6 +862,12 @@ void DrawObject( cMeshObject* pCurMesh,
 
 
     // Height map in vertex shader
+    //    _  _     _      _   _                      
+    //   | || |___(_)__ _| |_| |_   _ __  __ _ _ __  
+    //   | __ / -_) / _` | ' \  _| | '  \/ _` | '_ \ 
+    //   |_||_\___|_\__, |_||_\__| |_|_|_\__,_| .__/ 
+    //              |___/                     |_|    
+
     GLint textureHeightMap_UniLoc = glGetUniformLocation( program, "textureHeightMap" );
     GLint bUseHeightMap_UniLoc = glGetUniformLocation( program, "bUseHeightMap" );
 
@@ -869,15 +878,25 @@ void DrawObject( cMeshObject* pCurMesh,
 
         // 
         glActiveTexture(GL_TEXTURE30);
-        GLuint heightMap_TextID = ::g_pTheTextureManager->getTextureIDFromName("IslandHeightMap.bmp");
+        GLuint heightMap_TextID = ::g_pTheTextureManager->getTextureIDFromName("02-australia-gray.bmp");
         glBindTexture(GL_TEXTURE_2D, heightMap_TextID);
         glUniform1i(textureHeightMap_UniLoc, 30);     // Note the integer '30' instead of GL_TEXTUREXX
+
+        // HACK: Change the value over time
+        heightMapTextureOffset.x += 0.001f;
+
+        GLint textOffsetVS_UniLoc = glGetUniformLocation( program, "textOffsetVS" );
+        glUniform2f(textOffsetVS_UniLoc, heightMapTextureOffset.x, heightMapTextureOffset.y);
     }
     else
     {
         glUniform1f(bUseHeightMap_UniLoc, (float)GL_FALSE );
     }
-
+    //    _  _     _      _   _                      
+    //   | || |___(_)__ _| |_| |_   _ __  __ _ _ __  
+    //   | __ / -_) / _` | ' \  _| | '  \/ _` | '_ \ 
+    //   |_||_\___|_\__, |_||_\__| |_|_|_\__,_| .__/ 
+    //              |___/                     |_|    
     //    _____        _                  ___ _         __  __ 
     //   |_   _|____ _| |_ _  _ _ _ ___  / __| |_ _  _ / _|/ _|
     //     | |/ -_) \ /  _| || | '_/ -_) \__ \  _| || |  _|  _|

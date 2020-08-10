@@ -37,6 +37,7 @@ void LoadAllThemodels( unsigned int program,
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("DarkGrey.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("IslandHeightMap.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("02-australia-gray.bmp", true);
 
 
 
@@ -123,13 +124,13 @@ void LoadAllThemodels( unsigned int program,
     pTerrain->position.y = -10.0f;
     pTerrain->diffuseRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     pTerrain->isWireframe = true;
-    // Specular HIGHLIGHT colour 
+   //  Specular HIGHLIGHT colour 
     pTerrain->specularRGB_Power.r = 1.0f;
     pTerrain->specularRGB_Power.g = 1.0f;
     pTerrain->specularRGB_Power.b = 1.0f;
     pTerrain->specularRGB_Power.w = 1000.0f;
 
-    pTerrain->textureNames[0] = "IslandHeightMap.bmp";
+    pTerrain->textureNames[0] = "02-australia-gray.bmp";
     pTerrain->texRatios[0] = 1.0f;
 
     ::g_pVecObjects.push_back(pTerrain);

@@ -20,6 +20,7 @@ uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
 // Using textures as DATA, not just images
 uniform sampler2D textureHeightMap;
 uniform bool bUseHeightMap;
+uniform vec2 textOffsetVS;
 
 void main()
 {
@@ -27,9 +28,13 @@ void main()
 	
 	if ( bUseHeightMap )
 	{
-		vec4 texHeight = texture( textureHeightMap, vUVx2.st );
+		vec2 uvActaul = vUVx2.st + textOffsetVS;		// 0 to 1
+	
+		vec4 texHeight = texture( textureHeightMap, uvActaul.st );
+		
 		float height = (texHeight.r + texHeight.g + texHeight.b)/3.0f;
-		const float SCALERATIO = 5.0f;
+		const float SCALERATIO = 10.0f;
+		
 		positionXYZ.y += (height * SCALERATIO);
 	}
 	
