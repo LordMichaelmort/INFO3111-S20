@@ -21,14 +21,18 @@ uniform mat4 matProj;		// "projection" matrix (ortographic or perspective)
 uniform sampler2D textureHeightMap;
 uniform bool bUseHeightMap;
 uniform vec2 textOffsetVS;
+uniform mat4 matTextRotation;
 
 void main()
 {
 	vec3 positionXYZ = vec3( vPos.xyz );
-	
+
+	// This is the code that perturbs the height map (flat terrain mesh)
+	// Based on colour values.
 	if ( bUseHeightMap )
 	{
-		vec2 uvActaul = vUVx2.st + textOffsetVS;		// 0 to 1
+		//vec2 uvActaul = vUVx2.st + textOffsetVS;		// 0 to 1
+		vec4 uvActaul = matTextRotation * vec4(vUVx2.st, 0.0f, 1.0f);
 	
 		vec4 texHeight = texture( textureHeightMap, uvActaul.st );
 		
@@ -37,6 +41,7 @@ void main()
 		
 		positionXYZ.y += (height * SCALERATIO);
 	}
+	// End of: Perterb of height map
 	
 	// Note reverse order because we need to apply these
 	// in order of M, then V, then P, and matrix multiply goes "backwards"

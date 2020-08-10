@@ -783,6 +783,7 @@ int main(void)
 
 // HACK: 
 static glm::vec2 heightMapTextureOffset = glm::vec2(0.0f, 0.0f);
+static float textureRotationAngle = 0.0f;
 
 
 void DrawObject( cMeshObject* pCurMesh, 
@@ -883,7 +884,15 @@ void DrawObject( cMeshObject* pCurMesh,
         glUniform1i(textureHeightMap_UniLoc, 30);     // Note the integer '30' instead of GL_TEXTUREXX
 
         // HACK: Change the value over time
-        heightMapTextureOffset.x += 0.001f;
+//        heightMapTextureOffset.x += 0.001f;
+        textureRotationAngle += glm::radians(0.1f);
+
+        glm::mat4 matRotTexture = glm::rotate(glm::mat4(1.0f),
+                                              textureRotationAngle, // (float) glfwGetTime(), 
+                                              glm::vec3(0.0f, 0.0f, 1.0f));
+        GLint matTextRotation_UniLoc = glGetUniformLocation(program, "matTextRotation");
+        glUniformMatrix4fv(matTextRotation_UniLoc, 1, GL_FALSE, glm::value_ptr(matRotTexture));
+
 
         GLint textOffsetVS_UniLoc = glGetUniformLocation( program, "textOffsetVS" );
         glUniform2f(textOffsetVS_UniLoc, heightMapTextureOffset.x, heightMapTextureOffset.y);
