@@ -826,25 +826,30 @@ void DrawObject( cMeshObject* pCurMesh,
     glActiveTexture( GL_TEXTURE0 ); // Choose texture unit #0
     // Get texture id (from the name we loaded using the texture manager)
 //    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName("cobblestone.bmp");
-    GLuint cobblestoneText_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[0]);
+    GLuint texture_00_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[0]);
     // Make that texture "current" (aka "bind" it)
-    glBindTexture( GL_TEXTURE_2D, cobblestoneText_ID );    // This is the "current" texture
+    glBindTexture( GL_TEXTURE_2D, texture_00_ID);    // This is the "current" texture
     // Connect the sampler to the "Texture Unit"
     glUniform1i( texture0A_UniLoc, 0 );     // Note: we pass a NUMBER, not an enum (GL_TEXTURE0)
 
 
     // TODO: You will have to set these texture names form the cMeshObject, too
     glActiveTexture( GL_TEXTURE1 );
-    GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
-    glBindTexture( GL_TEXTURE_2D, fauci_TextID );
+//    GLuint fauci_TextID = ::g_pTheTextureManager->getTextureIDFromName("fauci.bmp");
+    GLuint texture_01_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[1]);
+    glBindTexture( GL_TEXTURE_2D, texture_01_ID);
     glUniform1i( texture0B_UniLoc, 1 );     // Note the integer '1' instead of GL_TEXTURE7
 
 
-    glActiveTexture( GL_TEXTURE2 );
-    GLuint whatever_TextID = ::g_pTheTextureManager->getTextureIDFromName("Whatever.bmp");
-    glBindTexture( GL_TEXTURE_2D, whatever_TextID );
-    glUniform1i( texture0C_UniLoc, 2 );     // Note the integer '1' instead of GL_TEXTURE7
+    glActiveTexture( GL_TEXTURE2 );    
+    GLuint texture_02_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[2]);
+    glBindTexture(GL_TEXTURE_2D, texture_02_ID);
+    glUniform1i(texture0C_UniLoc, 2);     
 
+    glActiveTexture( GL_TEXTURE3 );
+    GLuint texture_03_ID = ::g_pTheTextureManager->getTextureIDFromName(pCurMesh->textureNames[3]);
+    glBindTexture(GL_TEXTURE_2D, texture_03_ID);
+    glUniform1i(texture0C_UniLoc, 3);     
     // ...and so on
 
     //uniform vec4 textureRatios;
@@ -868,44 +873,44 @@ void DrawObject( cMeshObject* pCurMesh,
     //   | __ / -_) / _` | ' \  _| | '  \/ _` | '_ \ 
     //   |_||_\___|_\__, |_||_\__| |_|_|_\__,_| .__/ 
     //              |___/                     |_|    
-
-    GLint textureHeightMap_UniLoc = glGetUniformLocation( program, "textureHeightMap" );
-    GLint bUseHeightMap_UniLoc = glGetUniformLocation( program, "bUseHeightMap" );
-
-    // HACK: If this is the terrain, then set these uniforms
-    if (pCurMesh->friendlyName == "terrain")
-    {
-        glUniform1f(bUseHeightMap_UniLoc, (float)GL_TRUE );
-
-        // 
-        glActiveTexture(GL_TEXTURE30);
-        GLuint heightMap_TextID = ::g_pTheTextureManager->getTextureIDFromName("02-australia-gray.bmp");
-        glBindTexture(GL_TEXTURE_2D, heightMap_TextID);
-        glUniform1i(textureHeightMap_UniLoc, 30);     // Note the integer '30' instead of GL_TEXTUREXX
-
-        // HACK: Change the value over time
-//        heightMapTextureOffset.x += 0.001f;
-        textureRotationAngle += glm::radians(0.1f);
-
-        glm::mat4 matRotTexture = glm::rotate(glm::mat4(1.0f),
-                                              textureRotationAngle, // (float) glfwGetTime(), 
-                                              glm::vec3(0.0f, 0.0f, 1.0f));
-        GLint matTextRotation_UniLoc = glGetUniformLocation(program, "matTextRotation");
-        glUniformMatrix4fv(matTextRotation_UniLoc, 1, GL_FALSE, glm::value_ptr(matRotTexture));
-
-
-        GLint textOffsetVS_UniLoc = glGetUniformLocation( program, "textOffsetVS" );
-        glUniform2f(textOffsetVS_UniLoc, heightMapTextureOffset.x, heightMapTextureOffset.y);
-    }
-    else
-    {
-        glUniform1f(bUseHeightMap_UniLoc, (float)GL_FALSE );
-    }
-    //    _  _     _      _   _                      
-    //   | || |___(_)__ _| |_| |_   _ __  __ _ _ __  
-    //   | __ / -_) / _` | ' \  _| | '  \/ _` | '_ \ 
-    //   |_||_\___|_\__, |_||_\__| |_|_|_\__,_| .__/ 
-    //              |___/                     |_|    
+//
+//   GLint textureHeightMap_UniLoc = glGetUniformLocation( program, "textureHeightMap" );
+//   GLint bUseHeightMap_UniLoc = glGetUniformLocation( program, "bUseHeightMap" );
+//
+//   // HACK: If this is the terrain, then set these uniforms
+//   if (pCurMesh->friendlyName == "terrain")
+//   {
+//       glUniform1f(bUseHeightMap_UniLoc, (float)GL_TRUE );
+//
+//       // 
+//       glActiveTexture(GL_TEXTURE30);
+//       GLuint heightMap_TextID = ::g_pTheTextureManager->getTextureIDFromName("02-australia-gray.bmp");
+//       glBindTexture(GL_TEXTURE_2D, heightMap_TextID);
+//       glUniform1i(textureHeightMap_UniLoc, 30);     // Note the integer '30' instead of GL_TEXTUREXX
+//
+//       // HACK: Change the value over time
+///        heightMapTextureOffset.x += 0.001f;
+//       textureRotationAngle += glm::radians(0.1f);
+//
+//       glm::mat4 matRotTexture = glm::rotate(glm::mat4(1.0f),
+//                                             textureRotationAngle, // (float) glfwGetTime(), 
+//                                             glm::vec3(0.0f, 0.0f, 1.0f));
+//       GLint matTextRotation_UniLoc = glGetUniformLocation(program, "matTextRotation");
+//       glUniformMatrix4fv(matTextRotation_UniLoc, 1, GL_FALSE, glm::value_ptr(matRotTexture));
+//
+//
+//       GLint textOffsetVS_UniLoc = glGetUniformLocation( program, "textOffsetVS" );
+//       glUniform2f(textOffsetVS_UniLoc, heightMapTextureOffset.x, heightMapTextureOffset.y);
+//   }
+//   else
+//   {
+//       glUniform1f(bUseHeightMap_UniLoc, (float)GL_FALSE );
+//   }
+//   //    _  _     _      _   _                      
+//   //   | || |___(_)__ _| |_| |_   _ __  __ _ _ __  
+//   //   | __ / -_) / _` | ' \  _| | '  \/ _` | '_ \ 
+//   //   |_||_\___|_\__, |_||_\__| |_|_|_\__,_| .__/ 
+//   //              |___/                     |_|    
     //    _____        _                  ___ _         __  __ 
     //   |_   _|____ _| |_ _  _ _ _ ___  / __| |_ _  _ / _|/ _|
     //     | |/ -_) \ /  _| || | '_/ -_) \__ \  _| || |  _|  _|

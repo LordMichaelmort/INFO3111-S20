@@ -38,6 +38,10 @@ void LoadAllThemodels( unsigned int program,
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("DarkGrey.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("IslandHeightMap.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("02-australia-gray.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("StoneTexture.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("SandTexture.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("WaterSurfaceTexture.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("pool-water-caustic.bmp", true);
 
 
 
@@ -114,26 +118,54 @@ void LoadAllThemodels( unsigned int program,
 
 
     // Add to the list of things to draw
-    cMeshObject* pTerrain = new cMeshObject();
-//    pTerrain->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
-    pTerrain->meshName = "assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply";
+    cMeshObject* pSeaFloor = new cMeshObject();
+    pSeaFloor->meshName = "assets/models/00_terrain_xyz_n_rgba_uv.ply";
+//    pTerrain->meshName = "assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply";
+    pSeaFloor->friendlyName = "seaFloor";
+    pSeaFloor->scale = 2.0f;
+    pSeaFloor->position.y = -10.0f;
+    pSeaFloor->specularRGB_Power.r = 1.0f;
+    pSeaFloor->specularRGB_Power.g = 1.0f;
+    pSeaFloor->specularRGB_Power.b = 1.0f;
+//    pSeaFloor->specularRGB_Power.w = 1000.0f;        // REALLY shinny
+//    pSeaFloor->specularRGB_Power.w = 10.0f;          // Sort of (like silk)
+    pSeaFloor->specularRGB_Power.w = 1.0f;           // No specular ("flat", like dry clay)
+ //   pSeaFloor->textureNames[0] = "02-australia-gray.bmp";
+ //   pSeaFloor->textureNames[0] = "SandTexture.bmp";
+    pSeaFloor->textureNames[0] = "fauci.bmp";
+    pSeaFloor->textureNames[1] = "pool-water-caustic.bmp";
+    pSeaFloor->textureNames[2] = "";
+    pSeaFloor->textureNames[3] = "";
 
-    pTerrain->friendlyName = "terrain";
+    pSeaFloor->texRatios[0] = 1.0f;
+    pSeaFloor->texRatios[1] = 0.0f;
+    pSeaFloor->texRatios[2] = 0.0f;
+    pSeaFloor->texRatios[3] = 0.0f;
 
-    pTerrain->scale = 2.0f;
-    pTerrain->position.y = -10.0f;
-    pTerrain->diffuseRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    pTerrain->isWireframe = true;
-   //  Specular HIGHLIGHT colour 
-    pTerrain->specularRGB_Power.r = 1.0f;
-    pTerrain->specularRGB_Power.g = 1.0f;
-    pTerrain->specularRGB_Power.b = 1.0f;
-    pTerrain->specularRGB_Power.w = 1000.0f;
+    ::g_pVecObjects.push_back(pSeaFloor);
 
-    pTerrain->textureNames[0] = "02-australia-gray.bmp";
-    pTerrain->texRatios[0] = 1.0f;
+    // Add to the list of things to draw
+    cMeshObject* pWaterSurface = new cMeshObject();
+    pWaterSurface->meshName = "assets/models/00_FLAT_terrain_xyz_n_rgba_uv.ply";
+    pWaterSurface->friendlyName = "terrain";
+    pWaterSurface->scale = 2.0f;
+    pWaterSurface->position.y = 35.0f;
+    pWaterSurface->specularRGB_Power.r = 1.0f;
+    pWaterSurface->specularRGB_Power.g = 1.0f;
+    pWaterSurface->specularRGB_Power.b = 1.0f;
+    pWaterSurface->specularRGB_Power.w = 1000.0f;        // REALLY shinny
+    pWaterSurface->textureNames[0] = "WaterSurfaceTexture.bmp";
+    pWaterSurface->textureNames[1] = "";
+    pWaterSurface->textureNames[2] = "";
+    pWaterSurface->textureNames[2] = "";
 
-    ::g_pVecObjects.push_back(pTerrain);
+    pWaterSurface->texRatios[0] = 1.0f;
+
+    pWaterSurface->diffuseRGBA.a = 0.65f;    // Semi-transparent
+    ::g_pVecObjects.push_back(pWaterSurface);
+
+
+
 
      // Add to the list of things to draw
     cMeshObject* pISOBall = new cMeshObject();
