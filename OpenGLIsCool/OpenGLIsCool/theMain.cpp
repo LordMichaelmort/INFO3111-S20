@@ -526,8 +526,9 @@ int main(void)
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         matProjection = glm::perspective( 0.6f,
                                           ratio,
-                                          0.1f,          // Near plane
-                                          10000.0f);      // Far plane
+                                          1.0f,          // Near plane
+                                          2000.0f);      // Far plane
+
 
         matView = glm::mat4(1.0f);
 
@@ -555,6 +556,14 @@ int main(void)
 
         // STARTOF: Update anything per frame
         {
+            // Move the skybox object to the location of the camera
+            cMeshObject* pSkybox = findObjectByName("SkyBox");
+            pSkybox->position = ::g_pFlyCamera->getEye();
+
+
+
+
+
             cMeshObject* pTorpedo = findObjectByName("Torpedo");
 
             if ( ::g_bTorpedoIsMoving )
@@ -1073,6 +1082,41 @@ void DrawObject( cMeshObject* pCurMesh,
     }
     // This sets the state of the blend function
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+
+
+    // **********************************************************
+    // Is this the tranparent thing Feeney wanted for CP11?
+    // uniform bool bUseTranspTexture;	// If true, then use transparency texture
+    GLint bUseTranspTexture_UL = glGetUniformLocation(program, "bUseTranspTexture");
+
+    if (pCurMesh->friendlyName == "Spidey")
+    {
+        // This is sort of redundant as I could have set the diffuseRGBA.a < 1.0f;
+        glEnable(GL_BLEND);
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+        // 
+        // Picked 16 becauss it's not yet being used
+        glActiveTexture(GL_TEXTURE16);
+        GLuint texPerlinNoise_ID = ::g_pTheTextureManager->getTextureIDFromName("PerlinNoise.bmp");
+        glBindTexture(GL_TEXTURE_2D, texPerlinNoise_ID);
+
+        // uniform sampler2D textTransp;	// Texture used to sample alpha values
+        GLint textTransp_UL = glGetUniformLocation(program, "textTransp");
+        glUniform1i(textTransp_UL, 16);     // GL_TEXTURE16
+
+
+        // uniform bool bUseTranspTexture;	// If true, then use transparency texture
+        glUniform1f(bUseTranspTexture_UL, static_cast<float>(GL_TRUE));
+
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+        glUniform1f(bUseTranspTexture_UL, static_cast<float>(GL_FALSE));
+    }//if (pCurMesh->friendlyName
+    // **********************************************************
 
 
 

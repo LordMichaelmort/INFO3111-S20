@@ -53,8 +53,10 @@ uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 uniform sampler2D textureDiscard;
 uniform bool bUseDiscardTexture;	
 
-
-
+// CP11
+uniform sampler2D textTransp;	// Texture used to sample alpha values
+uniform bool bUseTranspTexture;	// If true, then use transparency texture
+uniform bool bUseDiscardTransp;
 
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
@@ -129,7 +131,37 @@ void main()
 	// that reads the 4th value (the "alpha channel")
 	// directly. 
 	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
-
+	
+	// CP11
+	if ( bUseTranspTexture )
+	{
+		// uniform sampler2D textTransp;
+//		vec4 alphaTextRGBA = texture( textTransp, fUVx2.st );
+//		float alphaText = (alphaTextRGBA.a + alphaTextRGBA.b + alphaTextRGBA.g)/ 3.0f;
+		
+		// If it's greyscale, then R = G = B (likely) so just sample R
+		float alphaText = texture( textTransp, fUVx2.st ).r;
+		
+		// Assume range is from 0.4 to 0.6 (range of 0.2)
+		alphaText -= 0.4f;
+		alphaText = clamp(alphaText, 0.0f, 1.0f);
+		alphaText *= 1.0f/0.2f;		// x5
+		
+		outputColour.a = alphaText;
+		
+		// You'd really see this:
+		//outputColour.a = texture( textTransp, fUVx2.st ).r;
+		
+		// Discard transparency
+//		float alphaText = texture( textTransp, fUVx2.st ).r;
+//		if ( alphaText < 0.5f )
+//		{
+//			// MIGHT be a performance on some desktop cards. 
+//			// It's NOT on mobile and usually not on colsole
+//			discard;
+//		}
+	}
+	
 }
 
 

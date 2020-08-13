@@ -6,6 +6,7 @@
 #include <glm/vec4.hpp>
 #include <vector>
 
+
 class cMeshObject
 {
 public:
@@ -40,6 +41,7 @@ public:
 
 	std::string discardTexture;
 
+
 	// This is "read only"
 	unsigned int getUniqueID(void);
 private:
@@ -47,3 +49,4 @@ private:
 	// Note original assignment not set here, but in the cpp file (body of class)
 	static unsigned int s_NextID;
 };
+

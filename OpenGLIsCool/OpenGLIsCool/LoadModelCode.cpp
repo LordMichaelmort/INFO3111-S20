@@ -44,11 +44,32 @@ void LoadAllThemodels( unsigned int program,
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("pool-water-caustic.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("SpidermanUV_square.bmp", true);
 
+    // For CP#11
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("PerlinNoise.bmp", true);
+
     // This is an example of a "mask" or "discard" texture
     // Using the texture to "discard" parts of the model
     // (like holes, chain link fence, etc.)
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("HeyThereTexture_Mask_or_discard.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("PolkaDotMask.bmp", true);
+
+    std::string ErrorString = "";
+    if (!::g_pTheTextureManager->CreateCubeTextureFromBMPFiles("sunnyday",
+                                                               "cubemaps/TropicalSunnyDayRight2048.bmp",   /* +ve X */
+                                                               "cubemaps/TropicalSunnyDayLeft2048.bmp",   /* -ve X */
+                                                               "cubemaps/TropicalSunnyDayUp2048.bmp",   /* +ve Y */
+                                                               "cubemaps/TropicalSunnyDayDown2048.bmp",   /* -ve Y */
+                                                               "cubemaps/TropicalSunnyDayBack2048.bmp",   /* +ve Z */
+                                                               "cubemaps/TropicalSunnyDayFront2048.bmp",   /* -ve Z */
+                                                               true, /*is Seamless*/
+                                                               ErrorString))
+    {
+        std::cout << "Error: Didn't load cubemap because: " << ErrorString << std::endl;
+    }
+    else
+    {
+        std::cout << "Loaded cube map OK." << std::endl;
+    }
 
 
     {
@@ -127,6 +148,7 @@ void LoadAllThemodels( unsigned int program,
         pSpiderHead->scale = 10.0f;
         pSpiderHead->position.y = 10.0f;
         pSpiderHead->orientation.x = glm::radians(-90.0f);
+        pSpiderHead->friendlyName = "Spidey";
         ::g_pVecObjects.push_back(pSpiderHead);
 
         cMeshObject* pSpiderBody = new cMeshObject();
@@ -136,6 +158,8 @@ void LoadAllThemodels( unsigned int program,
         pSpiderBody->scale = 10.0f;
         pSpiderBody->position.y = 10.0f;
         pSpiderBody->orientation.x = glm::radians(-90.0f);
+        pSpiderBody->friendlyName = "Spidey";
+        pSpiderBody->diffuseRGBA.a = 0.99f;
         ::g_pVecObjects.push_back(pSpiderBody);
 
         cMeshObject* pSpiderLeftArm = new cMeshObject();
@@ -145,10 +169,21 @@ void LoadAllThemodels( unsigned int program,
         pSpiderLeftArm->scale = 10.0f;
         pSpiderLeftArm->position.y = 10.0f;
         pSpiderLeftArm->orientation.x = glm::radians(-90.0f);
+        pSpiderLeftArm->friendlyName = "Spidey";
         ::g_pVecObjects.push_back(pSpiderLeftArm);
     }    
 
-
+    // Skybox (cubemap) object
+    sModelDrawInfo mdiISOSphereIN;
+    pTheVAOManager->LoadModelIntoVAO("assets/models/ISO_Sphere_Smooth_inverted_normals_xyz_n_rgba_uv.ply", mdiISOSphereIN, program);
+    
+    cMeshObject* pSkyBox = new cMeshObject();
+    pSkyBox->meshName = "assets/models/ISO_Sphere_Smooth_inverted_normals_xyz_n_rgba_uv.ply";
+    pSkyBox->textureNames[0] = "SpidermanUV_square.bmp";
+    pSkyBox->texRatios[0] = 1.0f;
+    pSkyBox->scale = 1000.0f;
+    pSkyBox->friendlyName = "SkyBox";
+    ::g_pVecObjects.push_back(pSkyBox);
 
 
 
