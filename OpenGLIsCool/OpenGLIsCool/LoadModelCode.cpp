@@ -179,8 +179,10 @@ void LoadAllThemodels( unsigned int program,
     
     cMeshObject* pSkyBox = new cMeshObject();
     pSkyBox->meshName = "assets/models/ISO_Sphere_Smooth_inverted_normals_xyz_n_rgba_uv.ply";
-    pSkyBox->textureNames[0] = "SpidermanUV_square.bmp";
-    pSkyBox->texRatios[0] = 1.0f;
+    // Because this is using a cubeMap for the skybox, we aren't 
+    // actually using the regular 2D texture stuff.
+//    pSkyBox->textureNames[0] = "SpidermanUV_square.bmp";
+//    pSkyBox->texRatios[0] = 1.0f;
     pSkyBox->scale = 1000.0f;
     pSkyBox->friendlyName = "SkyBox";
     ::g_pVecObjects.push_back(pSkyBox);

@@ -58,6 +58,14 @@ uniform sampler2D textTransp;	// Texture used to sample alpha values
 uniform bool bUseTranspTexture;	// If true, then use transparency texture
 uniform bool bUseDiscardTransp;
 
+// Cube map texture(s)
+uniform samplerCube texCubeSkyBox01;
+uniform bool bIsSkybox;			// If true, samples from cubemap
+
+// Cubemaps can be used for other things, like reflection and refraction
+uniform bool bObjectReflectsSkyBox;
+
+
 vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 							
@@ -74,6 +82,27 @@ void main()
 		outputColour.rgb = diffuseColourRGBA.rgb;
 		return;
 	}
+	
+	// Skybox (cubemap) object
+	if ( bIsSkybox )
+	{
+		// Sample from the cubemap using the inverted normals
+		// uniform samplerCube texCubeSkyBox01;
+		vec3 skyboxNormal = fNormal.xyz;
+		// Invert so ray projected FROM sphere to inside of cubemap
+		skyboxNormal = -skyboxNormal;
+		
+		vec4 skyPixelColour = texture(texCubeSkyBox01, skyboxNormal.xyz);
+		
+		// Note: No lighting 
+		outputColour.rgb = skyPixelColour.rgb;
+		outputColour.a = 1.0f;
+		
+		// Early exit
+		return;
+	
+	}//if ( bIsSkybox )
+	
 	
 	// For when we want to completely elimiate part of the model
 	if ( bUseDiscardTexture )
@@ -131,6 +160,21 @@ void main()
 	// that reads the 4th value (the "alpha channel")
 	// directly. 
 	outputColour.a = diffuseColourRGBA.a;				// Set "alpha" to 1.0f
+	
+	
+	// Another use for cube maps is reflection and refraction
+	if ( bObjectReflectsSkyBox )
+	{
+		vec3 viewRay = normalize(eyeLocation.xyz - fVertWorldPos.xyz);
+		
+		vec3 reflectionRay = reflect(viewRay, fNormal.xyz);
+		
+		vec4 skyPixelColour = texture(texCubeSkyBox01, reflectionRay.xyz);
+		
+		outputColour.rgb *= 0.0001f;
+		outputColour.rgb += skyPixelColour.rgb;
+	}
+	
 	
 	// CP11
 	if ( bUseTranspTexture )

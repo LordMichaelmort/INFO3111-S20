@@ -1134,6 +1134,40 @@ void DrawObject( cMeshObject* pCurMesh,
                 pCurMesh->specularRGB_Power.w); 
 
 
+
+
+
+    //    ___ _        _                _____     _         __  __         __   
+    //   / __| |___  _| |__  _____ __  / / __|  _| |__  ___|  \/  |__ _ _ _\ \  
+    //   \__ \ / / || | '_ \/ _ \ \ / | | (_| || | '_ \/ -_) |\/| / _` | '_ \ | 
+    //   |___/_\_\\_, |_.__/\___/_\_\ | |\___\_,_|_.__/\___|_|  |_\__,_| .__/ | 
+    //            |__/                 \_\                             |_| /_/  
+    // Is this the skybox object we're drawing
+    // uniform bool bIsSkybox;			// If true, samples from cubemap
+    GLint bIsSkybox_UL = glGetUniformLocation(program, "bIsSkybox");
+    if (pCurMesh->friendlyName == "SkyBox")
+    {
+        // yes
+        glUniform1f(bIsSkybox_UL, (float)GL_TRUE);
+
+        glActiveTexture(GL_TEXTURE20);
+        GLuint texSunnyDaySkyBox_ID = ::g_pTheTextureManager->getTextureIDFromName("sunnyday");
+        // Note that this is GL_TEXTURE_CUBE_MAP instead of GL_TEXTURE_2D
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texSunnyDaySkyBox_ID);   // ***WARNING WILL ROBINSON!!!****
+
+        // uniform samplerCube skyBox01;
+        GLint texCubeSkyBox01_UL = glGetUniformLocation(program, "texCubeSkyBox01");
+        glUniform1i(texCubeSkyBox01_UL, 20);     // GL_TEXTURE20
+
+    }
+    else
+    {
+        // Is NOT a skybox, so turn this "off"
+        glUniform1f(bIsSkybox_UL, (float)GL_FALSE);
+    }
+
+
+
     sModelDrawInfo mdoModelToDraw;
     if (::g_pTheVAOManager->FindDrawInfoByModelName(pCurMesh->meshName,
                                                     mdoModelToDraw))
