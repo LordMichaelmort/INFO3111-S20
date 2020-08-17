@@ -28,7 +28,8 @@ public:
 	~CTextureFromBMP();
 	// Returns true if able to load texture and store it
 	// Updated: December 2010 for ATI cards, too!
-	bool CreateNewTextureFromBMPFile2( std::string textureName, std::string fileNameFullPath, /*GLenum textureUnit,*/ bool bGenerateMIPMap );		
+	bool CreateNewTextureFromBMPFile2( std::string textureName, std::string fileNameFullPath, /*GLenum textureUnit,*/ bool bGenerateMIPMap, 
+									   bool use_glTexImage2D_instead_of_glTexStorage2D = false );
 
 	// _____  _     _                        _     _                         
 	//|_   _|| |_  (_) ___  _ __  __ _  _ _ | |_  (_) ___  _ _   ___ __ __ __
@@ -40,10 +41,11 @@ public:
 		                                   std::string posY_fileName, std::string negY_fileName, 
 										   std::string posZ_fileName, std::string negZ_fileName, 
 										   /*GLenum textureUnit,*/ bool bIsSeamless,
-										   GLenum &errorEnum, std::string &errorString, std::string &errorDetails );
+										   GLenum &errorEnum, std::string &errorString, std::string &errorDetails, 
+										   bool use_glTexImage2D_instead_of_glTexStorage2D = false );		
 	bool CreateNewBMPFromCurrentTexture( int mipMapLevel );
 	//bool LoadBMP( std::string fileName );
-	bool LoadBMP2( std::string fileName );		// Faster loader
+	bool LoadBMP2( std::string fileName );		// Added August 16, 2020
 	bool SaveBMP( std::string fileName );
 	// Deletes the data (and the array) - used after calling LoadBMP
 	bool ClearBMP( void );	

@@ -58,7 +58,7 @@ std::string CTextureFromBMP::getFileNameFullPath(void)
 
 
 bool CTextureFromBMP::CreateNewTextureFromBMPFile2( std::string textureName, std::string fileNameFullPath, 
-												    /*GLenum textureUnit,*/ bool bGenerateMIPMap )	
+												    bool bGenerateMIPMap, bool use_glTexImage2D_instead_of_glTexStorage2D /*=false*/)
 {
 	bool bReturnVal = true;
 
@@ -96,23 +96,40 @@ bool CTextureFromBMP::CreateNewTextureFromBMPFile2( std::string textureName, std
 	// Set alignment to 1 byte
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
-	glTexImage2D( GL_TEXTURE_2D,		// target (2D, 3D, etc.)		// OpenGL 2.0 and up
-				 0,					// MIP map level 
-				 GL_RGBA,			// internal format
-				 this->m_numberOfColumns,	// width (pixels)	
-				 this->m_numberOfRows,		// height (pixels)	
-				 0,					// border (0 or 1)
-				 GL_RGB,			// format of pixel data
-				 GL_UNSIGNED_BYTE,	// type of pixel data
-				 this->m_p_theImages);	// pointer to data in memory
+	if (use_glTexImage2D_instead_of_glTexStorage2D )
+	{
+		// Supported by OpenGL 2.0
+		glTexImage2D( GL_TEXTURE_2D, 
+		              0,			// Mipmap level
+					  GL_RGBA,		// internal format
+					  this->m_numberOfColumns,
+					  this->m_numberOfRows, 
+					  0,		// border (must be zero)
+					  GL_RGB,			// format of pixel data
+					  GL_UNSIGNED_BYTE,	// type of pixel data
+					  this->m_p_theImages);	// pointer to data in memory
+	}
+	else
+	{
+		// For OpenGL 4.2 of higher
+		glTexStorage2D( GL_TEXTURE_2D,								// OpenGL 4.2 and up
+			            10, 
+						GL_RGBA8, 
+						this->m_numberOfColumns,					// When reversed the image is correct, but B & W
+						this->m_numberOfRows );
 
-//	glTexStorage2D( GL_TEXTURE_2D,								// OpenGL 4.2 and up
-//		            1, 
-//					GL_RGBA8, 
-//					this->m_numberOfColumns,					// When reversed the image is correct, but B & W
-//					this->m_numberOfRows );
-//					//this->m_numberOfColumns, 
-//					//this->m_numberOfRows );
+		// Positive X image...
+		glTexSubImage2D(GL_TEXTURE_2D,
+						0,   // Level
+						0, 0, // Offset
+						this->m_numberOfColumns,	// width
+						this->m_numberOfRows,		// height
+						GL_RGB,
+						GL_UNSIGNED_BYTE,
+						this->m_p_theImages);
+
+	}// if (use_glTexImage2D_instead_of_glTexStorage2D )
+
 
 	if ( this->bWasThereAnOpenGLError() )	{ return false;	}
 
@@ -180,7 +197,8 @@ bool CTextureFromBMP::CreateNewCubeTextureFromBMPFiles( std::string cubeMapName,
 		                                                std::string posY_fileName, std::string negY_fileName, 
 														std::string posZ_fileName, std::string negZ_fileName, 
 														/*GLenum textureUnit, */bool bIsSeamless,
-														GLenum &errorEnum, std::string &errorString, std::string &errorDetails )
+														GLenum &errorEnum, std::string &errorString, std::string &errorDetails,
+													    bool use_glTexImage2D_instead_of_glTexStorage2D /*=false*/ )
 {
 
 	bool bReturnVal = true;
@@ -190,19 +208,9 @@ bool CTextureFromBMP::CreateNewCubeTextureFromBMPFiles( std::string cubeMapName,
 	// Pick a texture number...
 	//GLuint textureNum = 0;
 	glGenTextures( 1, &(this->m_textureNumber) );
-	// Worked?
-	if ( ( glGetError() & GL_INVALID_VALUE ) == GL_INVALID_VALUE )
-	{
-		bReturnVal = false;
-		return false;
-	}
-
-	//
-	//glEnable(GL_TEXTURE_2D);
-	//glActiveTexture( textureUnit );	// GL_TEXTURE0, GL_TEXTURE1, etc.
 	glBindTexture( GL_TEXTURE_CUBE_MAP, this->m_textureNumber ); 
 
-	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
  
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE /*GL_REPEAT*/ );
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE /*GL_REPEAT*/ );
@@ -221,101 +229,193 @@ bool CTextureFromBMP::CreateNewCubeTextureFromBMPFiles( std::string cubeMapName,
 
 	if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
 					
+
+	
 	// Positive X image...
 	// Assume all the images are the same size. If not, then it will screw up
-	if ( this->LoadBMP2( posX_fileName ) )
+	if (!this->LoadBMP2(posX_fileName))
 	{
+		if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+		return false;
+	}
+
+
+	if ( ! use_glTexImage2D_instead_of_glTexStorage2D)
+	{
+		// Use OpenGL 4.2 and up version
+
+		// Create a cube map based on the size of the pos x BMP
 		glTexStorage2D( GL_TEXTURE_CUBE_MAP, 
 		            10, // Mipmap levels
 					GL_RGBA8,	// Internal format
 					this->m_numberOfColumns,	// width (pixels)
 					this->m_numberOfRows );		// height (pixels)
 
-		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-	}
-	else
-	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
+		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) 
+		{ 
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false; 
+		}
 
-	// Positive X image...
-	glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 
-		             0,   // Level
-					 0, 0, // Offset
-					 this->m_numberOfColumns,	// width
-					 this->m_numberOfRows,		// height
-					 GL_RGB, 
-					 GL_UNSIGNED_BYTE,
-					 this->m_p_theImages );
-	this->ClearBMP();
-	if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-
-
-	// Negative X image...
-	if ( this->LoadBMP2( negX_fileName ) )
-	{
-		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+		// Positive X image...
+		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0 /*Level*/, 0 /*x offset*/, 0 /* y offset*/, this->m_numberOfColumns,	this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
 		this->ClearBMP();
 		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-	}
-	else
-	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
 
-	// Positive Y image...
-	if ( this->LoadBMP2( posY_fileName ) )
-	{
-		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
-		this->ClearBMP();
-		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-	}
-	else
-	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
 
-	// Negative Y image...
-	if ( this->LoadBMP2( negY_fileName ) )
-	{
-		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
-		this->ClearBMP();
-		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-	}
-	else
-	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
+		// Negative X image...
+		if ( this->LoadBMP2( negX_fileName ) )
+		{
+			glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+			this->ClearBMP();
+			if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
 
-	// Positive Z image...
-	if ( this->LoadBMP2( posZ_fileName ) )
-	{
-		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
-		this->ClearBMP();
-		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
-	}
-	else
-	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
+		// Positive Y image...
+		if ( this->LoadBMP2( posY_fileName ) )
+		{
+			glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+			this->ClearBMP();
+			if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
 
-	// Negative Z image...
-	if ( this->LoadBMP2( negZ_fileName ) )
-	{
-		glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
-		this->ClearBMP();
-		if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		// Negative Y image...
+		if ( this->LoadBMP2( negY_fileName ) )
+		{
+			glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+			this->ClearBMP();
+			if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Positive Z image...
+		if ( this->LoadBMP2( posZ_fileName ) )
+		{
+			glTexSubImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+			this->ClearBMP();
+			if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Negative Z image...
+		if ( this->LoadBMP2( negZ_fileName ) )
+		{
+			glTexSubImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 0, 0, this->m_numberOfColumns, this->m_numberOfRows, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages );
+			this->ClearBMP();
+			if ( this->bWasThereAnOpenGLError(errorEnum, errorString,  errorDetails) ) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}	
 	}
 	else
 	{
-		this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
-		return false;
-	}
+		// Supported by OpenGL 2.0
+
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+					 0,				// Mipmap level
+					 GL_RGBA,		// internal format
+					 this->m_numberOfColumns,
+					 this->m_numberOfRows,
+					 0,					// border (must be zero)
+					 GL_RGB,			// format of pixel data
+					 GL_UNSIGNED_BYTE,	// type of pixel data
+					 this->m_p_theImages);	// pointer to data in memory
+		if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails))	{ return false; }
+
+
+		// Negative X image...
+		this->ClearBMP();
+		if (this->LoadBMP2(negX_fileName))
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, this->m_numberOfColumns, this->m_numberOfRows, 0, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages);
+			if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Positive Y image...
+		this->ClearBMP();
+		if (this->LoadBMP2(posY_fileName))
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, this->m_numberOfColumns, this->m_numberOfRows, 0, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages);
+			if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Negative Y image...
+		this->ClearBMP();
+		if (this->LoadBMP2(negY_fileName))
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, this->m_numberOfColumns, this->m_numberOfRows, 0, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages);
+			if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Positive Z image...
+		this->ClearBMP();
+		if (this->LoadBMP2(posZ_fileName))
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, this->m_numberOfColumns, this->m_numberOfRows, 0, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages);
+			if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+		// Negative Z image...
+		this->ClearBMP();
+		if (this->LoadBMP2(negZ_fileName))
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, this->m_numberOfColumns, this->m_numberOfRows, 0, GL_RGB, GL_UNSIGNED_BYTE, this->m_p_theImages);
+			if (this->bWasThereAnOpenGLError(errorEnum, errorString, errorDetails)) { return false; }
+		}
+		else
+		{
+			this->m_lastErrorNum = CTextureFromBMP::ERORR_FILE_WONT_OPEN;
+			return false;
+		}
+
+			
+	}//if (use_glTexImage2D_instead_of_glTexStorage2D)
+
+
+
+
 
 	this->m_textureName = cubeMapName;
 

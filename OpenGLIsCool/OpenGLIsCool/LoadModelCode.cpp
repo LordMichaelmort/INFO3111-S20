@@ -34,7 +34,7 @@ void LoadAllThemodels( unsigned int program,
 
     // This is a fairly big texture, so comment it out if your Debug build is taking a long
     //   time to load... 
-    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true, true );
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("DarkGrey.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("IslandHeightMap.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("02-australia-gray.bmp", true);
@@ -43,6 +43,9 @@ void LoadAllThemodels( unsigned int program,
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("WaterSurfaceTexture.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("pool-water-caustic.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("SpidermanUV_square.bmp", true);
+
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("tree_texture.bmp", true);
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("tree_texture_mask.bmp", true);
 
     // For CP#11
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("PerlinNoise.bmp", true);
@@ -62,7 +65,8 @@ void LoadAllThemodels( unsigned int program,
                                                                "cubemaps/TropicalSunnyDayBack2048.bmp",   /* +ve Z */
                                                                "cubemaps/TropicalSunnyDayFront2048.bmp",   /* -ve Z */
                                                                true, /*is Seamless*/
-                                                               ErrorString))
+                                                               ErrorString, 
+                                                               true ))
     {
         std::cout << "Error: Didn't load cubemap because: " << ErrorString << std::endl;
     }
@@ -189,6 +193,20 @@ void LoadAllThemodels( unsigned int program,
 
 
 
+    sModelDrawInfo mdiSmallQuad;
+    pTheVAOManager->LoadModelIntoVAO("assets/models/2_tri_quad_XY_axis_1x1.ply", mdiSmallQuad, program);
+
+    cMeshObject* pQuadTree = new cMeshObject();
+    pQuadTree->meshName = "assets/models/2_tri_quad_XY_axis_1x1.ply";
+    pQuadTree->friendlyName = "QuadForTree";
+    pQuadTree->textureNames[0] = "tree_texture.bmp";       //tree_texture
+    pQuadTree->texRatios[0] = 1.0f;
+    pQuadTree->scale = 60.0f;
+    pQuadTree->position.y = 50.0f;
+    ::g_pVecObjects.push_back(pQuadTree);
+
+
+
      // Add to the list of things to draw
     cMeshObject* pBunny = new cMeshObject();
     pBunny->meshName = "assets/models/bun_zipper_res2_xyz_n_rgba_uv.ply";
@@ -197,10 +215,10 @@ void LoadAllThemodels( unsigned int program,
     pBunny->position.y = 10.0f;
 
     pBunny->textureNames[0] = "cobblestone.bmp";
-    pBunny->texRatios[0] = 1.0f;
+    pBunny->texRatios[0] = 0.0f;
 
     pBunny->textureNames[1] = "fauci.bmp";
-    pBunny->texRatios[1] = 0.0f;
+    pBunny->texRatios[1] = 1.0f;
 
     ::g_pVecObjects.push_back(pBunny);
 
@@ -244,11 +262,12 @@ void LoadAllThemodels( unsigned int program,
     pWaterSurface->specularRGB_Power.b = 0.0f;
     pWaterSurface->specularRGB_Power.w = 1000.0f;        // REALLY shinny
     pWaterSurface->textureNames[0] = "WaterSurfaceTexture.bmp";
-    pWaterSurface->textureNames[1] = "";
+    pWaterSurface->textureNames[1] = "fauci.bmp";
     pWaterSurface->textureNames[2] = "";
     pWaterSurface->textureNames[2] = "";
 
-    pWaterSurface->texRatios[0] = 1.0f;
+    pWaterSurface->texRatios[0] = 0.0f;
+    pWaterSurface->texRatios[1] = 1.0f;
 
  //   pWaterSurface->diffuseRGBA.a = 0.65f;    // Semi-transparent
     pWaterSurface->diffuseRGBA.a = 1.0f;  

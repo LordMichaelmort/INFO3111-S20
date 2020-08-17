@@ -53,6 +53,8 @@ uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
 uniform sampler2D textureDiscard;
 uniform bool bUseDiscardTexture;	
 
+uniform bool bTreeDiscardExample;
+
 // CP11
 uniform sampler2D textTransp;	// Texture used to sample alpha values
 uniform bool bUseTranspTexture;	// If true, then use transparency texture
@@ -76,6 +78,27 @@ void main()
 	//outputColour = fNormal;
 //	
 //	outputColour = fColour;
+
+	if ( bTreeDiscardExample )
+	{
+		vec4 treeColour = texture( texture0A, fUVx2.st );				// Tree texture
+		float treeMaskColourBW = texture( textureDiscard, fUVx2.st ).r; 	// Tree 'mask' texture
+	
+		// Check to see if the mask is white or black
+		// Where "white" --> Draw the tree colour
+		// Where "black" --> Don't draw anything (discard)
+		if ( treeMaskColourBW > 0.5f )	// "White"
+		{
+			outputColour.rgb = treeColour.rgb;
+			outputColour.a = 1.0f;
+			return;
+		}
+		else
+		{	// Mask is "black" so draw nothing
+			discard;
+		}	
+	}
+
 
 	if ( hasNoLighting )
 	{

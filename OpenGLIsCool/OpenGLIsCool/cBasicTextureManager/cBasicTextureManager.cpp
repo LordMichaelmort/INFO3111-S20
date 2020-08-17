@@ -9,13 +9,14 @@ void cBasicTextureManager::SetBasePath(std::string basepath)
 }
 
 
-bool cBasicTextureManager::Create2DTextureFromBMPFile( std::string textureFileName, bool bGenerateMIPMap )
+bool cBasicTextureManager::Create2DTextureFromBMPFile( std::string textureFileName, bool bGenerateMIPMap, 
+													   bool bUse_glTexImage2D_instead_of_glTexStorage2D /*=false*/ )
 {
 	std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;
 
 
 	CTextureFromBMP* pTempTexture = new CTextureFromBMP();
-	if ( ! pTempTexture->CreateNewTextureFromBMPFile2( textureFileName, fileToLoadFullPath, /*textureUnit,*/ bGenerateMIPMap ) )
+	if ( ! pTempTexture->CreateNewTextureFromBMPFile2( textureFileName, fileToLoadFullPath, /*textureUnit,*/ bGenerateMIPMap, bUse_glTexImage2D_instead_of_glTexStorage2D ) )
 	{
 		this->m_appendErrorString( "Can't load " );
 		this->m_appendErrorString( fileToLoadFullPath );
@@ -92,7 +93,8 @@ bool cBasicTextureManager::CreateCubeTextureFromBMPFiles(
 		                            std::string posX_fileName, std::string negX_fileName, 
 		                            std::string posY_fileName, std::string negY_fileName, 
 									std::string posZ_fileName, std::string negZ_fileName, 
-									bool bIsSeamless, std::string &errorString )
+									bool bIsSeamless, std::string &errorString, 
+									bool bUse_glTexImage2D_instead_of_glTexStorage2D /*=false*/ )
 {
 	std::string posX_fileName_FullPath = this->m_basePath + "/" + posX_fileName;
 	std::string negX_fileName_FullPath = this->m_basePath + "/" + negX_fileName;
@@ -109,7 +111,7 @@ bool cBasicTextureManager::CreateCubeTextureFromBMPFiles(
 				posX_fileName_FullPath, negX_fileName_FullPath, 
 	            posY_fileName_FullPath, negY_fileName_FullPath, 
 	            posZ_fileName_FullPath, negZ_fileName_FullPath, 
-	            bIsSeamless, errorEnum, errorString, errorDetails ) )
+	            bIsSeamless, errorEnum, errorString, errorDetails, bUse_glTexImage2D_instead_of_glTexStorage2D ) )
 	{
 		this->m_appendErrorString( "Can't load " );
 		this->m_appendErrorString( cubeMapName );

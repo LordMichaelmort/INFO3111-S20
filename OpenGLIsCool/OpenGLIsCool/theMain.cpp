@@ -820,6 +820,30 @@ void DrawObject( cMeshObject* pCurMesh,
         return;
     }
 
+    GLint bTreeDiscardExample_UL = glGetUniformLocation(program, "bTreeDiscardExample");
+    if (pCurMesh->friendlyName == "QuadForTree")
+    {
+        // Set this flag to turn on this "tree discard" example
+        glUniform1f(bTreeDiscardExample_UL, (float)GL_TRUE);
+
+        glActiveTexture(GL_TEXTURE25);
+        glBindTexture(GL_TEXTURE_2D, ::g_pTheTextureManager->getTextureIDFromName("tree_texture.bmp"));
+        GLint texture0A_UL = glGetUniformLocation(program, "texture0A");
+        glUniform1i(texture0A_UL, 25);  // 25, not GL_TEXTURE25
+
+
+        glActiveTexture(GL_TEXTURE26);
+        glBindTexture(GL_TEXTURE_2D, ::g_pTheTextureManager->getTextureIDFromName("tree_texture_mask.bmp"));
+        GLint textureDiscard_UL = glGetUniformLocation(program, "textureDiscard");
+        glUniform1i(textureDiscard_UL, 26);  // 25, not GL_TEXTURE25
+
+
+    }
+    else
+    {
+        glUniform1f(bTreeDiscardExample_UL, (float)GL_FALSE);
+    }
+
 
     // STARTOF: Discard texture portion
 
