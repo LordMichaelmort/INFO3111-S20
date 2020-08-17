@@ -836,8 +836,6 @@ void DrawObject( cMeshObject* pCurMesh,
         glBindTexture(GL_TEXTURE_2D, ::g_pTheTextureManager->getTextureIDFromName("tree_texture_mask.bmp"));
         GLint textureDiscard_UL = glGetUniformLocation(program, "textureDiscard");
         glUniform1i(textureDiscard_UL, 26);  // 25, not GL_TEXTURE25
-
-
     }
     else
     {

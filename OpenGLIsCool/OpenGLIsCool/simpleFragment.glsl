@@ -48,6 +48,10 @@ uniform sampler2D texture0B;		// Fauci texture
 uniform sampler2D texture0C;
 uniform sampler2D texture0D;
 uniform vec4 textureRatios;		//  = vec4( 0.0f, 1.0f, 0.0f, 0.0f );
+uniform vec4 otherEffects;		// x = 1.0f --> use discard texture
+								// y = 1.0f --> use the gloss map
+								// z = 1.0f --> use bump map
+						
 
 // A "mask" or "discard" texture
 uniform sampler2D textureDiscard;
