@@ -34,7 +34,7 @@ void LoadAllThemodels( unsigned int program,
 
     // This is a fairly big texture, so comment it out if your Debug build is taking a long
     //   time to load... 
-    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true, true );
+    ::g_pTheTextureManager->Create2DTextureFromBMPFile("fauci.bmp", true, false );
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("DarkGrey.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("IslandHeightMap.bmp", true);
     ::g_pTheTextureManager->Create2DTextureFromBMPFile("02-australia-gray.bmp", true);
