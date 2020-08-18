@@ -66,7 +66,7 @@ void LoadAllThemodels( unsigned int program,
                                                                "cubemaps/TropicalSunnyDayFront2048.bmp",   /* -ve Z */
                                                                true, /*is Seamless*/
                                                                ErrorString, 
-                                                               true ))
+                                                               false ))
     {
         std::cout << "Error: Didn't load cubemap because: " << ErrorString << std::endl;
     }
